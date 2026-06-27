@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ guild.name }} - Klaus Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-brand">Klaus Bot</a>
+    <div class="nav-user">
+      <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
+      <span>{{ user.username }}</span>
+      <a href="/dashboard" class="btn btn-outline btn-sm">Voltar</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      {% if guild.icon %}
+        <img src="https://cdn.discordapp.com/icons/{{ guild.id }}/{{ guild.icon }}.png?size=128" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--border);">
+      {% else %}
+        <div class="guild-icon" style="width: 60px; height: 60px; font-size: 1.5rem;">{{ guild.name[0] }}</div>
+      {% endif %}
+      <div>
+        <h2>{{ guild.name }}</h2>
+        <p style="color: var(--text2); font-size: 0.9rem;">Configurações do servidor</p>
+      </div>
+    </div>
+
+    <div id="alert-box"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="tab('welcome')">👋 Boas-vindas</button>
+      <button class="tab" onclick="tab('autorole')">⭐ Auto Cargo</button>
+      <button class="tab" onclick="tab('logs')">📋 Logs</button>
+      <button class="tab" onclick="tab('farewell')">😢 Adeus</button>
+    </div>
+
+    <!-- BOAS-VINDAS -->
+    <div id="tab-welcome" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <h3>⚙️ Configurar Boas-vindas</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar</h4>
+              <p>Enviar mensagem ao entrar</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="welcome_enabled" {% if config.welcome_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Canal</label>
+            <select id="welcome_channel"><option value="">Selecione...</option></select>
+          </div>
+
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="welcome_title" value="{{ config.welcome_title }}">
+          </div>
+
+          <div class="form-group">
+            <label>Mensagem</label>
+            <textarea id="welcome_message">{{ config.welcome_message }}</textarea>
+            <div class="hint"><code>{user}</code> menção · <code>{server}</code> nome · <code>{count}</code> membros</div>
+          </div>
+
+          <div class="form-group">
+            <label>Cor</label>
+            <div class="color-row">
+              <input type="color" id="welcome_color_pick" value="{{ config.welcome_color }}">
+              <input type="text" id="welcome_color" value="{{ config.welcome_color }}" maxlength="7">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('welcome')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" id="welcome-preview" style="border-left-color: {{ config.welcome_color }};">
+              <h4 id="w-title">{{ config.welcome_title }}</h4>
+              <p id="w-desc">{{ config.welcome_message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTO CARGO -->
+    <div id="tab-autorole" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>⭐ Configurar Auto Cargo</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar</h4>
+              <p>Dar cargo ao entrar</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="autorole_enabled" {% if config.autorole_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Cargo</label>
+            <select id="autorole_role"><option value="">Selecione...</option></select>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('autorole')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>ℹ️ Como funciona</h3>
+          <p style="color: var(--text2); line-height: 1.8;">Quando ativado, o Klaus dará automaticamente o cargo selecionado para todo novo membro que entrar no servidor.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="tab-logs" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>📋 Configurar Logs</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar</h4>
+              <p>Ativar logs</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="logs_enabled" {% if config.logs_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Canal</label>
+            <select id="logs_channel"><option value="">Selecione...</option></select>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Mensagens</h4><p>Editadas/deletadas</p></div>
+            <label class="toggle"><input type="checkbox" id="logging_messages" {% if config.logging_messages %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Membros</h4><p>Entradas/saídas</p></div>
+            <label class="toggle"><input type="checkbox" id="logging_members" {% if config.logging_members %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Moderação</h4><p>Ban/kick/mute/warn</p></div>
+            <label class="toggle"><input type="checkbox" id="logging_mod" {% if config.logging_mod %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('logs')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" style="border-left-color: #fde68a;">
+              <h4>📝 Mensagem Editada</h4>
+              <p><strong>Autor:</strong> @Usuário<br><strong>Canal:</strong> #geral<br><strong>Antes:</strong> "Olá"<br><strong>Depois:</strong> "Olá mundo!"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADEUS -->
+    <div id="tab-farewell" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>😢 Configurar Adeus</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar</h4>
+              <p>Enviar ao sair</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="farewell_enabled" {% if config.farewell_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Canal</label>
+            <select id="farewell_channel"><option value="">Selecione...</option></select>
+          </div>
+
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="farewell_title" value="{{ config.farewell_title }}">
+          </div>
+
+          <div class="form-group">
+            <label>Mensagem</label>
+            <textarea id="farewell_message">{{ config.farewell_message }}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Cor</label>
+            <div class="color-row">
+              <input type="color" id="farewell_color_pick" value="{{ config.farewell_color }}">
+              <input type="text" id="farewell_color" value="{{ config.farewell_color }}" maxlength="7">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('farewell')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" id="farewell-preview" style="border-left-color: {{ config.farewell_color }};">
+              <h4 id="f-title">{{ config.farewell_title }}</h4>
+              <p id="f-desc">{{ config.farewell_message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    init("{{ guild.id }}");
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Klaus Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-brand">Klaus Bot</a>
+    <div class="nav-user">
+      <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
+      <span>{{ user.username }}</span>
+      <a href="/logout" class="btn btn-outline btn-sm">Sair</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2 style="margin-bottom: 0.5rem;">Seus Servidores</h2>
+    <p style="color: var(--text2); margin-bottom: 1.5rem;">Escolha um servidor para configurar</p>
+
+    {% for g in guilds %}
+    <div class="guild-card">
+      {% if g.icon %}
+        <img src="https://cdn.discordapp.com/icons/{{ g.id }}/{{ g.icon }}.png?size=128" alt="">
+      {% else %}
+        <div class="guild-icon">{{ g.name[0] }}</div>
+      {% endif %}
+      <div class="guild-info">
+        <h4>{{ g.name }}</h4>
+        <p>
+          {% if g.in_bot %}
+            <span class="badge badge-green">Bot adicionado</span>
+          {% else %}
+            <span class="badge badge-yellow">Bot não adicionado</span>
+          {% endif %}
+        </p>
+      </div>
+      {% if g.in_bot %}
+        <a href="/server/{{ g.id }}" class="btn btn-primary btn-sm">Configurar</a>
+      {% else %}
+        <a href="https://discord.com/oauth2/authorize?client_id=1502096967055184024&scope=bot%20applications.commands&permissions=8&guild_id={{ g.id }}" class="btn btn-success btn-sm" target="_blank">Adicionar Bot</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if not guilds %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+      <p style="font-size: 1.1rem;">Nenhum servidor encontrado 😢</p>
+      <p style="color: var(--text2); margin-top: 0.5rem;">Você precisa de permissão de administrador</p>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

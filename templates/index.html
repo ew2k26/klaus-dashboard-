@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaus Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-brand">Klaus Bot</a>
+    <div>
+      {% if user %}
+        <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+      {% else %}
+        <a href="/login" class="btn btn-discord btn-sm">Entrar com Discord</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Olá, eu sou o <span>Klaus</span> 💜</h1>
+    <p>Um bot fofinho para o seu servidor Discord</p>
+    {% if user %}
+      <a href="/dashboard" class="btn btn-primary">Meu Dashboard</a>
+    {% else %}
+      <a href="/login" class="btn btn-discord">Entrar com Discord</a>
+    {% endif %}
+  </section>
+
+  <div class="container">
+    <div class="grid-2">
+      <div class="card">
+        <h3>💰 Economia</h3>
+        <p style="color: var(--text2)">Diário, streak, perfil, ranking, loja, minerar, forjar, apostar e muito mais!</p>
+      </div>
+      <div class="card">
+        <h3>🎮 Diversão</h3>
+        <p style="color: var(--text2)">hug, kiss, slap, ship, batalha, piadas, memes e dezenas de comandos!</p>
+      </div>
+      <div class="card">
+        <h3>🛡️ Moderação</h3>
+        <p style="color: var(--text2)">Ban, kick, mute, warn, limpar mensagens e mais!</p>
+      </div>
+      <div class="card">
+        <h3>⚙️ Dashboard</h3>
+        <p style="color: var(--text2)">Configure boas-vindas, auto cargo, logs e adeus pelo site!</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">Klaus Bot 💜 Feito com amor</footer>
+</body>
+</html>

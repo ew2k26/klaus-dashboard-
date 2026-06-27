@@ -1,10 +1,5 @@
-import json
 import os
 import secrets
-import time
-import hmac
-import hashlib
-import base64
 from functools import wraps
 from typing import Any
 
@@ -17,7 +12,6 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for
 load_dotenv()
 
 app = Flask(__name__)
-SECRET = os.getenv("SECRET_KEY", "klaus-dashboard-secret-2026")
 
 CLIENT_ID = os.getenv("CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
@@ -26,44 +20,26 @@ MONGODB_URL = os.getenv("MONGODB_URL", "")
 API = "https://discord.com/api/v10"
 
 
-def sign_data(data: str) -> str:
-    sig = hmac.new(SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
-    return base64.urlsafe_b64encode(data.encode()).decode() + "." + sig
+def get_redirect_uri() -> str:
+    env = os.getenv("REDIRECT_URI", "")
+    if env:
+        return env
+    return request.url_root.rstrip("/") + "/callback"
 
 
-def unsign_data(signed: str) -> str | None:
+def get_db() -> Any:
+    c = pymongo.MongoClient(MONGODB_URL, tls=True, tlsCAFile=certifi.where())
+    return c["economia"]
+
+
+def fetch_user(token: str) -> dict | None:
     try:
-        parts = signed.split(".", 1)
-        data_b64 = parts[0]
-        sig = parts[1]
-        data = base64.urlsafe_b64decode(data_b64.encode()).decode()
-        expected = hmac.new(SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
-        if hmac.compare_digest(sig, expected):
-            return data
-    except Exception:
-        pass
-    return None
-
-
-def set_user_cookie(resp: Any, user: dict) -> Any:
-    payload = json.dumps(user)
-    signed = sign_data(payload)
-    max_age = 60 * 60 * 24 * 7
-    resp.set_cookie("user", signed, max_age=max_age, httponly=True, samesite="Lax", secure=False)
-    return resp
-
-
-def get_user() -> dict | None:
-    signed = request.cookies.get("user")
-    if not signed:
-        return None
-    data = unsign_data(signed)
-    if not data:
-        return None
-    try:
-        user = json.loads(data)
-        if time.time() - user.get("_ts", 0) > 60 * 60 * 24 * 7:
+        r = requests.get(f"{API}/users/@me", headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        if r.status_code != 200:
             return None
+        user = r.json()
+        g = requests.get(f"{API}/users/@me/guilds", headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        user["guilds"] = g.json() if g.status_code == 200 else []
         return user
     except Exception:
         return None
@@ -72,54 +48,40 @@ def get_user() -> dict | None:
 def login_required(f: Any) -> Any:
     @wraps(f)
     def decorated(*args: Any, **kwargs: Any) -> Any:
-        if not get_user():
+        token = request.cookies.get("token")
+        if not token:
             return redirect(url_for("index"))
-        return f(*args, **kwargs)
+        user = fetch_user(token)
+        if not user:
+            resp = redirect(url_for("index"))
+            resp.delete_cookie("token")
+            return resp
+        return f(user, *args, **kwargs)
     return decorated
-
-
-def get_redirect_uri() -> str:
-    env_uri = os.getenv("REDIRECT_URI", "")
-    if env_uri:
-        return env_uri
-    url = request.url_root.rstrip("/")
-    return url + "/callback"
-
-
-def get_db() -> Any:
-    client = pymongo.MongoClient(MONGODB_URL, tls=True, tlsCAFile=certifi.where())
-    return client["economia"]
 
 
 @app.route("/")
 def index() -> str:
-    user = get_user()
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
     return render_template("index.html", user=user)
 
 
 @app.route("/login")
 def login() -> redirect:
-    state = secrets.token_urlsafe(32)
-    redirect_uri = get_redirect_uri()
-    resp = redirect(
+    return redirect(
         f"https://discord.com/api/oauth2/authorize"
-        f"?client_id={CLIENT_ID}&redirect_uri={redirect_uri}"
-        f"&response_type=code&scope=identify+guilds&state={state}"
+        f"?client_id={CLIENT_ID}"
+        f"&redirect_uri={get_redirect_uri()}"
+        f"&response_type=code"
+        f"&scope=identify+guilds"
     )
-    resp.set_cookie("oauth_state", state, max_age=300)
-    return resp
 
 
 @app.route("/callback")
 def callback() -> redirect:
     code = request.args.get("code")
-    state = request.args.get("state")
-    saved_state = request.cookies.get("oauth_state")
-
     if not code:
-        return redirect(url_for("index"))
-
-    if state != saved_state:
         return redirect(url_for("index"))
 
     r = requests.post(
@@ -137,35 +99,21 @@ def callback() -> redirect:
         return redirect(url_for("index"))
 
     token = r.json()["access_token"]
-    user_resp = requests.get(f"{API}/users/@me", headers={"Authorization": f"Bearer {token}"}, timeout=10)
-    guilds_resp = requests.get(f"{API}/users/@me/guilds", headers={"Authorization": f"Bearer {token}"}, timeout=10)
-
-    if user_resp.status_code != 200:
-        return redirect(url_for("index"))
-
-    user = user_resp.json()
-    user["guilds"] = guilds_resp.json() if guilds_resp.status_code == 200 else []
-    user["_ts"] = int(time.time())
-
     resp = redirect(url_for("dashboard"))
-    set_user_cookie(resp, user)
-    resp.delete_cookie("oauth_state")
+    resp.set_cookie("token", token, max_age=60 * 60 * 24 * 7, httponly=True, samesite="Lax")
     return resp
 
 
 @app.route("/logout")
 def logout() -> redirect:
     resp = redirect(url_for("index"))
-    resp.delete_cookie("user")
+    resp.delete_cookie("token")
     return resp
 
 
 @app.route("/dashboard")
 @login_required
-def dashboard() -> str:
-    user = get_user()
-    assert user is not None
-
+def dashboard(user: dict) -> str:
     bot_guilds = set()
     if BOT_TOKEN:
         try:
@@ -178,21 +126,17 @@ def dashboard() -> str:
     guilds = []
     for g in user.get("guilds", []):
         perm = int(g.get("permissions", 0))
-        can_manage = (perm & 0x20) != 0
-        in_bot = g["id"] in bot_guilds
-        if can_manage:
-            guilds.append({**g, "in_bot": in_bot})
+        if perm & 0x20:
+            guilds.append({**g, "in_bot": g["id"] in bot_guilds})
 
     return render_template("dashboard.html", user=user, guilds=guilds)
 
 
 @app.route("/server/<guild_id>")
 @login_required
-def server(guild_id: str) -> str:
-    user = get_user()
-    assert user is not None
+def server(user: dict, guild_id: str) -> str:
     guild = next((g for g in user.get("guilds", []) if g["id"] == guild_id), None)
-    if not guild:
+    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
         return redirect(url_for("dashboard"))
 
     config = {
@@ -218,27 +162,30 @@ def server(guild_id: str) -> str:
 
 
 @app.route("/api/<guild_id>", methods=["POST"])
-@login_required
-def save_config(guild_id: str) -> Any:
+def api_save(guild_id: str) -> Any:
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    if not user:
+        return jsonify({"error": "not logged in"}), 401
+
+    guild = next((g for g in user.get("guilds", []) if g["id"] == guild_id), None)
+    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
+        return jsonify({"error": "no permission"}), 403
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "no data"}), 400
 
     try:
         db = get_db()
-        db["guilds"].update_one(
-            {"guild_id": int(guild_id)},
-            {"$set": data},
-            upsert=True,
-        )
+        db["guilds"].update_one({"guild_id": int(guild_id)}, {"$set": data}, upsert=True)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/<guild_id>/roles")
-@login_required
-def get_roles(guild_id: str) -> Any:
+def api_roles(guild_id: str) -> Any:
     if not BOT_TOKEN:
         return jsonify([])
     try:
@@ -253,8 +200,7 @@ def get_roles(guild_id: str) -> Any:
 
 
 @app.route("/api/<guild_id>/channels")
-@login_required
-def get_channels(guild_id: str) -> Any:
+def api_channels(guild_id: str) -> Any:
     if not BOT_TOKEN:
         return jsonify([])
     try:

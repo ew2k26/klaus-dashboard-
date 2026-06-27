@@ -17,9 +17,16 @@ app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 CLIENT_ID = os.getenv("CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-REDIRECT_URI = os.getenv("REDIRECT_URI", "http://localhost:5000/callback")
 MONGODB_URL = os.getenv("MONGODB_URL", "")
 API = "https://discord.com/api/v10"
+
+
+def get_redirect_uri() -> str:
+    env_uri = os.getenv("REDIRECT_URI", "")
+    if env_uri:
+        return env_uri
+    url = request.url_root.rstrip("/")
+    return url + "/callback"
 
 
 def get_db() -> Any:
@@ -45,9 +52,10 @@ def index() -> str:
 def login() -> redirect:
     state = secrets.token_urlsafe(32)
     session["state"] = state
+    redirect_uri = get_redirect_uri()
     return redirect(
         f"https://discord.com/api/oauth2/authorize"
-        f"?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
+        f"?client_id={CLIENT_ID}&redirect_uri={redirect_uri}"
         f"&response_type=code&scope=identify+guilds&state={state}"
     )
 
@@ -64,7 +72,7 @@ def callback() -> redirect:
         data={
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": REDIRECT_URI,
+            "redirect_uri": get_redirect_uri(),
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         auth=(CLIENT_ID, CLIENT_SECRET),

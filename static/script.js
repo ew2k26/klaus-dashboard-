@@ -6,9 +6,19 @@ function init(id) {
   fetch(`/api/${id}/channels`)
     .then(r => r.json())
     .then(channels => {
+      if (!channels || channels.length === 0) {
+        document.querySelectorAll('select').forEach(sel => {
+          if (sel.id === 'autorole_role') return;
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'Nenhum canal encontrado - adicione o BOT_TOKEN no Vercel';
+          opt.disabled = true;
+          sel.appendChild(opt);
+        });
+        return;
+      }
       document.querySelectorAll('select').forEach(sel => {
         if (sel.id === 'autorole_role') return;
-        const cfg = window.__config || {};
         channels.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c.id;
@@ -16,6 +26,7 @@ function init(id) {
           sel.appendChild(opt);
         });
       });
+      const cfg = window.__config || {};
       if (cfg.welcome_channel) document.getElementById('welcome_channel').value = cfg.welcome_channel;
       if (cfg.logs_channel) document.getElementById('logs_channel').value = cfg.logs_channel;
       if (cfg.farewell_channel) document.getElementById('farewell_channel').value = cfg.farewell_channel;
@@ -27,6 +38,14 @@ function init(id) {
     .then(roles => {
       const el = document.getElementById('autorole_role');
       if (!el) return;
+      if (!roles || roles.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Nenhum cargo encontrado - adicione o BOT_TOKEN no Vercel';
+        opt.disabled = true;
+        el.appendChild(opt);
+        return;
+      }
       roles.forEach(r => {
         const opt = document.createElement('option');
         opt.value = r.id;

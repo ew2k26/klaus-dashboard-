@@ -235,6 +235,9 @@
     </div>
   </div>
 
+  <script>
+    window.__config = {{ config | tojson }};
+  </script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
     init("{{ guild.id }}");

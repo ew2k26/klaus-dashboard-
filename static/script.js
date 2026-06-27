@@ -159,4 +159,4 @@ function updateColor(id) {
   if (preview && text) preview.style.borderLeftColor = text.value;
 }
 
-window.__config = {{ config | tojson }};
+window.__config = window.__config || {};

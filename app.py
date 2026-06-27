@@ -74,7 +74,7 @@ def login() -> redirect:
         f"?client_id={CLIENT_ID}"
         f"&redirect_uri={get_redirect_uri()}"
         f"&response_type=code"
-        f"&scope=identify+guilds"
+        f"&scope=identify+guilds+guilds.channels.read+guilds.members.read"
     )
 
 
@@ -192,12 +192,15 @@ def api_roles(guild_id: str) -> Any:
         return jsonify([])
     try:
         r = requests.get(f"{API}/guilds/{guild_id}/roles", headers={"Authorization": auth}, timeout=10)
+        print(f"[API] Roles {guild_id}: status={r.status_code} auth={'Bot' if BOT_TOKEN else 'User'}")
         if r.status_code != 200:
+            print(f"[API] Roles error: {r.text[:200]}")
             return jsonify([])
         roles = [x for x in r.json() if not x.get("managed") and x["name"] != "@everyone"]
         roles.sort(key=lambda x: x.get("position", 0), reverse=True)
         return jsonify([{"id": r["id"], "name": r["name"]} for r in roles])
-    except Exception:
+    except Exception as e:
+        print(f"[API] Roles exception: {e}")
         return jsonify([])
 
 
@@ -209,12 +212,15 @@ def api_channels(guild_id: str) -> Any:
         return jsonify([])
     try:
         r = requests.get(f"{API}/guilds/{guild_id}/channels", headers={"Authorization": auth}, timeout=10)
+        print(f"[API] Channels {guild_id}: status={r.status_code} auth={'Bot' if BOT_TOKEN else 'User'}")
         if r.status_code != 200:
+            print(f"[API] Channels error: {r.text[:200]}")
             return jsonify([])
         channels = [c for c in r.json() if c.get("type") == 0]
         channels.sort(key=lambda x: x.get("position", 0))
         return jsonify([{"id": c["id"], "name": c["name"]} for c in channels])
-    except Exception:
+    except Exception as e:
+        print(f"[API] Channels exception: {e}")
         return jsonify([])
 
 

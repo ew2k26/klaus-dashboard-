@@ -6,12 +6,13 @@ function init(id) {
   fetch(`/api/${id}/channels`)
     .then(r => r.json())
     .then(channels => {
+      console.log('Channels response:', channels);
       if (!channels || channels.length === 0) {
         document.querySelectorAll('select').forEach(sel => {
           if (sel.id === 'autorole_role') return;
           const opt = document.createElement('option');
           opt.value = '';
-          opt.textContent = 'Nenhum canal encontrado - adicione o BOT_TOKEN no Vercel';
+          opt.textContent = 'Nenhum canal encontrado';
           opt.disabled = true;
           sel.appendChild(opt);
         });
@@ -36,12 +37,13 @@ function init(id) {
   fetch(`/api/${id}/roles`)
     .then(r => r.json())
     .then(roles => {
+      console.log('Roles response:', roles);
       const el = document.getElementById('autorole_role');
       if (!el) return;
       if (!roles || roles.length === 0) {
         const opt = document.createElement('option');
         opt.value = '';
-        opt.textContent = 'Nenhum cargo encontrado - adicione o BOT_TOKEN no Vercel';
+        opt.textContent = 'Nenhum cargo encontrado';
         opt.disabled = true;
         el.appendChild(opt);
         return;

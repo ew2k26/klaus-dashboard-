@@ -37,6 +37,7 @@
       <button class="tab" onclick="tab('autorole', this)">⭐ Auto Cargo</button>
       <button class="tab" onclick="tab('logs', this)">📋 Logs</button>
       <button class="tab" onclick="tab('farewell', this)">😢 Adeus</button>
+      <button class="tab" onclick="tab('xp', this)">✨ XP System</button>
     </div>
 
     <!-- BOAS-VINDAS -->
@@ -228,6 +229,58 @@
             <div class="embed" id="farewell-preview" style="border-left-color: {{ config.farewell_color }};">
               <h4 id="f-title">{{ config.farewell_title }}</h4>
               <p id="f-desc">{{ config.farewell_message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XP SYSTEM -->
+    <div id="tab-xp" class="tab-content" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <h3>✨ Configurar XP</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar XP</h4>
+              <p>Ganhar XP ao enviar mensagens</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="xp_enabled" {% if config.xp_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>XP por mensagem (mínimo)</label>
+            <input type="number" id="xp_min" value="{{ config.xp_min or 15 }}" min="1" max="100">
+          </div>
+
+          <div class="form-group">
+            <label>XP por mensagem (máximo)</label>
+            <input type="number" id="xp_max" value="{{ config.xp_max or 25 }}" min="1" max="100">
+          </div>
+
+          <div class="form-group">
+            <label>Cooldown (segundos)</label>
+            <input type="number" id="xp_cooldown" value="{{ config.xp_cooldown or 60 }}" min="10" max="300">
+          </div>
+
+          <div class="form-group">
+            <label>Canal de anúncio de level up</label>
+            <select id="xp_announce_channel"><option value="">Nenhum (silencioso)</option></select>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('xp')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" style="border-left-color: #8b5cf6;">
+              <h4>Level Up!</h4>
+              <p><strong>@Usuário</strong> subiu para o <strong>Level 5</strong>!</p>
             </div>
           </div>
         </div>

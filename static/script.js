@@ -29,6 +29,7 @@ function init(id) {
       if (cfg.welcome_channel) document.getElementById('welcome_channel').value = cfg.welcome_channel;
       if (cfg.logs_channel) document.getElementById('logs_channel').value = cfg.logs_channel;
       if (cfg.farewell_channel) document.getElementById('farewell_channel').value = cfg.farewell_channel;
+      if (cfg.xp_announce_channel) document.getElementById('xp_announce_channel').value = cfg.xp_announce_channel;
     })
     .catch(e => console.log('Erro ao carregar canais:', e));
 
@@ -103,6 +104,14 @@ function save(section) {
       farewell_title: document.getElementById('farewell_title').value,
       farewell_message: document.getElementById('farewell_message').value,
       farewell_color: document.getElementById('farewell_color').value,
+    };
+  } else if (section === 'xp') {
+    data = {
+      xp_enabled: document.getElementById('xp_enabled').checked,
+      xp_min: parseInt(document.getElementById('xp_min').value) || 15,
+      xp_max: parseInt(document.getElementById('xp_max').value) || 25,
+      xp_cooldown: parseInt(document.getElementById('xp_cooldown').value) || 60,
+      xp_announce_channel: document.getElementById('xp_announce_channel').value,
     };
   }
 

@@ -147,6 +147,8 @@ def server(user: dict, guild_id: str) -> str:
         "farewell_color": "#f87171", "farewell_title": "\U0001f44b Até logo!",
         "logs_enabled": False, "logs_channel": "",
         "logging_messages": False, "logging_members": False, "logging_mod": False,
+        "xp_enabled": True, "xp_min": 15, "xp_max": 25, "xp_cooldown": 60,
+        "xp_announce_channel": "",
     }
     try:
         db = get_db()

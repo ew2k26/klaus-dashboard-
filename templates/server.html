@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ guild.name }} - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 </head>
 <body>
   <nav class="nav">
-    <a href="/" class="nav-brand">Klaus Bot</a>
+    <a href="/" class="nav-brand">KLAUS</a>
     <div class="nav-user">
       <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
       <span>{{ user.username }}</span>
@@ -238,7 +238,7 @@
   <script>
     window.__config = {{ config | tojson }};
   </script>
-  <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+  <script src="{{ url_for('static', filename='script.js') }}?v=3"></script>
   <script>
     init("{{ guild.id }}");
   </script>

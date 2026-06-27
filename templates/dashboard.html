@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 </head>
 <body>
   <nav class="nav">
-    <a href="/" class="nav-brand">Klaus Bot</a>
+    <a href="/" class="nav-brand">KLAUS</a>
     <div class="nav-user">
       <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
       <span>{{ user.username }}</span>
@@ -18,8 +18,10 @@
   </nav>
 
   <div class="container">
-    <h2 style="margin-bottom: 0.5rem;">Seus Servidores</h2>
-    <p style="color: var(--text2); margin-bottom: 1.5rem;">Escolha um servidor para configurar</p>
+    <div class="section-title" style="margin-bottom: 1.5rem;">
+      <h2>Seus Servidores</h2>
+      <p>Escolha um servidor para configurar</p>
+    </div>
 
     {% for g in guilds %}
     <div class="guild-card">
@@ -48,8 +50,8 @@
 
     {% if not guilds %}
     <div class="card" style="text-align: center; padding: 3rem;">
-      <p style="font-size: 1.1rem;">Nenhum servidor encontrado 😢</p>
-      <p style="color: var(--text2); margin-top: 0.5rem;">Você precisa de permissão de administrador</p>
+      <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Nenhum servidor encontrado</p>
+      <p style="color: var(--text2);">Você precisa de permissão de administrador</p>
     </div>
     {% endif %}
   </div>

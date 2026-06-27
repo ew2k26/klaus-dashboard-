@@ -220,5 +220,64 @@ def api_channels(guild_id: str) -> Any:
         return jsonify({"error": str(e), "channels": []})
 
 
+@app.route("/api/leaderboard")
+def api_leaderboard() -> Any:
+    try:
+        db = get_db()
+        cursor = db["usuarios"].find().sort("koins", -1).limit(10)
+        entries = []
+        for i, doc in enumerate(cursor):
+            entries.append({
+                "rank": i + 1,
+                "discord_id": str(doc.get("discord_id", "")),
+                "koins": doc.get("koins", 0),
+                "wins": doc.get("wins", 0),
+                "losses": doc.get("losses", 0),
+            })
+        return jsonify({"entries": entries})
+    except Exception as e:
+        return jsonify({"error": str(e), "entries": []})
+
+
+@app.route("/api/stats")
+def api_stats() -> Any:
+    try:
+        db = get_db()
+        total_users = db["usuarios"].count_documents({})
+        pipeline = [{"$group": {"_id": None, "total_koins": {"$sum": "$koins"}}}]
+        result = list(db["usuarios"].aggregate(pipeline))
+        total_koins = result[0]["total_koins"] if result else 0
+        return jsonify({
+            "total_users": total_users,
+            "total_koins": total_koins,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "total_users": 0, "total_koins": 0})
+
+
+@app.route("/api/profile/<user_id>")
+def api_profile(user_id: str) -> Any:
+    try:
+        db = get_db()
+        doc = db["usuarios"].find_one({"discord_id": int(user_id)})
+        if not doc:
+            return jsonify({"error": "user not found"}), 404
+        return jsonify({
+            "discord_id": str(doc.get("discord_id", "")),
+            "koins": doc.get("koins", 0),
+            "wins": doc.get("wins", 0),
+            "losses": doc.get("losses", 0),
+            "profit": doc.get("profit", 0),
+            "commands_used": doc.get("commands_used", 0),
+            "mines": doc.get("mines", 0),
+            "daily_streak": doc.get("daily_streak", 0),
+            "achievements": doc.get("achievements", []),
+            "total_earned": doc.get("total_earned", 0),
+            "total_lost": doc.get("total_lost", 0),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

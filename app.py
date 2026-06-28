@@ -574,6 +574,24 @@ def api_profile_buy() -> Any:
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/profile_image/<user_id>")
+def api_profile_image(user_id: str) -> Any:
+    try:
+        db_conn = get_db()
+        doc = db_conn["usuarios"].find_one({"discord_id": int(user_id)})
+        if not doc:
+            return jsonify({"error": "user not found"}), 404
+        img_b64 = doc.get("profile_image_b64")
+        if not img_b64:
+            return jsonify({"error": "no image cached"}), 404
+        import base64
+        img_bytes = base64.b64decode(img_b64)
+        from flask import Response
+        return Response(img_bytes, mimetype="image/png", headers={"Cache-Control": "public, max-age=300"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/profile")
 @login_required
 def profile_page() -> str:

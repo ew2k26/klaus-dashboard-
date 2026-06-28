@@ -322,6 +322,97 @@ def api_profile(user_id: str) -> Any:
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/profile_config/<user_id>")
+def api_profile_config(user_id: str) -> Any:
+    try:
+        db = get_db()
+        doc = db["usuarios"].find_one({"discord_id": int(user_id)})
+        if not doc:
+            return jsonify({"koins": 0, "background": "padrao", "border": "default",
+                            "purchased_backgrounds": ["padrao"],
+                            "purchased_borders": ["default"]})
+        profile = doc.get("profile", {})
+        return jsonify({
+            "koins": doc.get("koins", 0),
+            "background": profile.get("background", "padrao"),
+            "border": profile.get("border", "default"),
+            "purchased_backgrounds": profile.get("purchased_backgrounds", ["padrao"]),
+            "purchased_borders": profile.get("purchased_borders", ["default"]),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_config/<user_id>/set", methods=["POST"])
+def api_profile_config_set(user_id: str) -> Any:
+    try:
+        db = get_db()
+        data = request.get_json(force=True)
+        update = {"$set": {}}
+        if "background" in data:
+            update["$set"]["profile.background"] = data["background"]
+        if "border" in data:
+            update["$set"]["profile.border"] = data["border"]
+        db["usuarios"].update_one({"discord_id": int(user_id)}, update, upsert=True)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_buy", methods=["POST"])
+def api_profile_buy() -> Any:
+    try:
+        db = get_db()
+        data = request.get_json(force=True)
+        user_id = data.get("user_id")
+        item_type = data.get("type")
+        key = data.get("key")
+        if not user_id or not item_type or not key:
+            return jsonify({"error": "missing params"}), 400
+
+        if item_type == "backgrounds":
+            item = PROFILE_BACKGROUNDS.get(key)
+        else:
+            item = PROFILE_BORDERS.get(key)
+        if not item:
+            return jsonify({"error": "item not found"}), 404
+
+        doc = db["usuarios"].find_one({"discord_id": int(user_id)})
+        koins = doc.get("koins", 0) if doc else 0
+        if koins < item["price"]:
+            return jsonify({"error": "koins insuficientes"}), 400
+
+        db["usuarios"].update_one(
+            {"discord_id": int(user_id)},
+            {
+                "$inc": {"koins": -item["price"]},
+                "$addToSet": {f"profile.purchased_{item_type}": key},
+                "$set": {f"profile.{'background' if item_type == 'backgrounds' else 'border'}": key},
+            },
+            upsert=True,
+        )
+        return jsonify({"ok": True, "new_koins": koins - item["price"]})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_image/<user_id>")
+def api_profile_image(user_id: str) -> Any:
+    try:
+        db = get_db()
+        doc = db["usuarios"].find_one({"discord_id": int(user_id)})
+        img_b64 = doc.get("profile_image", "") if doc else ""
+        if not img_b64:
+            return "", 204
+        import base64 as _b64
+        img_bytes = _b64.b64decode(img_b64)
+        from flask import Response
+        return Response(img_bytes, mimetype="image/png",
+                        headers={"Cache-Control": "no-cache"})
+    except Exception as e:
+        return "", 204
+
+
 @app.route("/api/leaderboard_full")
 def api_leaderboard_full() -> Any:
     try:

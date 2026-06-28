@@ -245,6 +245,7 @@ def api_leaderboard() -> Any:
             entries.append({
                 "rank": i + 1,
                 "discord_id": str(doc.get("discord_id", "")),
+                "username": doc.get("username", ""),
                 "koins": doc.get("koins", 0),
                 "wins": doc.get("wins", 0),
                 "losses": doc.get("losses", 0),
@@ -309,6 +310,7 @@ def api_leaderboard_full() -> Any:
             entries.append({
                 "rank": skip + i + 1,
                 "discord_id": str(doc.get("discord_id", "")),
+                "username": doc.get("username", ""),
                 "koins": doc.get("koins", 0),
                 "wins": doc.get("wins", 0),
                 "losses": doc.get("losses", 0),

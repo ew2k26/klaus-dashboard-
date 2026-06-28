@@ -48,32 +48,32 @@
     </div>
 
     <div class="features-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
-      <div class="feature-card" style="--accent: #8b5cf6; text-align: center;">
+      <div class="feature-card visible" style="--accent: #8b5cf6; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">👥</div>
         <h3 style="font-size: 2rem; font-weight: 900;" id="stat-users">--</h3>
         <p style="margin: 0;">Usuários</p>
       </div>
-      <div class="feature-card" style="--accent: #3b82f6; text-align: center;">
+      <div class="feature-card visible" style="--accent: #3b82f6; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">🏠</div>
         <h3 style="font-size: 2rem; font-weight: 900;" id="stat-guilds">--</h3>
         <p style="margin: 0;">Servidores</p>
       </div>
-      <div class="feature-card" style="--accent: #f59e0b; text-align: center;">
+      <div class="feature-card visible" style="--accent: #f59e0b; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">💰</div>
         <h3 style="font-size: 2rem; font-weight: 900;" id="stat-koins">--</h3>
         <p style="margin: 0;">Koins Totais</p>
       </div>
-      <div class="feature-card" style="--accent: #22c55e; text-align: center;">
+      <div class="feature-card visible" style="--accent: #22c55e; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">⚡</div>
         <h3 style="font-size: 2rem; font-weight: 900;" id="stat-commands">--</h3>
         <p style="margin: 0;">Comandos Usados</p>
       </div>
-      <div class="feature-card" style="--accent: #d946ef; text-align: center;">
+      <div class="feature-card visible" style="--accent: #d946ef; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">🏆</div>
         <h3 style="font-size: 2rem; font-weight: 900;" id="stat-achievements">--</h3>
         <p style="margin: 0;">Conquistas</p>
       </div>
-      <div class="feature-card" style="--accent: #ef4444; text-align: center;">
+      <div class="feature-card visible" style="--accent: #ef4444; text-align: center;">
         <div class="feature-icon" style="margin: 0 auto 1rem;">👑</div>
         <h3 style="font-size: 1.2rem; font-weight: 900;" id="stat-top-user">--</h3>
         <p style="margin: 0;">Mais Rico</p>
@@ -196,6 +196,8 @@
       document.getElementById('stat-koins').textContent = koins;
 
       document.getElementById('stat-top-user').textContent = `#${data.top_user_id} (${(data.top_user_koins || 0).toLocaleString('pt-BR')})`;
+
+      document.querySelectorAll('.feature-card').forEach(c => c.classList.add('visible'));
     }).catch(() => {
       document.getElementById('status-badge').textContent = '● Erro';
       document.getElementById('status-emoji').textContent = '⚠️';

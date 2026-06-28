@@ -201,16 +201,10 @@
 
   <script>
     let currentPage = 1;
-    const fallbackNames = {};
 
-    function getFallbackName(id) {
-      if (!fallbackNames[id]) {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let name = 'User';
-        for (let i = 0; i < 4; i++) name += chars[Math.floor(Math.random() * chars.length)];
-        fallbackNames[id] = name;
-      }
-      return fallbackNames[id];
+    function getDisplayName(entry) {
+      if (entry.username) return entry.username;
+      return 'User#' + entry.discord_id.slice(-4);
     }
 
     function formatKoins(n) {
@@ -238,7 +232,7 @@
         entries.forEach((e, i) => {
           const rank = e.rank;
           const isTop3 = rank <= 3;
-          const name = getFallbackName(e.discord_id);
+          const name = getDisplayName(e.discord_id);
           const row = document.createElement('div');
           row.className = 'lb-row';
           row.onclick = () => openProfile(e);
@@ -273,7 +267,7 @@
       order.forEach((idx, pos) => {
         const e = top3[idx];
         if (!e) return;
-        const name = getFallbackName(e.discord_id);
+        const name = getDisplayName(e.discord_id);
         const div = document.createElement('div');
         div.className = 'podium-item';
         div.onclick = () => openProfile(e);
@@ -302,7 +296,7 @@
 
     function openProfile(entry) {
       const modal = document.getElementById('profile-modal');
-      const name = getFallbackName(entry.discord_id);
+      const name = getDisplayName(entry.discord_id);
       document.getElementById('modal-avatar').src = `https://cdn.discordapp.com/embed/avatars/${parseInt(entry.discord_id) % 5}.png`;
       document.getElementById('modal-name').textContent = name;
       document.getElementById('modal-id').textContent = `ID: ${entry.discord_id}`;

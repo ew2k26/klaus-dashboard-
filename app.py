@@ -738,8 +738,6 @@ def api_profile_config(user_id: str) -> Any:
             "border": doc.get("profile_border", "default"),
             "purchased_backgrounds": doc.get("purchased_backgrounds", ["padrao"]),
             "purchased_borders": doc.get("purchased_borders", ["default"]),
-            "custom_bg_url": doc.get("custom_bg_url", ""),
-            "has_custom_bg": doc.get("has_custom_bg", False),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -805,61 +803,6 @@ def api_profile_buy() -> Any:
             upsert=True,
         )
         return jsonify({"ok": True, "new_koins": koins - item["price"]})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/profile_custom_bg", methods=["POST"])
-def api_profile_custom_bg() -> Any:
-    try:
-        data = request.get_json()
-        user_id = data.get("user_id")
-        image_url = data.get("image_url", "").strip()
-        if not user_id or not image_url:
-            return jsonify({"error": "missing params"}), 400
-        if not image_url.startswith(("http://", "https://")):
-            return jsonify({"error": "invalid url"}), 400
-
-        db_conn = get_db()
-        doc = db_conn["usuarios"].find_one({"discord_id": int(user_id)})
-        if not doc:
-            return jsonify({"error": "user not found"}), 404
-
-        koins = doc.get("koins", 0)
-        price = 1_000_000
-
-        has_custom = doc.get("has_custom_bg", False)
-        if not has_custom and koins < price:
-            return jsonify({"error": "insufficient koins", "needed": price, "have": koins}), 400
-
-        update = {"$set": {"custom_bg_url": image_url}}
-        if not has_custom:
-            update["$inc"] = {"koins": -price}
-            update["$set"]["has_custom_bg"] = True
-        db_conn["usuarios"].update_one(
-            {"discord_id": int(user_id)},
-            update,
-            upsert=True,
-        )
-        new_koins = koins - (price if not has_custom else 0)
-        return jsonify({"ok": True, "new_koins": new_koins})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/profile_custom_bg/delete", methods=["POST"])
-def api_profile_custom_bg_delete() -> Any:
-    try:
-        data = request.get_json()
-        user_id = data.get("user_id")
-        if not user_id:
-            return jsonify({"error": "missing params"}), 400
-        db_conn = get_db()
-        db_conn["usuarios"].update_one(
-            {"discord_id": int(user_id)},
-            {"$unset": {"custom_bg_url": "", "has_custom_bg": ""}},
-        )
-        return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

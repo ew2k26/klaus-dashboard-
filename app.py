@@ -448,5 +448,89 @@ def leaderboard_page() -> str:
     return render_template("leaderboard.html")
 
 
+PROFILE_BACKGROUNDS = {
+    "default": {"name": "Padrão", "emoji": "⬛", "price": 0, "colors": {"bg": "#0f0a1a", "accent": "#8b5cf6", "border": "#d946ef"}},
+    "midnight": {"name": "Meia-Noite", "emoji": "🌙", "price": 5000, "colors": {"bg": "#0a0a2e", "accent": "#4f46e5", "border": "#818cf8"}},
+    "crimson": {"name": "Crimson", "emoji": "🔴", "price": 8000, "colors": {"bg": "#1a0a0a", "accent": "#dc2626", "border": "#f87171"}},
+    "forest": {"name": "Floresta", "emoji": "🌲", "price": 8000, "colors": {"bg": "#0a1a0a", "accent": "#16a34a", "border": "#4ade80"}},
+    "ocean": {"name": "Oceano", "emoji": "🌊", "price": 10000, "colors": {"bg": "#0a0a1a", "accent": "#0284c7", "border": "#38bdf8"}},
+    "sunset": {"name": "Pôr do Sol", "emoji": "🌅", "price": 12000, "colors": {"bg": "#1a0f0a", "accent": "#ea580c", "border": "#fb923c"}},
+    "royal": {"name": "Royal", "emoji": "👑", "price": 15000, "colors": {"bg": "#1a1005", "accent": "#ca8a04", "border": "#facc15"}},
+    "neon": {"name": "Neon", "emoji": "💚", "price": 20000, "colors": {"bg": "#050f0a", "accent": "#059669", "border": "#34d399"}},
+    "galaxy": {"name": "Galáxia", "emoji": "🌌", "price": 25000, "colors": {"bg": "#0f0520", "accent": "#9333ea", "border": "#c084fc"}},
+    "gold": {"name": "Dourado", "emoji": "✨", "price": 50000, "colors": {"bg": "#1a1505", "accent": "#d97706", "border": "#fbbf24"}},
+    "diamond": {"name": "Diamante", "emoji": "💎", "price": 100000, "colors": {"bg": "#0a1520", "accent": "#0891b2", "border": "#22d3ee"}},
+    "lava": {"name": "Lava", "emoji": "🔥", "price": 75000, "colors": {"bg": "#1a0505", "accent": "#b91c1c", "border": "#ef4444"}},
+    "arctic": {"name": "Ártico", "emoji": "❄️", "price": 30000, "colors": {"bg": "#0a1520", "accent": "#0ea5e9", "border": "#7dd3fc"}},
+    "phantom": {"name": "Fantasma", "emoji": "👻", "price": 40000, "colors": {"bg": "#100a1a", "accent": "#7c3aed", "border": "#a78bfa"}},
+    "toxic": {"name": "Tóxico", "emoji": "☢️", "price": 60000, "colors": {"bg": "#0a1a05", "accent": "#65a30d", "border": "#a3e635"}},
+}
+
+PROFILE_BORDERS = {
+    "default": {"name": "Padrão", "emoji": "⬜", "price": 0, "color": "#d946ef"},
+    "gold": {"name": "Dourado", "emoji": "🥇", "price": 10000, "color": "#ffd700"},
+    "diamond": {"name": "Diamante", "emoji": "💎", "price": 20000, "color": "#22d3ee"},
+    "ruby": {"name": "Rubi", "emoji": "❤️", "price": 15000, "color": "#ef4444"},
+    "emerald": {"name": "Esmeralda", "emoji": "💚", "price": 15000, "color": "#22c55e"},
+    "sapphire": {"name": "Safira", "emoji": "💙", "price": 15000, "color": "#3b82f6"},
+    "amethyst": {"name": "Ametista", "emoji": "💜", "price": 20000, "color": "#a855f7"},
+    "rainbow": {"name": "Arco-Íris", "emoji": "🌈", "price": 50000, "color": "#f59e0b"},
+    "fire": {"name": "Fogo", "emoji": "🔥", "price": 30000, "color": "#f97316"},
+    "ice": {"name": "Gelo", "emoji": "❄️", "price": 30000, "color": "#7dd3fc"},
+    "galaxy": {"name": "Galáxia", "emoji": "🌌", "price": 40000, "color": "#c084fc"},
+    "shadow": {"name": "Shadow", "emoji": "🖤", "price": 60000, "color": "#525252"},
+}
+
+
+@app.route("/api/profile_config/<user_id>")
+def api_profile_config(user_id: str) -> Any:
+    try:
+        db_conn = get_db()
+        doc = db_conn["usuarios"].find_one({"discord_id": int(user_id)})
+        if not doc:
+            return jsonify({"error": "user not found"}), 404
+        return jsonify({
+            "discord_id": str(doc.get("discord_id", "")),
+            "username": doc.get("username", f"User#{user_id[-4:]}"),
+            "koins": doc.get("koins", 0),
+            "background": doc.get("profile_background", "default"),
+            "border": doc.get("profile_border", "default"),
+            "purchased_backgrounds": doc.get("purchased_backgrounds", ["default"]),
+            "purchased_borders": doc.get("purchased_borders", ["default"]),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_config/<user_id>/set", methods=["POST"])
+def api_profile_config_set(user_id: str) -> Any:
+    try:
+        data = request.get_json()
+        db_conn = get_db()
+        update = {}
+        if "background" in data:
+            update["profile_background"] = data["background"]
+        if "border" in data:
+            update["profile_border"] = data["border"]
+        if update:
+            db_conn["usuarios"].update_one(
+                {"discord_id": int(user_id)},
+                {"$set": update},
+                upsert=True,
+            )
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/profile")
+@login_required
+def profile_page() -> str:
+    user = fetch_user(session.get("token", ""))
+    if not user:
+        return redirect("/login")
+    return render_template("profile.html", user=user, backgrounds=PROFILE_BACKGROUNDS, borders=PROFILE_BORDERS)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

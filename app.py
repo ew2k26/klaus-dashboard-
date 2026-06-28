@@ -45,6 +45,29 @@ def fetch_user(token: str) -> dict | None:
         return None
 
 
+def fetch_discord_user(user_id: str) -> dict | None:
+    if not BOT_TOKEN:
+        return None
+    try:
+        r = requests.get(
+            f"{API}/users/{user_id}",
+            headers={"Authorization": f"Bot {BOT_TOKEN}"},
+            timeout=5,
+        )
+        if r.status_code == 200:
+            return r.json()
+    except Exception:
+        pass
+    return None
+
+
+def avatar_url(user_id: str, avatar_hash: str | None) -> str:
+    if avatar_hash:
+        return f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128"
+    idx = (int(user_id) >> 22) % 6 if user_id else 0
+    return f"https://cdn.discordapp.com/embed/avatars/{idx}.png"
+
+
 def login_required(f: Any) -> Any:
     @wraps(f)
     def decorated(*args: Any, **kwargs: Any) -> Any:
@@ -278,8 +301,11 @@ def api_profile(user_id: str) -> Any:
         doc = db["usuarios"].find_one({"discord_id": int(user_id)})
         if not doc:
             return jsonify({"error": "user not found"}), 404
+        av = doc.get("avatar", "")
         return jsonify({
             "discord_id": str(doc.get("discord_id", "")),
+            "username": doc.get("username", f"User#{user_id[-4:]}"),
+            "avatar_url": avatar_url(user_id, av),
             "koins": doc.get("koins", 0),
             "wins": doc.get("wins", 0),
             "losses": doc.get("losses", 0),
@@ -307,10 +333,25 @@ def api_leaderboard_full() -> Any:
         cursor = db["usuarios"].find().sort("koins", -1).skip(skip).limit(per_page)
         entries = []
         for i, doc in enumerate(cursor):
+            uid = str(doc.get("discord_id", ""))
+            username = doc.get("username", "")
+            av_hash = doc.get("avatar", "")
+
+            if not username or not av_hash:
+                remote = fetch_discord_user(uid)
+                if remote:
+                    username = username or remote.get("username", "")
+                    av_hash = av_hash or remote.get("avatar", "")
+                    db["usuarios"].update_one(
+                        {"discord_id": int(uid)},
+                        {"$set": {"username": username, "avatar": av_hash}},
+                    )
+
             entries.append({
                 "rank": skip + i + 1,
-                "discord_id": str(doc.get("discord_id", "")),
-                "username": doc.get("username", ""),
+                "discord_id": uid,
+                "username": username or f"User#{uid[-4:]}",
+                "avatar_url": avatar_url(uid, av_hash),
                 "koins": doc.get("koins", 0),
                 "wins": doc.get("wins", 0),
                 "losses": doc.get("losses", 0),
@@ -358,8 +399,25 @@ def api_bot_status() -> Any:
         total_achievements = result3[0]["total"] if result3 else 0
 
         top_user = db["usuarios"].find_one(sort=[("koins", -1)])
-        top_name = top_user.get("username", str(top_user.get("discord_id", "N/A"))) if top_user else "N/A"
-        top_koins = top_user.get("koins", 0) if top_user else 0
+        top_name = "N/A"
+        top_uid = "N/A"
+        top_koins = 0
+        top_avatar = ""
+        if top_user:
+            top_uid = str(top_user.get("discord_id", ""))
+            top_name = top_user.get("username", "")
+            top_avatar = top_user.get("avatar", "")
+            top_koins = top_user.get("koins", 0)
+            if not top_name or not top_avatar:
+                remote = fetch_discord_user(top_uid)
+                if remote:
+                    top_name = top_name or remote.get("username", "")
+                    top_avatar = top_avatar or remote.get("avatar", "")
+                    db["usuarios"].update_one(
+                        {"discord_id": int(top_uid)},
+                        {"$set": {"username": top_name, "avatar": top_avatar}},
+                    )
+            top_name = top_name or f"User#{top_uid[-4:]}"
 
         return jsonify({
             "status": "online",
@@ -368,8 +426,9 @@ def api_bot_status() -> Any:
             "total_koins": total_koins,
             "total_commands": total_commands,
             "total_achievements": total_achievements,
-            "top_user_id": str(top_user.get("discord_id", "")) if top_user else "N/A",
+            "top_user_id": top_uid,
             "top_user_name": top_name,
+            "top_user_avatar": avatar_url(top_uid, top_avatar),
             "top_user_koins": top_koins,
             "bot_name": "Klaus",
             "bot_version": "2.0",

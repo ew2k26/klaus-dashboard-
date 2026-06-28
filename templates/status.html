@@ -395,8 +395,8 @@
       if (data.top_user_id && data.top_user_id !== 'N/A') {
         const card = document.getElementById('top-user-card');
         card.style.display = 'block';
-        document.getElementById('top-avatar').src = `https://cdn.discordapp.com/embed/avatars/${parseInt(data.top_user_id) % 5}.png`;
-        document.getElementById('top-user-name').textContent = data.top_user_name || data.top_user_id;
+        document.getElementById('top-avatar').src = data.top_user_avatar || `https://cdn.discordapp.com/embed/avatars/0.png`;
+        document.getElementById('top-user-name').textContent = data.top_user_name || 'User';
         document.getElementById('top-user-koins').textContent = formatKoins(data.top_user_koins || 0) + ' Koins';
       }
     }).catch(() => {

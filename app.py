@@ -580,6 +580,106 @@ PROFILE_BACKGROUNDS = {
     "supremo": {"name": "Supremo", "emoji": "👑", "price": 500000, "colors": {"bg": "#0d0a05", "accent": "#6a5a1a", "border": "#ffd700"}},
     "absoluto": {"name": "Absoluto", "emoji": "🌟", "price": 500000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#ffffff"}},
     "ultima": {"name": "Ultima", "emoji": "💫", "price": 500000, "colors": {"bg": "#050510", "accent": "#1a1a5a", "border": "#00ffff"}},
+    "aurora_boreal": {"name": "Aurora Boreal", "emoji": "🌌", "price": 45000, "colors": {"bg": "#050510", "accent": "#0a3a4a", "border": "#00ff88"}},
+    "tufao": {"name": "Tufao", "emoji": "🌪️", "price": 25000, "colors": {"bg": "#0a0a0d", "accent": "#2a2a4a", "border": "#708090"}},
+    "neblina": {"name": "Neblina", "emoji": "🌫️", "price": 15000, "colors": {"bg": "#0a0a0a", "accent": "#3a3a3a", "border": "#c0c0c0"}},
+    "geada": {"name": "Geada", "emoji": "🥶", "price": 20000, "colors": {"bg": "#050a0d", "accent": "#1a4a5a", "border": "#87ceeb"}},
+    "geleira": {"name": "Geleira", "emoji": "🧊", "price": 35000, "colors": {"bg": "#050510", "accent": "#1a3a5a", "border": "#00bfff"}},
+    "tornada": {"name": "Tornada", "emoji": "🌪️", "price": 80000, "colors": {"bg": "#0a0a0a", "accent": "#3a3a3a", "border": "#a0a0a0"}},
+    "tsunami": {"name": "Tsunami", "emoji": "🌊", "price": 90000, "colors": {"bg": "#050510", "accent": "#0a2a4a", "border": "#0080ff"}},
+    "vulcao": {"name": "Vulcao", "emoji": "🌋", "price": 120000, "colors": {"bg": "#100505", "accent": "#5a1a1a", "border": "#ff3300"}},
+    "deserto_glacial": {"name": "Deserto Glacial", "emoji": "🏜️", "price": 150000, "colors": {"bg": "#0d0c08", "accent": "#5a5a3a", "border": "#daa520"}},
+    "floresta_sombria": {"name": "Floresta Sombria", "emoji": "🌑", "price": 75000, "colors": {"bg": "#050a05", "accent": "#1a3a1a", "border": "#006400"}},
+    "planicie": {"name": "Planicie", "emoji": "🌾", "price": 12000, "colors": {"bg": "#0a0d05", "accent": "#4a6a2a", "border": "#9acd32"}},
+    "monsoon": {"name": "Monsoon", "emoji": "🌧️", "price": 55000, "colors": {"bg": "#050510", "accent": "#1a2a4a", "border": "#4682b4"}},
+    "mercurio": {"name": "Mercurio", "emoji": "☿️", "price": 30000, "colors": {"bg": "#0a0a0a", "accent": "#6a6a6a", "border": "#c0c0c0"}},
+    "ouro_liquido": {"name": "Ouro Liquido", "emoji": "🫗", "price": 200000, "colors": {"bg": "#0d0a05", "accent": "#7a6a1a", "border": "#ffc107"}},
+    "platina_negra": {"name": "Platina Negra", "emoji": "⚫", "price": 250000, "colors": {"bg": "#050505", "accent": "#3a3a3a", "border": "#8a8a8a"}},
+    "titanio": {"name": "Titanio", "emoji": "🔩", "price": 100000, "colors": {"bg": "#0a0a0d", "accent": "#4a4a5a", "border": "#b0c4de"}},
+    "cobalto": {"name": "Cobalto", "emoji": "🔵", "price": 60000, "colors": {"bg": "#05050d", "accent": "#1a1a6a", "border": "#0047ab"}},
+    "tungstenio": {"name": "Tungstenio", "emoji": "⚙️", "price": 150000, "colors": {"bg": "#0a0a0a", "accent": "#3a3a3a", "border": "#696969"}},
+    "osmio": {"name": "Osmio", "emoji": "💎", "price": 180000, "colors": {"bg": "#0a0a0d", "accent": "#3a3a5a", "border": "#4169e1"}},
+    "iridio": {"name": "Iridio", "emoji": "🪞", "price": 170000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#e0e0e0"}},
+    "cromo": {"name": "Cromo", "emoji": "🪞", "price": 40000, "colors": {"bg": "#0a0a0a", "accent": "#4a4a4a", "border": "#d4d4d4"}},
+    "vanadio": {"name": "Vanadio", "emoji": "🟣", "price": 35000, "colors": {"bg": "#0d050d", "accent": "#4a1a4a", "border": "#9932cc"}},
+    "niobio": {"name": "Niobio", "emoji": "⚡", "price": 45000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#4682b4"}},
+    "elfico": {"name": "El fico", "emoji": "🧝", "price": 100000, "colors": {"bg": "#050d08", "accent": "#1a5a2a", "border": "#98fb98"}},
+    "anjo": {"name": "Anjo", "emoji": "😇", "price": 200000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#fffacd"}},
+    "demonio": {"name": "Demonio", "emoji": "😈", "price": 300000, "colors": {"bg": "#100505", "accent": "#5a1a1a", "border": "#ff0000"}},
+    "celestial": {"name": "Celestial", "emoji": "☁️", "price": 350000, "colors": {"bg": "#0a0510", "accent": "#3a1a5a", "border": "#dda0dd"}},
+    "infernal": {"name": "Infernal", "emoji": "🔥", "price": 250000, "colors": {"bg": "#100505", "accent": "#6a1a1a", "border": "#ff4500"}},
+    "arcana": {"name": "Arcana", "emoji": "🔮", "price": 175000, "colors": {"bg": "#0d050d", "accent": "#4a1a4a", "border": "#ba55d3"}},
+    "feiticeiro": {"name": "Feiticeiro", "emoji": "🧙", "price": 125000, "colors": {"bg": "#0a0510", "accent": "#3a1a4a", "border": "#9370db"}},
+    "druida": {"name": "Druida", "emoji": "🌿", "price": 85000, "colors": {"bg": "#050a05", "accent": "#2a5a2a", "border": "#32cd32"}},
+    "necromante": {"name": "Necromante", "emoji": "💀", "price": 225000, "colors": {"bg": "#050505", "accent": "#2a1a2a", "border": "#8b008b"}},
+    "paladino": {"name": "Paladino", "emoji": "⚔️", "price": 160000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a3a", "border": "#ffd700"}},
+    "sangue_sagrado": {"name": "Sangue Sagrado", "emoji": "🩸", "price": 275000, "colors": {"bg": "#0d0505", "accent": "#5a1a1a", "border": "#b22222"}},
+    "sombras_eternas": {"name": "Sombras Eternas", "emoji": "🌑", "price": 190000, "colors": {"bg": "#050505", "accent": "#1a1a2a", "border": "#483d8b"}},
+    "nebulosa": {"name": "Nebulosa", "emoji": "🔭", "price": 120000, "colors": {"bg": "#050510", "accent": "#2a1a4a", "border": "#8a2be2"}},
+    "quasar": {"name": "Quasar", "emoji": "💫", "price": 200000, "colors": {"bg": "#0d0505", "accent": "#5a1a1a", "border": "#ff6347"}},
+    "pulsar": {"name": "Pulsar", "emoji": "⚡", "price": 180000, "colors": {"bg": "#050510", "accent": "#1a1a5a", "border": "#00bfff"}},
+    "via_lactea": {"name": "Via Lactea", "emoji": "🌌", "price": 300000, "colors": {"bg": "#050510", "accent": "#1a1a3a", "border": "#e6e6fa"}},
+    "supernova_v2": {"name": "Supernova II", "emoji": "💥", "price": 350000, "colors": {"bg": "#100505", "accent": "#6a2a1a", "border": "#ff8c00"}},
+    "estrela_negra": {"name": "Estrela Negra", "emoji": "⭐", "price": 400000, "colors": {"bg": "#050505", "accent": "#1a1a1a", "border": "#4a4a6a"}},
+    "wormhole": {"name": "Wormhole", "emoji": "🕳️", "price": 250000, "colors": {"bg": "#050505", "accent": "#0a0a2a", "border": "#4b0082"}},
+    "cosmica_infinita": {"name": "Cosmica Infinita", "emoji": "✨", "price": 500000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#ff00ff"}},
+    "big_crunch": {"name": "Big Crunch", "emoji": "💥", "price": 550000, "colors": {"bg": "#0a0505", "accent": "#3a1a1a", "border": "#ff4444"}},
+    "anoes_brancos": {"name": "Anoes Brancos", "emoji": "⚪", "price": 100000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#ffffff"}},
+    "buraco_branco": {"name": "Buraco Branco", "emoji": "🕳️", "price": 325000, "colors": {"bg": "#0d0d0d", "accent": "#4a4a4a", "border": "#f5f5f5"}},
+    "magnetar": {"name": "Magnetar", "emoji": "🧲", "price": 220000, "colors": {"bg": "#05050d", "accent": "#1a1a4a", "border": "#0000cd"}},
+    "vinho_tinto": {"name": "Vinho Tinto", "emoji": "🍷", "price": 15000, "colors": {"bg": "#100508", "accent": "#4a1a2a", "border": "#800020"}},
+    "cerveja": {"name": "Cerveja", "emoji": "🍺", "price": 5000, "colors": {"bg": "#0d0a05", "accent": "#6a5a1a", "border": "#daa520"}},
+    "sake": {"name": "Sake", "emoji": "🍶", "price": 12000, "colors": {"bg": "#0d0d0d", "accent": "#4a4a4a", "border": "#f5f5f5"}},
+    "chimarra": {"name": "Chimarra", "emoji": "🧉", "price": 2000, "colors": {"bg": "#0d0a05", "accent": "#5a4a1a", "border": "#8b7355"}},
+    "licor_estelar": {"name": "Licor Estelar", "emoji": "🍸", "price": 600000, "colors": {"bg": "#0a0510", "accent": "#3a1a5a", "border": "#ff1493"}},
+    "cafe_eterno": {"name": "Cafe Eterno", "emoji": "☕", "price": 25000, "colors": {"bg": "#0d0805", "accent": "#5a3317", "border": "#a0522d"}},
+    "chocolate_rubro": {"name": "Chocolate Rubro", "emoji": "🍫", "price": 18000, "colors": {"bg": "#0d0805", "accent": "#5a2a17", "border": "#d2691e"}},
+    "frutas_tropicais": {"name": "Frutas Tropicais", "emoji": "🍊", "price": 8000, "colors": {"bg": "#0d0a05", "accent": "#5a4a1a", "border": "#ff8c00"}},
+    "melancia": {"name": "Melancia", "emoji": "🍉", "price": 3000, "colors": {"bg": "#0d0505", "accent": "#4a2a1a", "border": "#ff6b6b"}},
+    "canela_dourada": {"name": "Canela Dourada", "emoji": "✨", "price": 22000, "colors": {"bg": "#0d0a05", "accent": "#6a4a1a", "border": "#daa520"}},
+    "fractal": {"name": "Fractal", "emoji": "🔮", "price": 40000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#7b68ee"}},
+    "onda_sonora": {"name": "Onda Sonora", "emoji": "🎵", "price": 55000, "colors": {"bg": "#0a0510", "accent": "#3a1a4a", "border": "#ff69b4"}},
+    "vortex": {"name": "Vortex", "emoji": "🌀", "price": 85000, "colors": {"bg": "#050510", "accent": "#1a1a5a", "border": "#4169e1"}},
+    "prisma": {"name": "Prisma", "emoji": "🔺", "price": 30000, "colors": {"bg": "#0a0a0d", "accent": "#3a3a4a", "border": "#ff69b4"}},
+    "sinestesia": {"name": "Sinestesia", "emoji": "🎨", "price": 70000, "colors": {"bg": "#0d050d", "accent": "#4a1a3a", "border": "#da70d6"}},
+    "paradoxo": {"name": "Paradoxo", "emoji": "♾️", "price": 150000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#9370db"}},
+    "entropia": {"name": "Entropia", "emoji": "🔥", "price": 200000, "colors": {"bg": "#100505", "accent": "#5a1a1a", "border": "#ff4500"}},
+    "resonancia": {"name": "Resonancia", "emoji": "🔊", "price": 45000, "colors": {"bg": "#0a0510", "accent": "#3a1a4a", "border": "#ff1493"}},
+    "interferencia": {"name": "Interferencia", "emoji": "📡", "price": 65000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#00ffff"}},
+    "difracao": {"name": "Difracao", "emoji": "🌈", "price": 35000, "colors": {"bg": "#0a0a0d", "accent": "#3a3a5a", "border": "#ff69b4"}},
+    "polaridade": {"name": "Polaridade", "emoji": "🧲", "price": 25000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#e0e0e0"}},
+    "dimensional": {"name": "Dimensional", "emoji": "🕳️", "price": 300000, "colors": {"bg": "#050510", "accent": "#0a0a3a", "border": "#4b0082"}},
+    "veludo": {"name": "Veludo", "emoji": "🎭", "price": 80000, "colors": {"bg": "#0a050d", "accent": "#3a1a4a", "border": "#800080"}},
+    "seda": {"name": "Seda", "emoji": "🎀", "price": 75000, "colors": {"bg": "#0d0508", "accent": "#4a1a2a", "border": "#ffb6c1"}},
+    "marmore": {"name": "Marmore", "emoji": "🏛️", "price": 100000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#f0f0f0"}},
+    "granito": {"name": "Granito", "emoji": "🪨", "price": 90000, "colors": {"bg": "#0a0a0a", "accent": "#4a4a4a", "border": "#808080"}},
+    "ouro_rosa": {"name": "Ouro Rosa", "emoji": "🌹", "price": 350000, "colors": {"bg": "#0d0508", "accent": "#5a2a3a", "border": "#e8b4b8"}},
+    "diamante_negro": {"name": "Diamante Negro", "emoji": "💎", "price": 500000, "colors": {"bg": "#050505", "accent": "#1a1a1a", "border": "#4a4a4a"}},
+    "safira_imperial": {"name": "Safira Imperial", "emoji": "👑", "price": 400000, "colors": {"bg": "#050510", "accent": "#0a1a5a", "border": "#0f52ba"}},
+    "rubi_birman": {"name": "Rubis Birman", "emoji": "❤️", "price": 450000, "colors": {"bg": "#100505", "accent": "#5a1a1a", "border": "#9b111e"}},
+    "esmeralda_colombiana": {"name": "Esmeralda Colombiana", "emoji": "💚", "price": 425000, "colors": {"bg": "#050d05", "accent": "#1a5a2a", "border": "#046307"}},
+    "perola_imperial": {"name": "Perola Imperial", "emoji": "🤍", "price": 300000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#fdeef4"}},
+    "jade_imperial": {"name": "Jade Imperial", "emoji": "💚", "price": 275000, "colors": {"bg": "#050d08", "accent": "#1a6a3a", "border": "#00a86b"}},
+    "coral_vibrante": {"name": "Coral Vibrante", "emoji": "🪸", "price": 15000, "colors": {"bg": "#0d0808", "accent": "#5a3a3a", "border": "#ff7f50"}},
+    "azul_profundo": {"name": "Azul Profundo", "emoji": "💙", "price": 20000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#00008b"}},
+    "verde_esmeralda": {"name": "Verde Esmeralda", "emoji": "💚", "price": 25000, "colors": {"bg": "#050d05", "accent": "#1a5a2a", "border": "#2e8b57"}},
+    "amarelo_solar": {"name": "Amarelo Solar", "emoji": "☀️", "price": 10000, "colors": {"bg": "#0d0d05", "accent": "#5a5a1a", "border": "#ffd700"}},
+    "rosa_champagne": {"name": "Rosa Champagne", "emoji": "🥂", "price": 30000, "colors": {"bg": "#0d0508", "accent": "#4a2a3a", "border": "#f7cac9"}},
+    "vermelho_sangue": {"name": "Vermelho Sangue", "emoji": "🩸", "price": 40000, "colors": {"bg": "#100505", "accent": "#5a1a1a", "border": "#8b0000"}},
+    "lila_mistico": {"name": "Lila Mistico", "emoji": "🔮", "price": 35000, "colors": {"bg": "#0d050d", "accent": "#4a1a4a", "border": "#c8a2c8"}},
+    "turquesa_profunda": {"name": "Turquesa Profunda", "emoji": "💎", "price": 45000, "colors": {"bg": "#050d0d", "accent": "#1a5a5a", "border": "#48d1cc"}},
+    "cinza_prata": {"name": "Cinza Prata", "emoji": "🔘", "price": 8000, "colors": {"bg": "#0a0a0a", "accent": "#4a4a4a", "border": "#b0b0b0"}},
+    "branco_perola": {"name": "Branco Perola", "emoji": "🤍", "price": 50000, "colors": {"bg": "#0d0d0d", "accent": "#5a5a5a", "border": "#fdeef4"}},
+    "steampunk": {"name": "Steampunk", "emoji": "⚙️", "price": 75000, "colors": {"bg": "#0d0a05", "accent": "#6a4a1a", "border": "#b87333"}},
+    "retro": {"name": "Retro", "emoji": "📺", "price": 20000, "colors": {"bg": "#0d0a08", "accent": "#5a4a2a", "border": "#daa520"}},
+    "vaporwave": {"name": "Vaporwave", "emoji": "🌴", "price": 60000, "colors": {"bg": "#0d050d", "accent": "#4a1a4a", "border": "#ff71ce"}},
+    "synthwave": {"name": "Synthwave", "emoji": "🌆", "price": 80000, "colors": {"bg": "#0a0510", "accent": "#3a1a4a", "border": "#ff00ff"}},
+    "lofi": {"name": "Lo-Fi", "emoji": "🎧", "price": 30000, "colors": {"bg": "#0d0a08", "accent": "#5a4a2a", "border": "#cd853f"}},
+    "glitch": {"name": "Glitch", "emoji": "📟", "price": 50000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#00ff00"}},
+    "noir": {"name": "Noir", "emoji": "🎩", "price": 120000, "colors": {"bg": "#050505", "accent": "#1a1a1a", "border": "#4a4a4a"}},
+    "art_deco": {"name": "Art Deco", "emoji": "🏛️", "price": 150000, "colors": {"bg": "#0d0a05", "accent": "#6a5a1a", "border": "#c5a258"}},
+    "cyber_goth": {"name": "Cyber Goth", "emoji": "🤖", "price": 100000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#ff00ff"}},
+    "neon_dreams": {"name": "Neon Dreams", "emoji": "💡", "price": 200000, "colors": {"bg": "#050510", "accent": "#1a1a4a", "border": "#00ffff"}},
 }
 
 PROFILE_BORDERS = {
@@ -638,6 +738,8 @@ def api_profile_config(user_id: str) -> Any:
             "border": doc.get("profile_border", "default"),
             "purchased_backgrounds": doc.get("purchased_backgrounds", ["padrao"]),
             "purchased_borders": doc.get("purchased_borders", ["default"]),
+            "custom_bg_url": doc.get("custom_bg_url", ""),
+            "has_custom_bg": doc.get("has_custom_bg", False),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -703,6 +805,61 @@ def api_profile_buy() -> Any:
             upsert=True,
         )
         return jsonify({"ok": True, "new_koins": koins - item["price"]})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_custom_bg", methods=["POST"])
+def api_profile_custom_bg() -> Any:
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        image_url = data.get("image_url", "").strip()
+        if not user_id or not image_url:
+            return jsonify({"error": "missing params"}), 400
+        if not image_url.startswith(("http://", "https://")):
+            return jsonify({"error": "invalid url"}), 400
+
+        db_conn = get_db()
+        doc = db_conn["usuarios"].find_one({"discord_id": int(user_id)})
+        if not doc:
+            return jsonify({"error": "user not found"}), 404
+
+        koins = doc.get("koins", 0)
+        price = 1_000_000
+
+        has_custom = doc.get("has_custom_bg", False)
+        if not has_custom and koins < price:
+            return jsonify({"error": "insufficient koins", "needed": price, "have": koins}), 400
+
+        update = {"$set": {"custom_bg_url": image_url}}
+        if not has_custom:
+            update["$inc"] = {"koins": -price}
+            update["$set"]["has_custom_bg"] = True
+        db_conn["usuarios"].update_one(
+            {"discord_id": int(user_id)},
+            update,
+            upsert=True,
+        )
+        new_koins = koins - (price if not has_custom else 0)
+        return jsonify({"ok": True, "new_koins": new_koins})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/profile_custom_bg/delete", methods=["POST"])
+def api_profile_custom_bg_delete() -> Any:
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        if not user_id:
+            return jsonify({"error": "missing params"}), 400
+        db_conn = get_db()
+        db_conn["usuarios"].update_one(
+            {"discord_id": int(user_id)},
+            {"$unset": {"custom_bg_url": "", "has_custom_bg": ""}},
+        )
+        return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

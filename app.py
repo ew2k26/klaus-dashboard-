@@ -142,13 +142,28 @@ def server(user: dict, guild_id: str) -> str:
     config = {
         "welcome_enabled": False, "welcome_channel": "", "welcome_message": "Bem-vindo(a) ao servidor, {user}! \U0001f44b",
         "welcome_color": "#a78bfa", "welcome_title": "\U0001f31f Bem-vindo!",
+        "welcome_image": "",
         "autorole_enabled": False, "autorole_role": "",
         "farewell_enabled": False, "farewell_channel": "", "farewell_message": "Tchau, {user}! \U0001f44b",
         "farewell_color": "#f87171", "farewell_title": "\U0001f44b Até logo!",
+        "farewell_image": "",
         "logs_enabled": False, "logs_channel": "",
         "logging_messages": False, "logging_members": False, "logging_mod": False,
+        "logging_voice": False,
         "xp_enabled": True, "xp_min": 15, "xp_max": 25, "xp_cooldown": 60,
         "xp_announce_channel": "",
+        "automod_enabled": False,
+        "automod_max_links": 3, "automod_max_mentions": 5,
+        "automod_bad_words": "", "automod_anti_spam": False,
+        "automod_anti_links": False, "automod_bad_words_toggle": False,
+        "economy_starting_koins": 1000,
+        "economy_daily_min": 100, "economy_daily_max": 500,
+        "economy_work_cooldown": 3600, "economy_rob_cooldown": 7200,
+        "economy_daily_streak_bonus": 50,
+        "embed_color_primary": "#8b5cf6", "embed_color_success": "#22c55e",
+        "embed_color_error": "#ef4444", "embed_color_warning": "#f59e0b",
+        "welcome_footer": "Klaus Bot", "farewell_footer": "Klaus Bot",
+        "reaction_role_channel": "",
     }
     try:
         db = get_db()

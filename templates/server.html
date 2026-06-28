@@ -38,6 +38,9 @@
       <button class="tab" onclick="tab('logs', this)">📋 Logs</button>
       <button class="tab" onclick="tab('farewell', this)">😢 Adeus</button>
       <button class="tab" onclick="tab('xp', this)">✨ XP System</button>
+      <button class="tab" onclick="tab('automod', this)">🛡️ AutoMod</button>
+      <button class="tab" onclick="tab('economy', this)">💰 Economia</button>
+      <button class="tab" onclick="tab('embeds', this)">🎨 Cores</button>
     </div>
 
     <!-- BOAS-VINDAS -->
@@ -79,6 +82,16 @@
               <input type="color" id="welcome_color_pick" value="{{ config.welcome_color }}">
               <input type="text" id="welcome_color" value="{{ config.welcome_color }}" maxlength="7">
             </div>
+          </div>
+
+          <div class="form-group">
+            <label>Imagem (URL, opcional)</label>
+            <input type="text" id="welcome_image" value="{{ config.welcome_image }}" placeholder="https://...">
+          </div>
+
+          <div class="form-group">
+            <label>Footer</label>
+            <input type="text" id="welcome_footer" value="{{ config.welcome_footer }}" placeholder="Klaus Bot">
           </div>
 
           <button class="btn btn-primary" onclick="save('welcome')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
@@ -165,6 +178,11 @@
             <label class="toggle"><input type="checkbox" id="logging_mod" {% if config.logging_mod %}checked{% endif %}><span class="toggle-slider"></span></label>
           </div>
 
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Voz</h4><p>Entradas/saídas de canal de voz</p></div>
+            <label class="toggle"><input type="checkbox" id="logging_voice" {% if config.logging_voice %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
           <button class="btn btn-primary" onclick="save('logs')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
         </div>
 
@@ -218,6 +236,16 @@
               <input type="color" id="farewell_color_pick" value="{{ config.farewell_color }}">
               <input type="text" id="farewell_color" value="{{ config.farewell_color }}" maxlength="7">
             </div>
+          </div>
+
+          <div class="form-group">
+            <label>Imagem (URL, opcional)</label>
+            <input type="text" id="farewell_image" value="{{ config.farewell_image }}" placeholder="https://...">
+          </div>
+
+          <div class="form-group">
+            <label>Footer</label>
+            <input type="text" id="farewell_footer" value="{{ config.farewell_footer }}" placeholder="Klaus Bot">
           </div>
 
           <button class="btn btn-primary" onclick="save('farewell')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
@@ -281,6 +309,187 @@
             <div class="embed" style="border-left-color: #8b5cf6;">
               <h4>Level Up!</h4>
               <p><strong>@Usuário</strong> subiu para o <strong>Level 5</strong>!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTOMOD -->
+    <div id="tab-automod" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>🛡️ Configurar AutoMod</h3>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Ativar AutoMod</h4>
+              <p>Proteção automática contra spam e conteúdo indesejado</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="automod_enabled" {% if config.automod_enabled %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Anti-Spam</h4><p>Bloquear mensagens repetidas</p></div>
+            <label class="toggle"><input type="checkbox" id="automod_anti_spam" {% if config.automod_anti_spam %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Anti-Links</h4><p>Bloquear links externos</p></div>
+            <label class="toggle"><input type="checkbox" id="automod_anti_links" {% if config.automod_anti_links %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="form-group">
+            <label>Máx. links por mensagem</label>
+            <input type="number" id="automod_max_links" value="{{ config.automod_max_links or 3 }}" min="1" max="10">
+          </div>
+
+          <div class="form-group">
+            <label>Máx. menções por mensagem</label>
+            <input type="number" id="automod_max_mentions" value="{{ config.automod_max_mentions or 5 }}" min="1" max="20">
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Palavras Proibidas</h4><p>Filtrar palavras ofensivas</p></div>
+            <label class="toggle"><input type="checkbox" id="automod_bad_words_toggle" {% if config.automod_bad_words_toggle %}checked{% endif %}><span class="toggle-slider"></span></label>
+          </div>
+
+          <div class="form-group">
+            <label>Palavras proibidas (separadas por vírgula)</label>
+            <textarea id="automod_bad_words" placeholder="palavra1, palavra2, palavra3">{{ config.automod_bad_words }}</textarea>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('automod')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>ℹ️ Como funciona</h3>
+          <p style="color: var(--text2); line-height: 1.8;">
+            O AutoMod protege seu servidor automaticamente:<br><br>
+            🚫 <strong>Anti-Spam:</strong> Detecta mensagens repetidas<br>
+            🔗 <strong>Anti-Links:</strong> Bloqueia links externos<br>
+            🗣️ <strong>Anti-Mentions:</strong> Limita menções em massa<br>
+            🚫 <strong>Palavras Proibidas:</strong> Filtra palavras ofensivas<br><br>
+            Configure os limites ao lado e ative os filtros que precisa.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECONOMIA -->
+    <div id="tab-economy" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>💰 Configurar Economia</h3>
+
+          <div class="form-group">
+            <label>Koins iniciais (novos jogadores)</label>
+            <input type="number" id="economy_starting_koins" value="{{ config.economy_starting_koins or 1000 }}" min="0" max="100000">
+          </div>
+
+          <div class="form-group">
+            <label>Recompensa diária (mínimo)</label>
+            <input type="number" id="economy_daily_min" value="{{ config.economy_daily_min or 100 }}" min="10" max="10000">
+          </div>
+
+          <div class="form-group">
+            <label>Recompensa diária (máximo)</label>
+            <input type="number" id="economy_daily_max" value="{{ config.economy_daily_max or 500 }}" min="10" max="10000">
+          </div>
+
+          <div class="form-group">
+            <label>Cooldown trabalho (segundos)</label>
+            <input type="number" id="economy_work_cooldown" value="{{ config.economy_work_cooldown or 3600 }}" min="60" max="86400">
+          </div>
+
+          <div class="form-group">
+            <label>Cooldown roubo (segundos)</label>
+            <input type="number" id="economy_rob_cooldown" value="{{ config.economy_rob_cooldown or 7200 }}" min="60" max="86400">
+          </div>
+
+          <div class="form-group">
+            <label>Bônus streak diário (%)</label>
+            <input type="number" id="economy_daily_streak_bonus" value="{{ config.economy_daily_streak_bonus or 50 }}" min="0" max="500">
+          </div>
+
+          <button class="btn btn-primary" onclick="save('economy')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" style="border-left-color: #f59e0b;">
+              <h4>Daily Coletado!</h4>
+              <p>Recompensa: <strong>+{{ config.economy_daily_max }} koins</strong></p>
+              <p>Streak: <strong>7 dias</strong> (+{{ config.economy_daily_streak_bonus }}% bônus)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORES/EMBEDS -->
+    <div id="tab-embeds" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>🎨 Personalizar Cores</h3>
+
+          <div class="form-group">
+            <label>Cor Principal</label>
+            <div class="color-row">
+              <input type="color" id="embed_color_primary_pick" value="{{ config.embed_color_primary }}">
+              <input type="text" id="embed_color_primary" value="{{ config.embed_color_primary }}" maxlength="7">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cor de Sucesso</label>
+            <div class="color-row">
+              <input type="color" id="embed_color_success_pick" value="{{ config.embed_color_success }}">
+              <input type="text" id="embed_color_success" value="{{ config.embed_color_success }}" maxlength="7">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cor de Erro</label>
+            <div class="color-row">
+              <input type="color" id="embed_color_error_pick" value="{{ config.embed_color_error }}">
+              <input type="text" id="embed_color_error" value="{{ config.embed_color_error }}" maxlength="7">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cor de Aviso</label>
+            <div class="color-row">
+              <input type="color" id="embed_color_warning_pick" value="{{ config.embed_color_warning }}">
+              <input type="text" id="embed_color_warning" value="{{ config.embed_color_warning }}" maxlength="7">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="save('embeds')" style="width: 100%; margin-top: 0.5rem;">Salvar 💾</button>
+        </div>
+
+        <div class="card">
+          <h3>👁️ Preview</h3>
+          <div class="preview">
+            <div class="embed" style="border-left-color: {{ config.embed_color_primary }};" id="embed-preview">
+              <h4 id="ep-title">Cor Principal</h4>
+              <p>Esta é a cor padrão dos embeds do bot.</p>
+            </div>
+            <div class="embed" style="border-left-color: {{ config.embed_color_success }}; margin-top: 0.5rem;">
+              <h4>Cor de Sucesso</h4>
+              <p>Usado em: daily, trabalho, compras</p>
+            </div>
+            <div class="embed" style="border-left-color: {{ config.embed_color_error }}; margin-top: 0.5rem;">
+              <h4>Cor de Erro</h4>
+              <p>Usado em: erros, cooldowns</p>
+            </div>
+            <div class="embed" style="border-left-color: {{ config.embed_color_warning }}; margin-top: 0.5rem;">
+              <h4>Cor de Aviso</h4>
+              <p>Usado em: avisos, confirmações</p>
             </div>
           </div>
         </div>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - Klaus Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <nav class="nav">
+    <a href="/" class="nav-brand">
+      <span class="brand-icon">💜</span>
+      <span class="brand-text">KLAUS</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/status" class="nav-link">Status</a>
+      <a href="/leaderboard" class="nav-link">Leaderboard</a>
+      <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-badge">Ranking</span>
+      <h2>Leaderboard Global</h2>
+      <p>Os jogadores mais ricos do Klaus</p>
+    </div>
+
+    <div id="podium" class="podium-section" style="display: flex; justify-content: center; align-items: flex-end; gap: 1rem; margin-bottom: 3rem;"></div>
+
+    <div class="card" style="overflow: hidden;">
+      <div id="leaderboard-list"></div>
+    </div>
+
+    <div id="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;"></div>
+
+    <div id="loading" style="text-align: center; padding: 3rem; color: var(--text3);">Carregando...</div>
+
+    <div id="profile-modal" class="modal" style="display:none;">
+      <div class="modal-content card">
+        <div style="text-align: center; padding: 1rem;">
+          <img id="modal-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 1rem;">
+          <h3 id="modal-name" style="margin-bottom: 0.5rem;">--</h3>
+          <p style="color: var(--text3); font-size: 0.85rem;" id="modal-id">ID: --</p>
+        </div>
+        <div class="modal-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; padding: 1rem 0;">
+          <div class="modal-stat">
+            <span style="color: var(--text3); font-size: 0.78rem;">Koins</span>
+            <h4 id="modal-koins" style="color: var(--primary-light);">0</h4>
+          </div>
+          <div class="modal-stat">
+            <span style="color: var(--text3); font-size: 0.78rem;">Streak</span>
+            <h4 id="modal-streak" style="color: var(--yellow);">0 dias</h4>
+          </div>
+          <div class="modal-stat">
+            <span style="color: var(--text3); font-size: 0.78rem;">Comandos</span>
+            <h4 id="modal-commands">0</h4>
+          </div>
+          <div class="modal-stat">
+            <span style="color: var(--text3); font-size: 0.78rem;">Conquistas</span>
+            <h4 id="modal-achievements" style="color: var(--pink);">0</h4>
+          </div>
+        </div>
+        <button class="btn btn-ghost" onclick="closeModal()" style="width: 100%;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .podium-section { min-height: 120px; }
+    .podium-item {
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .podium-item:hover { transform: translateY(-5px); }
+    .podium-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid var(--primary);
+      margin-bottom: 0.5rem;
+      object-fit: cover;
+    }
+    .podium-avatar.gold { border-color: #ffd700; width: 80px; height: 80px; }
+    .podium-avatar.silver { border-color: #c0c0c0; }
+    .podium-avatar.bronze { border-color: #cd7f32; }
+    .podium-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .podium-koins {
+      font-size: 0.75rem;
+      color: var(--primary-light);
+    }
+    .podium-bar {
+      width: 100px;
+      border-radius: 10px 10px 0 0;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+    .podium-bar.gold { background: linear-gradient(180deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05)); height: 100px; color: #ffd700; }
+    .podium-bar.silver { background: linear-gradient(180deg, rgba(192,192,192,0.2), rgba(192,192,192,0.05)); height: 80px; color: #c0c0c0; }
+    .podium-bar.bronze { background: linear-gradient(180deg, rgba(205,127,50,0.2), rgba(205,127,50,0.05)); height: 60px; color: #cd7f32; }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .lb-row:hover { background: rgba(139, 92, 246, 0.05); }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank {
+      width: 40px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text3);
+      flex-shrink: 0;
+    }
+    .lb-rank.top3 { color: var(--primary-light); font-size: 1.1rem; }
+    .lb-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      margin-right: 0.8rem;
+      flex-shrink: 0;
+    }
+    .lb-info { flex: 1; }
+    .lb-info h4 { font-size: 0.9rem; font-weight: 600; }
+    .lb-info p { font-size: 0.75rem; color: var(--text3); }
+    .lb-koins {
+      font-weight: 800;
+      color: var(--primary-light);
+      font-size: 0.95rem;
+      text-align: right;
+    }
+    .lb-extra {
+      display: flex;
+      gap: 1rem;
+      margin-left: 1rem;
+      font-size: 0.75rem;
+      color: var(--text3);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 2rem;
+    }
+    .modal-content {
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-stat {
+      text-align: center;
+      padding: 0.5rem;
+      background: rgba(15, 10, 26, 0.5);
+      border-radius: 10px;
+    }
+    .modal-stat h4 { font-size: 1.1rem; margin-top: 0.2rem; }
+
+    .page-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .page-btn:hover { border-color: var(--primary); color: var(--primary-light); }
+    .page-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: transparent;
+    }
+  </style>
+
+  <script>
+    let currentPage = 1;
+    const fallbackNames = {};
+
+    function getFallbackName(id) {
+      if (!fallbackNames[id]) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let name = 'User';
+        for (let i = 0; i < 4; i++) name += chars[Math.floor(Math.random() * chars.length)];
+        fallbackNames[id] = name;
+      }
+      return fallbackNames[id];
+    }
+
+    function formatKoins(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return n.toString();
+    }
+
+    function loadPage(page) {
+      currentPage = page;
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('leaderboard-list').innerHTML = '';
+
+      fetch(`/api/leaderboard_full?page=${page}`).then(r => r.json()).then(data => {
+        document.getElementById('loading').style.display = 'none';
+        const entries = data.entries || [];
+
+        if (page === 1 && entries.length >= 3) {
+          renderPodium(entries.slice(0, 3));
+        } else if (page === 1) {
+          document.getElementById('podium').innerHTML = '';
+        }
+
+        const list = document.getElementById('leaderboard-list');
+        entries.forEach((e, i) => {
+          const rank = e.rank;
+          const isTop3 = rank <= 3;
+          const name = getFallbackName(e.discord_id);
+          const row = document.createElement('div');
+          row.className = 'lb-row';
+          row.onclick = () => openProfile(e);
+          row.innerHTML = `
+            <span class="lb-rank ${isTop3 ? 'top3' : ''}">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#' + rank}</span>
+            <img class="lb-avatar" src="https://cdn.discordapp.com/embed/avatars/${parseInt(e.discord_id) % 5}.png" alt="">
+            <div class="lb-info">
+              <h4>${name}</h4>
+              <p>Streak: ${e.daily_streak || 0} dias · ${e.commands_used || 0} cmds</p>
+            </div>
+            <div class="lb-extra">
+              <span>🏆 ${e.achievements || 0}</span>
+            </div>
+            <div class="lb-koins">${formatKoins(e.koins)} 💰</div>
+          `;
+          list.appendChild(row);
+        });
+
+        renderPagination(data.page, data.pages);
+      }).catch(() => {
+        document.getElementById('loading').textContent = 'Erro ao carregar leaderboard';
+      });
+    }
+
+    function renderPodium(top3) {
+      const podium = document.getElementById('podium');
+      podium.innerHTML = '';
+      const medals = ['silver', 'gold', 'bronze'];
+      const order = [1, 0, 2];
+      const heights = ['silver', 'gold', 'bronze'];
+
+      order.forEach((idx, pos) => {
+        const e = top3[idx];
+        if (!e) return;
+        const name = getFallbackName(e.discord_id);
+        const div = document.createElement('div');
+        div.className = 'podium-item';
+        div.onclick = () => openProfile(e);
+        div.innerHTML = `
+          <img class="podium-avatar ${medals[pos]}" src="https://cdn.discordapp.com/embed/avatars/${parseInt(e.discord_id) % 5}.png" alt="">
+          <div class="podium-name">${name}</div>
+          <div class="podium-koins">${formatKoins(e.koins)} 💰</div>
+          <div class="podium-bar ${heights[pos]}">${['2','1','3'][pos]}</div>
+        `;
+        podium.appendChild(div);
+      });
+    }
+
+    function renderPagination(current, total) {
+      const pag = document.getElementById('pagination');
+      pag.innerHTML = '';
+      if (total <= 1) return;
+      for (let i = 1; i <= Math.min(total, 10); i++) {
+        const btn = document.createElement('button');
+        btn.className = `page-btn ${i === current ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => loadPage(i);
+        pag.appendChild(btn);
+      }
+    }
+
+    function openProfile(entry) {
+      const modal = document.getElementById('profile-modal');
+      const name = getFallbackName(entry.discord_id);
+      document.getElementById('modal-avatar').src = `https://cdn.discordapp.com/embed/avatars/${parseInt(entry.discord_id) % 5}.png`;
+      document.getElementById('modal-name').textContent = name;
+      document.getElementById('modal-id').textContent = `ID: ${entry.discord_id}`;
+      document.getElementById('modal-koins').textContent = formatKoins(entry.koins);
+      document.getElementById('modal-streak').textContent = `${entry.daily_streak || 0} dias`;
+      document.getElementById('modal-commands').textContent = (entry.commands_used || 0).toLocaleString('pt-BR');
+      document.getElementById('modal-achievements').textContent = entry.achievements || 0;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('profile-modal').style.display = 'none';
+    }
+
+    document.getElementById('profile-modal').onclick = function(e) {
+      if (e.target === this) closeModal();
+    };
+
+    loadPage(1);
+  </script>
+</body>
+</html>

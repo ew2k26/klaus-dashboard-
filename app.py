@@ -289,9 +289,101 @@ def api_profile(user_id: str) -> Any:
             "achievements": doc.get("achievements", []),
             "total_earned": doc.get("total_earned", 0),
             "total_lost": doc.get("total_lost", 0),
+            "daily_claims": doc.get("daily_claims", 0),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/leaderboard_full")
+def api_leaderboard_full() -> Any:
+    try:
+        db = get_db()
+        page = int(request.args.get("page", 1))
+        per_page = 20
+        skip = (page - 1) * per_page
+        total = db["usuarios"].count_documents({})
+        cursor = db["usuarios"].find().sort("koins", -1).skip(skip).limit(per_page)
+        entries = []
+        for i, doc in enumerate(cursor):
+            entries.append({
+                "rank": skip + i + 1,
+                "discord_id": str(doc.get("discord_id", "")),
+                "koins": doc.get("koins", 0),
+                "wins": doc.get("wins", 0),
+                "losses": doc.get("losses", 0),
+                "daily_streak": doc.get("daily_streak", 0),
+                "commands_used": doc.get("commands_used", 0),
+                "achievements": len(doc.get("achievements", [])),
+            })
+        return jsonify({
+            "entries": entries,
+            "total": total,
+            "page": page,
+            "pages": (total + per_page - 1) // per_page,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "entries": []})
+
+
+@app.route("/api/bot_status")
+def api_bot_status() -> Any:
+    try:
+        db = get_db()
+        total_users = db["usuarios"].count_documents({})
+        total_guilds = 0
+        if BOT_TOKEN:
+            try:
+                r = requests.get(f"{API}/users/@me", headers={"Authorization": f"Bot {BOT_TOKEN}"}, timeout=10)
+                if r.status_code == 200:
+                    pass
+                r2 = requests.get(f"{API}/users/@me/guilds", headers={"Authorization": f"Bot {BOT_TOKEN}"}, timeout=10)
+                if r2.status_code == 200:
+                    total_guilds = len(r2.json())
+            except Exception:
+                pass
+
+        pipeline = [{"$group": {"_id": None, "total": {"$sum": "$koins"}}}]
+        result = list(db["usuarios"].aggregate(pipeline))
+        total_koins = result[0]["total"] if result else 0
+
+        pipeline2 = [{"$group": {"_id": None, "total": {"$sum": "$commands_used"}}}]
+        result2 = list(db["usuarios"].aggregate(pipeline2))
+        total_commands = result2[0]["total"] if result2 else 0
+
+        pipeline3 = [{"$group": {"_id": None, "total": {"$sum": {"$size": {"$ifNull": ["$achievements", []]}}}}}]
+        result3 = list(db["usuarios"].aggregate(pipeline3))
+        total_achievements = result3[0]["total"] if result3 else 0
+
+        top_user = db["usuarios"].find_one(sort=[("koins", -1)])
+        top_name = str(top_user.get("discord_id", "N/A")) if top_user else "N/A"
+        top_koins = top_user.get("koins", 0) if top_user else 0
+
+        return jsonify({
+            "status": "online",
+            "total_users": total_users,
+            "total_guilds": total_guilds,
+            "total_koins": total_koins,
+            "total_commands": total_commands,
+            "total_achievements": total_achievements,
+            "top_user_id": top_name,
+            "top_user_koins": top_koins,
+            "bot_name": "Klaus",
+            "bot_version": "2.0",
+            "uptime": "24/7",
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "status": "offline"})
+
+
+@app.route("/status")
+def status_page() -> str:
+    return render_template("status.html")
+
+
+@app.route("/leaderboard")
+def leaderboard_page() -> str:
+    return render_template("leaderboard.html")
 
 
 if __name__ == "__main__":

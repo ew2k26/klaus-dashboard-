@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Status - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=30">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 </head>
 <body>
@@ -50,37 +50,37 @@
     </div>
 
     <div class="status-grid">
-      <div class="stat-card" style="--accent: #8b5cf6;">
+      <div class="stat-card" style="--accent: #8b5cf6;" data-delay="0">
         <div class="stat-icon">👥</div>
         <div class="stat-value" id="stat-users">--</div>
         <div class="stat-label">Usuários</div>
         <div class="stat-bar"><div class="stat-bar-fill" id="bar-users"></div></div>
       </div>
-      <div class="stat-card" style="--accent: #3b82f6;">
+      <div class="stat-card" style="--accent: #3b82f6;" data-delay="0.08">
         <div class="stat-icon">🏠</div>
         <div class="stat-value" id="stat-guilds">--</div>
         <div class="stat-label">Servidores</div>
         <div class="stat-bar"><div class="stat-bar-fill" id="bar-guilds"></div></div>
       </div>
-      <div class="stat-card" style="--accent: #f59e0b;">
+      <div class="stat-card" style="--accent: #f59e0b;" data-delay="0.16">
         <div class="stat-icon">💰</div>
         <div class="stat-value" id="stat-koins">--</div>
         <div class="stat-label">Koins Totais</div>
         <div class="stat-bar"><div class="stat-bar-fill" id="bar-koins"></div></div>
       </div>
-      <div class="stat-card" style="--accent: #22c55e;">
+      <div class="stat-card" style="--accent: #22c55e;" data-delay="0.24">
         <div class="stat-icon">⚡</div>
         <div class="stat-value" id="stat-commands">--</div>
         <div class="stat-label">Comandos Usados</div>
         <div class="stat-bar"><div class="stat-bar-fill" id="bar-commands"></div></div>
       </div>
-      <div class="stat-card" style="--accent: #d946ef;">
+      <div class="stat-card" style="--accent: #d946ef;" data-delay="0.32">
         <div class="stat-icon">🏆</div>
         <div class="stat-value" id="stat-achievements">--</div>
         <div class="stat-label">Conquistas</div>
         <div class="stat-bar"><div class="stat-bar-fill" id="bar-achievements"></div></div>
       </div>
-      <div class="stat-card" style="--accent: #06b6d4;">
+      <div class="stat-card" style="--accent: #06b6d4;" data-delay="0.40">
         <div class="stat-icon">🤖</div>
         <div class="stat-value" id="stat-version">2.0</div>
         <div class="stat-label">Versão</div>
@@ -96,7 +96,7 @@
             <span class="service-dot service-online"></span>
             <div>
               <h4>Bot Discord</h4>
-              <p>Slash commands &middot; Slash commands</p>
+              <p>Slash commands &middot; 94 comandos</p>
             </div>
           </div>
           <span class="badge badge-green">Operacional</span>
@@ -139,12 +139,12 @@
   <style>
     .status-hero {
       text-align: center;
-      padding: 3rem 0 2rem;
+      padding: 3.5rem 0 2rem;
     }
     .status-hero-icon {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       margin: 0 auto 1.5rem;
       display: flex;
       align-items: center;
@@ -155,25 +155,25 @@
       inset: 0;
       border-radius: 50%;
       border: 2px solid var(--green);
-      animation: pulse-expand 2s ease-out infinite;
+      animation: pulse-expand 2.2s ease-out infinite;
       opacity: 0;
     }
-    .pulse-ring.delay {
-      animation-delay: 0.8s;
-    }
+    .pulse-ring.delay { animation-delay: 0.9s; }
     @keyframes pulse-expand {
-      0% { transform: scale(0.8); opacity: 0.6; }
-      100% { transform: scale(1.6); opacity: 0; }
+      0% { transform: scale(0.7); opacity: 0.7; }
+      100% { transform: scale(1.7); opacity: 0; }
     }
     #hero-emoji {
-      font-size: 3rem;
+      font-size: 3.2rem;
       position: relative;
       z-index: 2;
+      filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.3));
     }
     .status-hero-title {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
       margin-bottom: 0.3rem;
+      letter-spacing: -1px;
     }
     .status-hero-sub {
       color: var(--text3);
@@ -183,57 +183,67 @@
     .status-top-user {
       margin-bottom: 2rem;
       overflow: hidden;
+      transition: all 0.3s;
+    }
+    .status-top-user:hover {
+      border-color: rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
     }
     .top-user-inner {
       display: flex;
       align-items: center;
       gap: 1.2rem;
-      padding: 1rem;
+      padding: 1rem 1.5rem;
     }
     .top-user-avatar {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
       border: 3px solid #ffd700;
       flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
     }
     .top-user-info { flex: 1; }
     .top-user-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
+      font-weight: 600;
     }
     .top-user-info h3 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      margin: 0.1rem 0;
+      margin: 0.15rem 0;
     }
     .top-user-koins {
       color: #ffd700;
       font-weight: 700;
       font-size: 0.9rem;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
     }
 
     .status-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
       gap: 1rem;
       margin-bottom: 2.5rem;
     }
     .stat-card {
-      background: rgba(15, 10, 26, 0.6);
-      border: 1px solid rgba(139, 92, 246, 0.12);
-      border-radius: 16px;
+      background: rgba(10, 7, 20, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
       padding: 1.5rem 1rem;
       text-align: center;
       position: relative;
       overflow: hidden;
-      transition: transform 0.3s, border-color 0.3s;
+      transition: all 0.4s var(--transition);
+      opacity: 0;
+      transform: translateY(20px);
     }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
+    .stat-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .stat-card::before {
       content: '';
@@ -244,38 +254,51 @@
       width: 60%;
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
     }
     .stat-icon {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 0.5rem;
+      transition: transform 0.3s;
+    }
+    .stat-card:hover .stat-icon {
+      transform: scale(1.15) rotate(-5deg);
     }
     .stat-value {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: white;
       line-height: 1;
       margin-bottom: 0.3rem;
     }
     .stat-label {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       margin-bottom: 0.8rem;
+      font-weight: 600;
     }
     .stat-bar {
       width: 100%;
       height: 4px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
       border-radius: 4px;
       overflow: hidden;
     }
     .stat-bar-fill {
       height: 100%;
-      background: var(--accent);
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, white));
       border-radius: 4px;
       width: 0%;
-      transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: width 1.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .services-section { margin-bottom: 2rem; }
@@ -283,6 +306,7 @@
       font-size: 1.3rem;
       font-weight: 800;
       margin-bottom: 1rem;
+      text-align: center;
     }
     .services-card { padding: 0; overflow: hidden; }
     .service-row {
@@ -291,10 +315,13 @@
       justify-content: space-between;
       padding: 1rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
+      transition: all 0.25s;
     }
     .service-row:last-child { border-bottom: none; }
-    .service-row:hover { background: rgba(139, 92, 246, 0.04); }
+    .service-row:hover {
+      background: rgba(139, 92, 246, 0.04);
+      transform: translateX(4px);
+    }
     .service-info {
       display: flex;
       align-items: center;
@@ -308,25 +335,15 @@
     }
     .service-online {
       background: var(--green);
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
       animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
     }
     .service-info h4 { font-size: 0.9rem; margin: 0; }
     .service-info p { color: var(--text3); font-size: 0.78rem; margin: 0; }
-
-    .badge-gold {
-      background: rgba(255, 215, 0, 0.12);
-      color: #ffd700;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      padding: 0.3rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
   </style>
 
   <script>
@@ -342,7 +359,7 @@
 
     function animateValue(el, target) {
       let current = 0;
-      const step = Math.ceil(target / 40);
+      const step = Math.max(1, Math.ceil(target / 50));
       const interval = setInterval(() => {
         current += step;
         if (current >= target) {
@@ -350,11 +367,16 @@
           clearInterval(interval);
         }
         el.textContent = current.toLocaleString('pt-BR');
-      }, 30);
+      }, 25);
     }
 
+    // Stagger stat cards
+    document.querySelectorAll('.stat-card').forEach((card, i) => {
+      card.style.animationDelay = (i * 0.1) + 's';
+      setTimeout(() => card.classList.add('visible'), 200 + i * 100);
+    });
+
     fetch('/api/bot_status').then(r => r.json()).then(data => {
-      const badge = document.querySelector('.nav-brand');
       const heroEmoji = document.getElementById('hero-emoji');
       const heroTitle = document.getElementById('hero-title');
       const heroSub = document.getElementById('hero-sub');
@@ -370,8 +392,7 @@
         heroTitle.textContent = 'Offline';
         heroSub.textContent = 'Verifique novamente em instantes';
         heroTitle.style.color = '#f87171';
-        heroIcon.querySelector('.pulse-ring').style.borderColor = '#ef4444';
-        heroIcon.querySelector('.pulse-ring.delay').style.borderColor = '#ef4444';
+        heroIcon.querySelectorAll('.pulse-ring').forEach(r => r.style.borderColor = '#ef4444');
       }
 
       document.getElementById('stat-version').textContent = data.bot_version || '2.0';
@@ -394,12 +415,13 @@
         document.getElementById('bar-koins').style.width = '85%';
         document.getElementById('bar-commands').style.width = Math.min(100, commands / 100) + '%';
         document.getElementById('bar-achievements').style.width = Math.min(100, achievements / 2) + '%';
-      }, 100);
+      }, 300);
 
       if (data.top_user_id && data.top_user_id !== 'N/A') {
         const card = document.getElementById('top-user-card');
         card.style.display = 'block';
-        document.getElementById('top-avatar').src = data.top_user_avatar || `https://cdn.discordapp.com/embed/avatars/0.png`;
+        card.style.animation = 'fadeInUp 0.5s ease 0.3s both';
+        document.getElementById('top-avatar').src = data.top_user_avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
         document.getElementById('top-user-name').textContent = data.top_user_name || 'User';
         document.getElementById('top-user-koins').textContent = formatKoins(data.top_user_koins || 0) + ' Koins';
       }

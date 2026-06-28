@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=30">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 </head>
 <body>
@@ -33,10 +33,10 @@
     <div id="podium" class="podium-section"></div>
 
     <div class="card" style="overflow: hidden; margin-top: 2rem;">
-      <div style="padding: 1rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border); display: flex; font-size: 0.75rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em;">
+      <div style="padding: 1rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border); display: flex; font-size: 0.72rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;">
         <span style="width: 50px;">#</span>
         <span style="flex: 1;">Jogador</span>
-        <span style="width: 80px; text-align: right;">Conquistas</span>
+        <span style="width: 80px; text-align: right;">🏆</span>
         <span style="width: 100px; text-align: right;">Koins</span>
       </div>
       <div id="leaderboard-list"></div>
@@ -44,14 +44,16 @@
 
     <div id="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;"></div>
 
-    <div id="loading" style="text-align: center; padding: 3rem; color: var(--text3);">Carregando...</div>
+    <div id="loading" style="text-align: center; padding: 3rem; color: var(--text3); font-size: 0.9rem;">
+      <div class="loading-spinner"></div>
+    </div>
 
     <div id="profile-modal" class="modal" style="display:none;">
       <div class="modal-content card">
-        <div style="text-align: center; padding: 1.5rem 1rem;">
-          <img id="modal-avatar" src="" style="width: 88px; height: 88px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 0.8rem; object-fit: cover;">
-          <h3 id="modal-name" style="margin-bottom: 0.2rem;">--</h3>
-          <p style="color: var(--text3); font-size: 0.8rem;" id="modal-id">ID: --</p>
+        <div style="text-align: center; padding: 1.5rem 1rem 1rem;">
+          <img id="modal-avatar" src="" style="width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 0.8rem; object-fit: cover; box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);">
+          <h3 id="modal-name" style="margin-bottom: 0.2rem; font-size: 1.2rem;">--</h3>
+          <p style="color: var(--text3); font-size: 0.78rem;" id="modal-id">ID: --</p>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; padding: 0 1rem 1rem;">
           <div class="modal-stat"><span>Koins</span><h4 id="modal-koins">0</h4></div>
@@ -65,66 +67,125 @@
   </div>
 
   <style>
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .podium-section {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       gap: 1.2rem;
-      min-height: 200px;
+      min-height: 220px;
       padding: 1rem 0;
     }
     .podium-item {
       text-align: center;
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.35s var(--transition);
+      animation: fadeInUp 0.6s ease both;
     }
-    .podium-item:hover { transform: translateY(-6px); }
+    .podium-item:hover { transform: translateY(-8px); }
     .podium-avatar-wrap {
       position: relative;
       margin-bottom: 0.6rem;
+      display: inline-block;
     }
     .podium-avatar {
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid var(--primary);
+      transition: all 0.3s;
     }
-    .podium-avatar.gold { width: 88px; height: 88px; border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-    .podium-avatar.silver { width: 72px; height: 72px; border-color: #c0c0c0; }
-    .podium-avatar.bronze { width: 64px; height: 64px; border-color: #cd7f32; }
+    .podium-item:hover .podium-avatar {
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+    }
+    .podium-avatar.gold {
+      width: 92px;
+      height: 92px;
+      border-color: #ffd700;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    }
+    .podium-item:nth-child(2):hover .podium-avatar.gold {
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+    }
+    .podium-avatar.silver {
+      width: 76px;
+      height: 76px;
+      border-color: #c0c0c0;
+    }
+    .podium-avatar.bronze {
+      width: 66px;
+      height: 66px;
+      border-color: #cd7f32;
+    }
     .podium-medal {
       position: absolute;
-      bottom: -4px;
+      bottom: -6px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
-    .podium-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.15rem; }
-    .podium-koins { font-size: 0.75rem; color: var(--primary-light); font-weight: 600; }
+    .podium-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .podium-koins {
+      font-size: 0.75rem;
+      color: var(--primary-light);
+      font-weight: 600;
+    }
     .podium-bar {
-      width: 110px;
-      border-radius: 12px 12px 0 0;
+      width: 115px;
+      border-radius: 14px 14px 0 0;
       margin-top: 0.6rem;
       display: flex;
       align-items: flex-end;
       justify-content: center;
       padding-bottom: 0.6rem;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 900;
-      transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .podium-bar.gold { background: linear-gradient(180deg, rgba(255,215,0,0.25) 0%, rgba(255,215,0,0.05) 100%); height: 110px; color: #ffd700; }
-    .podium-bar.silver { background: linear-gradient(180deg, rgba(192,192,192,0.2) 0%, rgba(192,192,192,0.05) 100%); height: 85px; color: #c0c0c0; }
-    .podium-bar.bronze { background: linear-gradient(180deg, rgba(205,127,50,0.2) 0%, rgba(205,127,50,0.05) 100%); height: 65px; color: #cd7f32; }
+    .podium-bar.gold {
+      background: linear-gradient(180deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.03) 100%);
+      height: 115px;
+      color: #ffd700;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.08);
+    }
+    .podium-bar.silver {
+      background: linear-gradient(180deg, rgba(192,192,192,0.15) 0%, rgba(192,192,192,0.03) 100%);
+      height: 90px;
+      color: #c0c0c0;
+    }
+    .podium-bar.bronze {
+      background: linear-gradient(180deg, rgba(205,127,50,0.15) 0%, rgba(205,127,50,0.03) 100%);
+      height: 70px;
+      color: #cd7f32;
+    }
 
     .lb-row {
       display: flex;
       align-items: center;
       padding: 0.7rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
+      transition: all 0.25s;
       cursor: pointer;
+      animation: fadeIn 0.4s ease both;
     }
-    .lb-row:hover { background: rgba(139, 92, 246, 0.06); }
+    .lb-row:hover {
+      background: rgba(139, 92, 246, 0.05);
+      transform: translateX(4px);
+    }
     .lb-row:last-child { border-bottom: none; }
     .lb-rank {
       width: 50px;
@@ -133,18 +194,27 @@
       color: var(--text3);
       flex-shrink: 0;
     }
-    .lb-rank.top3 { color: var(--primary-light); font-size: 1rem; }
+    .lb-rank.top3 {
+      color: var(--primary-light);
+      font-size: 1.05rem;
+    }
     .lb-avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       margin-right: 0.8rem;
       flex-shrink: 0;
       object-fit: cover;
+      border: 2px solid transparent;
+      transition: all 0.25s;
+    }
+    .lb-row:hover .lb-avatar {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
     }
     .lb-info { flex: 1; }
     .lb-info h4 { font-size: 0.9rem; font-weight: 600; margin: 0; }
-    .lb-info p { font-size: 0.73rem; color: var(--text3); margin: 0.1rem 0 0; }
+    .lb-info p { font-size: 0.73rem; color: var(--text3); margin: 0.15rem 0 0; }
     .lb-achievements {
       width: 80px;
       text-align: right;
@@ -159,21 +229,23 @@
       font-size: 0.9rem;
     }
 
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 2rem; }
-    .modal-content { max-width: 380px; width: 100%; animation: fadeIn 0.3s ease; }
-    .modal-stat { text-align: center; padding: 0.6rem; background: rgba(15, 10, 26, 0.5); border-radius: 10px; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 2rem; }
+    .modal-content { max-width: 380px; width: 100%; animation: fadeInUp 0.35s ease; }
+    .modal-stat { text-align: center; padding: 0.6rem; background: rgba(10, 7, 20, 0.6); border-radius: 12px; border: 1px solid var(--border); }
     .modal-stat span { color: var(--text3); font-size: 0.73rem; display: block; }
     .modal-stat h4 { font-size: 1rem; margin: 0.2rem 0 0; color: var(--primary-light); }
 
     .page-btn {
-      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border2);
+      width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border2);
       background: transparent; color: var(--text2); cursor: pointer; font-weight: 600;
-      font-family: inherit; transition: all 0.2s;
+      font-family: inherit; transition: all 0.25s; font-size: 0.85rem;
     }
-    .page-btn:hover { border-color: var(--primary); color: var(--primary-light); }
-    .page-btn.active { background: var(--primary); color: white; border-color: transparent; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .page-btn:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(139, 92, 246, 0.05); }
+    .page-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--pink));
+      color: white; border-color: transparent;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
   </style>
 
   <script>
@@ -205,11 +277,12 @@
         }
 
         const list = document.getElementById('leaderboard-list');
-        entries.forEach((e) => {
+        entries.forEach((e, i) => {
           const rank = e.rank;
           const isTop3 = rank <= 3;
           const row = document.createElement('div');
           row.className = 'lb-row';
+          row.style.animationDelay = (i * 0.04) + 's';
           row.onclick = () => openProfile(e);
           row.innerHTML = `
             <span class="lb-rank ${isTop3 ? 'top3' : ''}">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#' + rank}</span>
@@ -226,7 +299,7 @@
 
         renderPagination(data.page, data.pages);
       }).catch(() => {
-        document.getElementById('loading').textContent = 'Erro ao carregar leaderboard';
+        document.getElementById('loading').innerHTML = '<p style="color: var(--text3);">Erro ao carregar leaderboard</p>';
       });
     }
 
@@ -236,13 +309,14 @@
       const medals = ['silver', 'gold', 'bronze'];
       const order = [1, 0, 2];
       const medalEmoji = ['🥈', '🥇', '🥉'];
+      const delays = [0.3, 0, 0.5];
 
       order.forEach((idx, pos) => {
         const e = top3[idx];
         if (!e) return;
         const div = document.createElement('div');
         div.className = 'podium-item';
-        div.style.animationDelay = (pos * 0.15) + 's';
+        div.style.animationDelay = delays[pos] + 's';
         div.onclick = () => openProfile(e);
         div.innerHTML = `
           <div class="podium-avatar-wrap">

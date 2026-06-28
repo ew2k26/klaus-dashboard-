@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Klaus Bot — O Bot Mais Completo do Discord</title>
   <meta name="description" content="Klaus Bot: Economia, Moderação, Diversão, XP System e Dashboard Web. O bot mais completo para seu servidor Discord.">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=30">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <canvas id="particles-canvas"></canvas>
@@ -60,7 +60,7 @@
 
   <section class="stats-bar" id="stats">
     <div class="stat-item">
-      <span class="stat-number" data-count="91">0</span>
+      <span class="stat-number" data-count="94">0</span>
       <span class="stat-label">Comandos</span>
     </div>
     <div class="stat-divider"></div>
@@ -91,24 +91,26 @@
       <div class="feature-card feature-card-large" style="--accent: #8b5cf6">
         <div class="feature-icon">💰</div>
         <h3>Economia Completa</h3>
-        <p>Diário, streak, trabalho, mineração, forja, loja, ranking, perfil e muito mais!</p>
+        <p>Diário com streak progressivo, trabalho, mineração, forja, loja interativa, ranking, perfil e muito mais!</p>
         <div class="feature-tags">
           <span class="tag">/daily</span>
           <span class="tag">/trabalhar</span>
           <span class="tag">/minerar</span>
           <span class="tag">/loja</span>
           <span class="tag">/forjar</span>
+          <span class="tag">/perfil</span>
         </div>
       </div>
 
       <div class="feature-card" style="--accent: #d946ef">
         <div class="feature-icon">🎰</div>
         <h3>Cassino</h3>
-        <p>Roleta, Coinflip, Dados, Blackjack, Loteria e Cases Gacha!</p>
+        <p>Roleta com botões, Coinflip, Dados, Blackjack, Loteria e Cases Gacha!</p>
         <div class="feature-tags">
           <span class="tag">/apostar</span>
           <span class="tag">/blackjack</span>
           <span class="tag">/case</span>
+          <span class="tag">/lottery</span>
         </div>
       </div>
 
@@ -149,11 +151,12 @@
       <div class="feature-card" style="--accent: #3b82f6">
         <div class="feature-icon">🎮</div>
         <h3>Diversão</h3>
-        <p>Truth or Dare, Magic Ball, hug, kiss, ship, batalha, piadas e memes!</p>
+        <p>Truth or Dare com 120+ perguntas, Magic Ball, hug, kiss, ship, batalha, piadas e memes!</p>
         <div class="feature-tags">
           <span class="tag">/tod</span>
           <span class="tag">/magic</span>
           <span class="tag">/ship</span>
+          <span class="tag">/piada</span>
         </div>
       </div>
 
@@ -165,19 +168,21 @@
           <span class="tag">/ban</span>
           <span class="tag">/automod</span>
           <span class="tag">/warn</span>
+          <span class="tag">/mute</span>
         </div>
       </div>
 
       <div class="feature-card feature-card-large" style="--accent: #8b5cf6">
         <div class="feature-icon">⚙️</div>
         <h3>Dashboard Web</h3>
-        <p>Configure boas-vindas, auto cargo, logs, XP, automod e cores pelo site! Tudo em tempo real.</p>
+        <p>Configure boas-vindas, auto cargo, logs, XP, automod, economia e cores pelo site! Tudo em tempo real.</p>
         <div class="feature-tags">
           <span class="tag">Boas-vindas</span>
           <span class="tag">Auto Cargo</span>
           <span class="tag">Logs</span>
           <span class="tag">XP System</span>
           <span class="tag">AutoMod</span>
+          <span class="tag">Economia</span>
           <span class="tag">Cores</span>
         </div>
       </div>
@@ -187,7 +192,7 @@
   <div class="container" id="commands">
     <div class="section-header">
       <span class="section-badge">Comandos</span>
-      <h2>91 Comandos Disponíveis</h2>
+      <h2>94 Comandos Disponíveis</h2>
       <p>Use / para ver todos os comandos no Discord</p>
     </div>
 
@@ -360,7 +365,7 @@
   </footer>
 
   <script>
-    // Particles
+    // Particles with connections
     (function() {
       const canvas = document.getElementById('particles-canvas');
       const ctx = canvas.getContext('2d');
@@ -378,26 +383,30 @@
         constructor() {
           this.x = Math.random() * w;
           this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 0.3;
-          this.vy = (Math.random() - 0.5) * 0.3;
+          this.vx = (Math.random() - 0.5) * 0.25;
+          this.vy = (Math.random() - 0.5) * 0.25;
           this.r = Math.random() * 2 + 0.5;
-          this.alpha = Math.random() * 0.3 + 0.05;
+          this.alpha = Math.random() * 0.25 + 0.05;
+          this.pulse = Math.random() * Math.PI * 2;
+          this.pulseSpeed = Math.random() * 0.02 + 0.005;
         }
         update() {
           this.x += this.vx;
           this.y += this.vy;
+          this.pulse += this.pulseSpeed;
           if (this.x < 0 || this.x > w) this.vx *= -1;
           if (this.y < 0 || this.y > h) this.vy *= -1;
         }
         draw() {
+          const a = this.alpha + Math.sin(this.pulse) * 0.08;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(139, 92, 246, ${this.alpha})`;
+          ctx.fillStyle = `rgba(139, 92, 246, ${a})`;
           ctx.fill();
         }
       }
 
-      for (let i = 0; i < 60; i++) particles.push(new Particle());
+      for (let i = 0; i < 70; i++) particles.push(new Particle());
 
       function animate() {
         ctx.clearRect(0, 0, w, h);
@@ -408,11 +417,12 @@
             const dx = particles[i].x - particles[j].x;
             const dy = particles[i].y - particles[j].y;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 150) {
+            if (dist < 140) {
+              const alpha = 0.04 * (1 - dist / 140);
               ctx.beginPath();
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(139, 92, 246, ${0.05 * (1 - dist / 150)})`;
+              ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
               ctx.lineWidth = 0.5;
               ctx.stroke();
             }
@@ -423,12 +433,12 @@
       animate();
     })();
 
-    // Nav scroll
+    // Nav scroll effect
     window.addEventListener('scroll', () => {
       document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Intersection observer
+    // Intersection observer for animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -441,21 +451,27 @@
       observer.observe(el);
     });
 
-    // Live stats from API
+    // Live stats from API with animated counters
     fetch('/api/stats').then(r => r.json()).then(data => {
       document.querySelectorAll('.stat-number[data-api]').forEach(el => {
         const key = el.dataset.api;
         let val = data[key] || 0;
         const suffix = el.dataset.suffix || '';
+        let displayVal = val;
+
         if (key === 'total_koins') {
-          if (val >= 1e18) val = (val / 1e18).toFixed(1) + 'Qi';
-          else if (val >= 1e15) val = (val / 1e15).toFixed(1) + 'Q';
-          else if (val >= 1e12) val = (val / 1e12).toFixed(1) + 'T';
-          else if (val >= 1e9) val = (val / 1e9).toFixed(1) + 'B';
-          else if (val >= 1e6) val = (val / 1e6).toFixed(1) + 'M';
-          else if (val >= 1e3) val = (val / 1e3).toFixed(1) + 'K';
+          if (val >= 1e18) displayVal = (val / 1e18).toFixed(1) + 'Qi';
+          else if (val >= 1e15) displayVal = (val / 1e15).toFixed(1) + 'Q';
+          else if (val >= 1e12) displayVal = (val / 1e12).toFixed(1) + 'T';
+          else if (val >= 1e9) displayVal = (val / 1e9).toFixed(1) + 'B';
+          else if (val >= 1e6) displayVal = (val / 1e6).toFixed(1) + 'M';
+          else if (val >= 1e3) displayVal = (val / 1e3).toFixed(1) + 'K';
+          else displayVal = val.toLocaleString('pt-BR');
+        } else {
+          displayVal = val.toLocaleString('pt-BR') + suffix;
         }
-        el.textContent = val + suffix;
+
+        el.textContent = displayVal;
       });
     }).catch(() => {});
 
@@ -463,21 +479,21 @@
     document.querySelectorAll('.stat-number[data-count]').forEach(el => {
       const target = parseInt(el.dataset.count);
       const suffix = el.dataset.suffix || '+';
-      const observer2 = new IntersectionObserver((entries) => {
+      const obs = new IntersectionObserver((entries) => {
         entries.forEach(e => {
           if (e.isIntersecting) {
             let current = 0;
-            const step = Math.ceil(target / 50);
+            const step = Math.ceil(target / 45);
             const timer = setInterval(() => {
               current += step;
               if (current >= target) { current = target; clearInterval(timer); }
               el.textContent = current + suffix;
-            }, 30);
-            observer2.unobserve(el);
+            }, 25);
+            obs.unobserve(el);
           }
         });
       }, { threshold: 0.5 });
-      observer2.observe(el);
+      obs.observe(el);
     });
 
     // FAQ toggle

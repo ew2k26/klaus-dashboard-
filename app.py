@@ -449,6 +449,11 @@ def leaderboard_page() -> str:
     return render_template("leaderboard.html")
 
 
+@app.route("/profile")
+def profile_page() -> str:
+    return render_template("profile.html")
+
+
 PROFILE_BACKGROUNDS = {
         "padrao": {"name": "Padrao", "emoji": "⬜", "price": 0, "colors": {"bg": "#0a0a0a", "accent": "#3a3a3a", "border": "#8a8a8a"}, "effects": {"particles": 20, "sparkles": 0, "stripes": False, "grid": False, "glow": 0}},
         "madeira": {"name": "Madeira", "emoji": "🪵", "price": 500, "colors": {"bg": "#0d0805", "accent": "#6b4423", "border": "#b87333"}, "effects": {"particles": 30, "sparkles": 5, "stripes": False, "grid": False, "glow": 1}},

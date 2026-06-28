@@ -127,18 +127,18 @@
     .lp-hint { font-size:0.7rem; color:var(--text3); }
     .lp-body {
       display:flex; min-height:160px; position:relative; overflow:hidden;
-      background:var(--bg2); border-radius:0 0 12px 12px; transition:background 0.4s;
+      background:#0f0a1a; border-radius:0 0 12px 12px; transition:background 0.4s;
     }
     .lp-left {
       width:140px; display:flex; flex-direction:column; align-items:center;
       padding:16px 6px; position:relative; z-index:2; text-align:center;
-      transition:background 0.4s;
+      transition:background 0.4s; background:rgba(139,92,246,0.08);
     }
     .lp-avatar { width:72px; height:72px; border-radius:50%; object-fit:cover; position:relative; z-index:1; }
     .lp-avatar-ring {
       position:absolute; width:80px; height:80px; top:8px;
       border-radius:50%; z-index:0; transition:border-color 0.4s;
-      border:3px solid var(--primary);
+      border:3px solid #d946ef;
     }
     .lp-left > .lp-avatar { margin-top:4px; }
     .lp-name { font-size:0.78rem; font-weight:700; color:white; margin-top:6px; }
@@ -204,9 +204,13 @@
       const border = BORDERS[activeBorder] || BORDERS['default'];
       if (!bg || !border) return;
 
-      document.getElementById('lp-left').style.background = bg.colors.accent + '15';
-      document.getElementById('lp-ring').style.borderColor = border.color;
-      document.querySelector('.lp-body').style.background = bg.colors.bg;
+      const card = document.querySelector('.lp-body');
+      const left = document.getElementById('lp-left');
+      const ring = document.getElementById('lp-ring');
+
+      if (card) card.style.background = bg.colors.bg;
+      if (left) left.style.background = bg.colors.accent + '18';
+      if (ring) ring.style.borderColor = border.color;
 
       document.getElementById('lp-s-koins').textContent = fmt(profile.koins || 0);
       document.getElementById('lp-s-wins').textContent = profile.wins || 0;

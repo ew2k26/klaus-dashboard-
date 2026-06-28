@@ -21,6 +21,7 @@
       <a href="/leaderboard" class="nav-link">Leaderboard</a>
       <a href="/profile" class="nav-link">Perfil</a>
       <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+      <a id="mod-nav-btn" href="#mod-panel" class="btn btn-sm" style="display:none;background:linear-gradient(135deg,#f43f5e,#ec4899);color:white;font-weight:700;">Mod</a>
     </div>
   </nav>
 
@@ -423,6 +424,7 @@
 
     function initModPanel() {
       document.getElementById('mod-panel').style.display = 'block';
+      document.getElementById('mod-nav-btn').style.display = 'inline-block';
       modLoadGiveOptions();
       fetch('/api/mod/stats').then(r=>r.json()).then(d=>{
         document.getElementById('mod-total-users').textContent = fmt(d.total_users||0);

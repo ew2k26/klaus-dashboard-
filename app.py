@@ -342,9 +342,10 @@ def api_leaderboard_full() -> Any:
                 if remote:
                     username = username or remote.get("username", "")
                     av_hash = av_hash or remote.get("avatar", "")
+                    gn = remote.get("global_name", "")
                     db["usuarios"].update_one(
                         {"discord_id": int(uid)},
-                        {"$set": {"username": username, "avatar": av_hash}},
+                        {"$set": {"username": username, "avatar": av_hash, "global_name": gn}},
                     )
 
             entries.append({
@@ -464,6 +465,26 @@ PROFILE_BACKGROUNDS = {
     "arctic": {"name": "Ártico", "emoji": "❄️", "price": 30000, "colors": {"bg": "#0a1520", "accent": "#0ea5e9", "border": "#7dd3fc"}},
     "phantom": {"name": "Fantasma", "emoji": "👻", "price": 40000, "colors": {"bg": "#100a1a", "accent": "#7c3aed", "border": "#a78bfa"}},
     "toxic": {"name": "Tóxico", "emoji": "☢️", "price": 60000, "colors": {"bg": "#0a1a05", "accent": "#65a30d", "border": "#a3e635"}},
+    "sakura": {"name": "Sakura", "emoji": "🌸", "price": 35000, "colors": {"bg": "#1a0a15", "accent": "#ec4899", "border": "#f9a8d4"}},
+    "cyberpunk": {"name": "Cyberpunk", "emoji": "🤖", "price": 80000, "colors": {"bg": "#0a0a1e", "accent": "#06b6d4", "border": "#f43f5e"}},
+    "aurora": {"name": "Aurora", "emoji": "🌌", "price": 45000, "colors": {"bg": "#050f1a", "accent": "#10b981", "border": "#06b6d4"}},
+    "volcanic": {"name": "Vulcânico", "emoji": "🌋", "price": 55000, "colors": {"bg": "#1a0805", "accent": "#ea580c", "border": "#f59e0b"}},
+    "cosmic": {"name": "Cósmico", "emoji": "🪐", "price": 70000, "colors": {"bg": "#0a0520", "accent": "#8b5cf6", "border": "#f472b6"}},
+    "emerald": {"name": "Esmeralda", "emoji": "💚", "price": 30000, "colors": {"bg": "#051a0a", "accent": "#16a34a", "border": "#4ade80"}},
+    "blood_moon": {"name": "Lua de Sangue", "emoji": "🌑", "price": 90000, "colors": {"bg": "#150505", "accent": "#991b1b", "border": "#dc2626"}},
+    "starlight": {"name": "Luz das Estrelas", "emoji": "⭐", "price": 40000, "colors": {"bg": "#0a0a15", "accent": "#e2e8f0", "border": "#f8fafc"}},
+    "candy": {"name": "Candy", "emoji": "🍬", "price": 25000, "colors": {"bg": "#1a0a20", "accent": "#d946ef", "border": "#f0abfc"}},
+    "deep_ocean": {"name": "Oceano Profundo", "emoji": "🐋", "price": 50000, "colors": {"bg": "#020617", "accent": "#0284c7", "border": "#0ea5e9"}},
+    "sakura_snow": {"name": "Neve Sakura", "emoji": "🏵️", "price": 65000, "colors": {"bg": "#1a0a18", "accent": "#f472b6", "border": "#fda4af"}},
+    "royal_purple": {"name": "Roxo Real", "emoji": "💎", "price": 55000, "colors": {"bg": "#0f0520", "accent": "#7c3aed", "border": "#a78bfa"}},
+    "neon_pink": {"name": "Neon Rosa", "emoji": "💗", "price": 45000, "colors": {"bg": "#1a0515", "accent": "#ec4899", "border": "#fb7185"}},
+    "obsidian": {"name": "Obsidiana", "emoji": "🖤", "price": 35000, "colors": {"bg": "#0a0a0a", "accent": "#525252", "border": "#737373"}},
+    "tropical": {"name": "Tropical", "emoji": "🌴", "price": 30000, "colors": {"bg": "#0a1a0f", "accent": "#22c55e", "border": "#facc15"}},
+    "ice_storm": {"name": "Tempestade de Gelo", "emoji": "🧊", "price": 60000, "colors": {"bg": "#050f1a", "accent": "#38bdf8", "border": "#e0f2fe"}},
+    "dragon": {"name": "Dragão", "emoji": "🐉", "price": 100000, "colors": {"bg": "#150a05", "accent": "#f97316", "border": "#ef4444"}},
+    "matrix": {"name": "Matrix", "emoji": "🟩", "price": 75000, "colors": {"bg": "#000a00", "accent": "#22c55e", "border": "#4ade80"}},
+    "void": {"name": "Vazio", "emoji": "🕳️", "price": 120000, "colors": {"bg": "#000000", "accent": "#18181b", "border": "#27272a"}},
+    "rainbow": {"name": "Arco-Íris", "emoji": "🌈", "price": 150000, "colors": {"bg": "#0f0a1a", "accent": "#f43f5e", "border": "#06b6d4"}},
 }
 
 PROFILE_BORDERS = {
@@ -479,6 +500,22 @@ PROFILE_BORDERS = {
     "ice": {"name": "Gelo", "emoji": "❄️", "price": 30000, "color": "#7dd3fc"},
     "galaxy": {"name": "Galáxia", "emoji": "🌌", "price": 40000, "color": "#c084fc"},
     "shadow": {"name": "Shadow", "emoji": "🖤", "price": 60000, "color": "#525252"},
+    "neon_pink": {"name": "Neon Rosa", "emoji": "💗", "price": 25000, "color": "#f472b6"},
+    "neon_cyan": {"name": "Neon Cyan", "emoji": "🩵", "price": 25000, "color": "#22d3ee"},
+    "cherry": {"name": "Cereja", "emoji": "🍒", "price": 20000, "color": "#e11d48"},
+    "blood": {"name": "Sangue", "emoji": "🩸", "price": 35000, "color": "#991b1b"},
+    "platinum": {"name": "Platina", "emoji": "⚪", "price": 45000, "color": "#e2e8f0"},
+    "obsidian": {"name": "Obsidiana", "emoji": "🖤", "price": 30000, "color": "#18181b"},
+    "neon_green": {"name": "Neon Verde", "emoji": "💚", "price": 25000, "color": "#4ade80"},
+    "neon_yellow": {"name": "Neon Amarelo", "emoji": "💛", "price": 25000, "color": "#facc15"},
+    "chrome": {"name": "Cromado", "emoji": "🪞", "price": 50000, "color": "#d4d4d8"},
+    "sakura": {"name": "Sakura", "emoji": "🌸", "price": 20000, "color": "#ec4899"},
+    "ocean": {"name": "Oceano", "emoji": "🌊", "price": 20000, "color": "#0ea5e9"},
+    "toxic": {"name": "Tóxico", "emoji": "☢️", "price": 40000, "color": "#a3e635"},
+    "royal": {"name": "Real", "emoji": "👑", "price": 35000, "color": "#facc15"},
+    "dragon": {"name": "Dragão", "emoji": "🐉", "price": 55000, "color": "#f97316"},
+    "void": {"name": "Vazio", "emoji": "🕳️", "price": 70000, "color": "#09090b"},
+    "cosmic": {"name": "Cósmico", "emoji": "🪐", "price": 45000, "color": "#c084fc"},
 }
 
 
@@ -494,6 +531,7 @@ def api_profile_config(user_id: str) -> Any:
         return jsonify({
             "discord_id": str(doc.get("discord_id", "")),
             "username": doc.get("username", f"User#{user_id[-4:]}"),
+            "global_name": doc.get("global_name", ""),
             "avatar_url": avatar_url,
             "koins": doc.get("koins", 0),
             "wins": doc.get("wins", 0),

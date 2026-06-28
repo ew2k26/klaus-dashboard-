@@ -363,7 +363,7 @@
       activeBg = data.background || 'default';
       activeBorder = data.border || 'default';
       document.getElementById('koins-badge').textContent = fmt(data.koins) + ' Koins';
-      document.getElementById('lp-name').textContent = data.username;
+      document.getElementById('lp-name').textContent = data.global_name || data.username;
       document.getElementById('lp-avatar').src = data.avatar_url;
       document.getElementById('lp-badge').textContent = 'KLAUS';
       document.getElementById('lp-pos').textContent = `#${data.rank || '?'} no ranking`;

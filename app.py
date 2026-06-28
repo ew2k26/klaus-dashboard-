@@ -853,3 +853,149 @@ PROFILE_BACKGROUNDS = {
         "big_crunch": {"name": "Big Crunch", "emoji": "💥", "price": 550000, "colors": {"bg": "#0a0505", "accent": "#3a1a1a", "border": "#ff4444"}, "effects": {"particles": 150, "sparkles": 50, "stripes": True, "grid": True, "glow": 3, "type": "embers", "intensity": 3}},
         "licor_estelar": {"name": "Licor Estelar", "emoji": "🍸", "price": 600000, "colors": {"bg": "#0a0510", "accent": "#3a1a5a", "border": "#ff1493"}, "effects": {"particles": 150, "sparkles": 50, "stripes": True, "grid": True, "glow": 3, "type": "nebula", "intensity": 3}},
     }
+
+
+OWNER_ID = "1230185414808047666"
+
+
+def mod_required(f: Any) -> Any:
+    @wraps(f)
+    def decorated(*args: Any, **kwargs: Any) -> Any:
+        token = request.cookies.get("token")
+        if not token:
+            return jsonify({"error": "unauthorized"}), 401
+        user = fetch_user(token)
+        if not user or str(user.get("id", "")) != OWNER_ID:
+            return jsonify({"error": "forbidden"}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+
+@app.route("/api/mod/stats")
+@mod_required
+def mod_stats() -> Any:
+    try:
+        db = get_db()
+        total_users = db["usuarios"].count_documents({})
+        pipeline = [{"$group": {"_id": None, "total": {"$sum": "$koins"}, "cmds": {"$sum": "$commands_used"}}}]
+        result = list(db["usuarios"].aggregate(pipeline))
+        total_koins = result[0]["total"] if result else 0
+        total_cmds = result[0]["cmds"] if result else 0
+        return jsonify({"total_users": total_users, "total_koins": total_koins, "total_commands": total_cmds})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/search")
+@mod_required
+def mod_search() -> Any:
+    try:
+        db = get_db()
+        q = request.args.get("q", "").strip()
+        if not q:
+            return jsonify({"error": "query vazia"}), 400
+        doc = None
+        if q.isdigit():
+            doc = db["usuarios"].find_one({"discord_id": int(q)})
+        if not doc:
+            doc = db["usuarios"].find_one({"username": {"$regex": q, "$options": "i"}})
+        if not doc:
+            return jsonify({"error": "usuario nao encontrado"})
+        uid = str(doc.get("discord_id", ""))
+        av = doc.get("avatar", "")
+        return jsonify({
+            "discord_id": uid,
+            "username": doc.get("username", "Unknown"),
+            "avatar_url": avatar_url(uid, av),
+            "koins": doc.get("koins", 0),
+            "wins": doc.get("wins", 0),
+            "losses": doc.get("losses", 0),
+            "commands_used": doc.get("commands_used", 0),
+            "daily_streak": doc.get("daily_streak", 0),
+            "background": doc.get("profile_background", "padrao"),
+            "border": doc.get("profile_border", "default"),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/set_koins", methods=["POST"])
+@mod_required
+def mod_set_koins() -> Any:
+    try:
+        db = get_db()
+        data = request.get_json(force=True)
+        user_id = data.get("user_id", "").strip()
+        koins = int(data.get("koins", 0))
+        if not user_id or not user_id.isdigit():
+            return jsonify({"error": "ID invalido"}), 400
+        db["usuarios"].update_one({"discord_id": int(user_id)}, {"$set": {"koins": koins}}, upsert=True)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/add_koins", methods=["POST"])
+@mod_required
+def mod_add_koins() -> Any:
+    try:
+        db = get_db()
+        data = request.get_json(force=True)
+        user_id = data.get("user_id", "").strip()
+        koins = int(data.get("koins", 0))
+        if not user_id or not user_id.isdigit():
+            return jsonify({"error": "ID invalido"}), 400
+        db["usuarios"].update_one({"discord_id": int(user_id)}, {"$inc": {"koins": koins}}, upsert=True)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/give_item", methods=["POST"])
+@mod_required
+def mod_give_item() -> Any:
+    try:
+        db = get_db()
+        data = request.get_json(force=True)
+        user_id = data.get("user_id", "").strip()
+        item_type = data.get("type")
+        key = data.get("key")
+        if not user_id or not user_id.isdigit():
+            return jsonify({"error": "ID invalido"}), 400
+        if item_type not in ("backgrounds", "borders"):
+            return jsonify({"error": "tipo invalido"}), 400
+        field = "purchased_backgrounds" if item_type == "backgrounds" else "purchased_borders"
+        db["usuarios"].update_one(
+            {"discord_id": int(user_id)},
+            {"$addToSet": {field: key}},
+            upsert=True,
+        )
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/users")
+@mod_required
+def mod_users() -> Any:
+    try:
+        db = get_db()
+        page = int(request.args.get("page", 1))
+        per_page = 20
+        skip = (page - 1) * per_page
+        total = db["usuarios"].count_documents({})
+        pages = max(1, (total + per_page - 1) // per_page)
+        cursor = db["usuarios"].find().sort("koins", -1).skip(skip).limit(per_page)
+        users = []
+        for doc in cursor:
+            uid = str(doc.get("discord_id", ""))
+            av = doc.get("avatar", "")
+            users.append({
+                "discord_id": uid,
+                "username": doc.get("username", "Unknown"),
+                "avatar_url": avatar_url(uid, av),
+                "koins": doc.get("koins", 0),
+            })
+        return jsonify({"users": users, "total": total, "page": page, "pages": pages})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

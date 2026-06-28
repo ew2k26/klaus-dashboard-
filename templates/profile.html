@@ -69,6 +69,70 @@
         <div class="shop-grid" id="border-grid"></div>
       </div>
     </div>
+
+    <!-- MOD PANEL (only for owner) -->
+    <div id="mod-panel" style="display:none; margin-top:2rem;">
+      <div class="section-header" style="margin-bottom:1.5rem">
+        <h2 style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Painel Mod</span>
+          <span style="font-size:0.7rem;background:rgba(244,63,94,0.15);color:#f43f5e;padding:3px 10px;border-radius:20px;border:1px solid rgba(244,63,94,0.2);-webkit-text-fill-color:#f43f5e;">OWNER</span>
+        </h2>
+        <p style="color:var(--text3);font-size:0.85rem;">Gerenciar usuarios e dados do bot</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="mod-stats" id="mod-stats">
+        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-users">-</div><div class="mod-stat-lbl">Usuarios</div></div>
+        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-koins">-</div><div class="mod-stat-lbl">Koins Total</div></div>
+        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-commands">-</div><div class="mod-stat-lbl">Comandos</div></div>
+      </div>
+
+      <!-- Search -->
+      <div class="mod-card">
+        <h3 style="margin-bottom:1rem;">Buscar Usuario</h3>
+        <div style="display:flex;gap:0.5rem;">
+          <input type="text" id="mod-search" placeholder="ID do Discord ou username..." style="flex:1;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          <button class="mod-btn mod-btn-primary" onclick="modSearchUser()">Buscar</button>
+        </div>
+        <div id="mod-search-result" style="margin-top:1rem;"></div>
+      </div>
+
+      <!-- Edit Koins -->
+      <div class="mod-card">
+        <h3 style="margin-bottom:1rem;">Editar Koins</h3>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <input type="text" id="mod-edit-id" placeholder="ID do Discord" style="width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          <input type="number" id="mod-edit-koins" placeholder="Novos koins" style="width:150px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          <button class="mod-btn mod-btn-green" onclick="modSetKoins()">Definir</button>
+          <button class="mod-btn mod-btn-yellow" onclick="modAddKoins()">Adicionar</button>
+        </div>
+      </div>
+
+      <!-- Give Items -->
+      <div class="mod-card">
+        <h3 style="margin-bottom:1rem;">Dar Itens</h3>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <input type="text" id="mod-give-id" placeholder="ID do Discord" style="width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          <select id="mod-give-type" style="padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+            <option value="backgrounds">Fundo</option>
+            <option value="borders">Borda</option>
+          </select>
+          <select id="mod-give-key" style="flex:1;min-width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          </select>
+          <button class="mod-btn mod-btn-purple" onclick="modGiveItem()">Dar Item</button>
+        </div>
+      </div>
+
+      <!-- Users List -->
+      <div class="mod-card">
+        <h3 style="margin-bottom:1rem;">Todos os Usuarios</h3>
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+          <button class="mod-btn mod-btn-primary" onclick="modLoadUsers(1)">Carregar</button>
+        </div>
+        <div id="mod-users-list"></div>
+        <div id="mod-users-pagination" style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;"></div>
+      </div>
+    </div>
   </div>
 
   <div id="alert-box"></div>
@@ -144,6 +208,39 @@
       box-shadow:0 4px 20px rgba(139,92,246,0.3);
     }
     .confirm-ok:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(139,92,246,0.4); }
+
+    .mod-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .mod-stat-card {
+      background:linear-gradient(135deg,rgba(15,10,30,0.8),rgba(20,15,35,0.8));
+      border:1px solid rgba(244,63,94,0.15); border-radius:14px; padding:1.2rem; text-align:center;
+    }
+    .mod-stat-val { font-size:1.6rem; font-weight:800; background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    .mod-stat-lbl { font-size:0.75rem; color:var(--text3); margin-top:0.3rem; }
+    .mod-card {
+      background:linear-gradient(135deg,rgba(15,10,30,0.8),rgba(20,15,35,0.8));
+      border:1px solid rgba(244,63,94,0.12); border-radius:16px; padding:1.5rem; margin-bottom:1.2rem;
+    }
+    .mod-card h3 { margin:0; font-size:1rem; color:var(--text1); }
+    .mod-btn {
+      padding:0.65rem 1.2rem; border-radius:10px; border:none; font-size:0.8rem;
+      font-weight:700; cursor:pointer; transition:all 0.2s; font-family:inherit; white-space:nowrap;
+    }
+    .mod-btn:hover { transform:translateY(-1px); }
+    .mod-btn-primary { background:linear-gradient(135deg,#f43f5e,#ec4899); color:white; }
+    .mod-btn-green { background:linear-gradient(135deg,#22c55e,#16a34a); color:white; }
+    .mod-btn-yellow { background:linear-gradient(135deg,#f59e0b,#d97706); color:white; }
+    .mod-btn-purple { background:linear-gradient(135deg,var(--primary),var(--pink)); color:white; }
+    .mod-user-row {
+      display:flex; align-items:center; gap:0.8rem; padding:0.8rem 1rem;
+      background:rgba(10,7,20,0.4); border-radius:10px; margin-bottom:0.5rem;
+      border:1px solid rgba(255,255,255,0.04); transition:all 0.2s;
+    }
+    .mod-user-row:hover { border-color:rgba(244,63,94,0.2); background:rgba(10,7,20,0.6); }
+    .mod-user-avatar { width:36px; height:36px; border-radius:50%; }
+    .mod-user-info { flex:1; }
+    .mod-user-name { font-weight:700; font-size:0.85rem; }
+    .mod-user-id { font-size:0.7rem; color:var(--text3); }
+    .mod-user-koins { font-weight:700; color:#ffd700; font-size:0.85rem; }
   </style>
 
   <script>
@@ -316,7 +413,151 @@
       document.getElementById('koins-badge').textContent = fmt(data.koins) + ' Koins';
       renderShop();
       loadProfileImage();
+      if (USER_ID === '1230185414808047666') initModPanel();
     });
+
+    /* ═══════════════════════════════════════════════════════════
+       MOD PANEL
+       ═══════════════════════════════════════════════════════════ */
+    const OWNER_ID = '1230185414808047666';
+
+    function initModPanel() {
+      document.getElementById('mod-panel').style.display = 'block';
+      modLoadGiveOptions();
+      fetch('/api/mod/stats').then(r=>r.json()).then(d=>{
+        document.getElementById('mod-total-users').textContent = fmt(d.total_users||0);
+        document.getElementById('mod-total-koins').textContent = fmt(d.total_koins||0);
+        document.getElementById('mod-total-commands').textContent = fmt(d.total_commands||0);
+      }).catch(()=>{});
+    }
+
+    function modLoadGiveOptions() {
+      const sel = document.getElementById('mod-give-key');
+      sel.innerHTML = '';
+      const updateOpts = () => {
+        const type = document.getElementById('mod-give-type').value;
+        const items = type === 'backgrounds' ? BGS : BORDERS;
+        sel.innerHTML = '';
+        for (const [k,v] of Object.entries(items)) {
+          const o = document.createElement('option');
+          o.value = k; o.textContent = `${v.emoji} ${v.name}`;
+          sel.appendChild(o);
+        }
+      };
+      document.getElementById('mod-give-type').onchange = updateOpts;
+      updateOpts();
+    }
+
+    async function modSearchUser() {
+      const q = document.getElementById('mod-search').value.trim();
+      if (!q) return;
+      const el = document.getElementById('mod-search-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;">Buscando...</div>';
+      try {
+        const r = await fetch(`/api/mod/search?q=${encodeURIComponent(q)}`);
+        const data = await r.json();
+        if (data.error) { el.innerHTML = `<div style="color:#f43f5e;font-size:0.85rem;">${data.error}</div>`; return; }
+        el.innerHTML = `
+          <div class="mod-user-row">
+            <img class="mod-user-avatar" src="${data.avatar_url || ''}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt="">
+            <div class="mod-user-info">
+              <div class="mod-user-name">${data.username || 'Unknown'} <span style="color:var(--text3);font-weight:400;">#${(data.discord_id||'').slice(-4)}</span></div>
+              <div class="mod-user-id">${data.discord_id}</div>
+            </div>
+            <div class="mod-user-koins">${fmt(data.koins)} K</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:0.78rem;color:var(--text3);">BG: <b style="color:var(--text1);">${data.background || 'padrao'}</b></span>
+            <span style="font-size:0.78rem;color:var(--text3);">Border: <b style="color:var(--text1);">${data.border || 'default'}</b></span>
+            <span style="font-size:0.78rem;color:var(--text3);">Streak: <b style="color:var(--text1);">${data.daily_streak || 0}</b></span>
+            <span style="font-size:0.78rem;color:var(--text3);">Cmds: <b style="color:var(--text1);">${data.commands_used || 0}</b></span>
+            <span style="font-size:0.78rem;color:var(--text3);">W/L: <b style="color:#22c55e;">${data.wins||0}</b>/<b style="color:#f43f5e;">${data.losses||0}</b></span>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;">
+            <button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="document.getElementById('mod-edit-id').value='${data.discord_id}';document.getElementById('mod-edit-id').scrollIntoView({behavior:'smooth'})">Editar Koins</button>
+            <button class="mod-btn mod-btn-purple" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="document.getElementById('mod-give-id').value='${data.discord_id}';document.getElementById('mod-give-id').scrollIntoView({behavior:'smooth'})">Dar Item</button>
+          </div>`;
+      } catch(e) {
+        el.innerHTML = '<div style="color:#f43f5e;font-size:0.85rem;">Erro de conexao</div>';
+      }
+    }
+
+    async function modSetKoins() {
+      const id = document.getElementById('mod-edit-id').value.trim();
+      const koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlert('Preencha ID e koins', 'error'); return; }
+      const confirmed = await showConfirm('Alterar Koins', `Definir <b>${fmt(koins)} koins</b> para <b>${id}</b>?`, '💰');
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/set_koins', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, koins}) });
+        const d = await r.json();
+        if (d.ok) showAlert('Koins atualizados!', 'success');
+        else showAlert(d.error || 'Erro', 'error');
+      } catch(e) { showAlert('Erro de conexao', 'error'); }
+    }
+
+    async function modAddKoins() {
+      const id = document.getElementById('mod-edit-id').value.trim();
+      const koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlert('Preencha ID e koins', 'error'); return; }
+      const confirmed = await showConfirm('Adicionar Koins', `Adicionar <b>${fmt(koins)} koins</b> para <b>${id}</b>?`, '💰');
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/add_koins', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, koins}) });
+        const d = await r.json();
+        if (d.ok) showAlert('Koins adicionados!', 'success');
+        else showAlert(d.error || 'Erro', 'error');
+      } catch(e) { showAlert('Erro de conexao', 'error'); }
+    }
+
+    async function modGiveItem() {
+      const id = document.getElementById('mod-give-id').value.trim();
+      const type = document.getElementById('mod-give-type').value;
+      const key = document.getElementById('mod-give-key').value;
+      if (!id || !key) { showAlert('Preencha ID e selecione item', 'error'); return; }
+      const items = type === 'backgrounds' ? BGS : BORDERS;
+      const item = items[key];
+      const confirmed = await showConfirm('Dar Item', `Dar <b>${item.emoji} ${item.name}</b> para <b>${id}</b>?`, item.emoji);
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/give_item', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, type, key}) });
+        const d = await r.json();
+        if (d.ok) showAlert('Item dado!', 'success');
+        else showAlert(d.error || 'Erro', 'error');
+      } catch(e) { showAlert('Erro de conexao', 'error'); }
+    }
+
+    let modUsersPage = 1;
+    async function modLoadUsers(page) {
+      modUsersPage = page || 1;
+      const el = document.getElementById('mod-users-list');
+      el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;">Carregando...</div>';
+      try {
+        const r = await fetch(`/api/mod/users?page=${modUsersPage}`);
+        const data = await r.json();
+        if (data.error) { el.innerHTML = `<div style="color:#f43f5e;">${data.error}</div>`; return; }
+        el.innerHTML = '';
+        for (const u of (data.users || [])) {
+          const row = document.createElement('div');
+          row.className = 'mod-user-row';
+          row.innerHTML = `
+            <img class="mod-user-avatar" src="${u.avatar_url || ''}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt="">
+            <div class="mod-user-info">
+              <div class="mod-user-name">${u.username || 'Unknown'}</div>
+              <div class="mod-user-id">${u.discord_id}</div>
+            </div>
+            <div class="mod-user-koins">${fmt(u.koins)} K</div>`;
+          el.appendChild(row);
+        }
+        const pag = document.getElementById('mod-users-pagination');
+        pag.innerHTML = '';
+        if (data.pages > 1) {
+          if (modUsersPage > 1) pag.innerHTML += `<button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="modLoadUsers(${modUsersPage-1})">Anterior</button>`;
+          pag.innerHTML += `<span style="color:var(--text3);font-size:0.8rem;padding:0.4rem;">Pagina ${modUsersPage}/${data.pages}</span>`;
+          if (modUsersPage < data.pages) pag.innerHTML += `<button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="modLoadUsers(${modUsersPage+1})">Proxima</button>`;
+        }
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e;">Erro de conexao</div>'; }
+    }
   </script>
 </body>
 </html>

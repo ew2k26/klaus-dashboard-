@@ -871,6 +871,29 @@ def mod_required(f: Any) -> Any:
     return decorated
 
 
+def broadcast_allowed(f: Any) -> Any:
+    @wraps(f)
+    def decorated(*args: Any, **kwargs: Any) -> Any:
+        token = request.cookies.get("token")
+        if not token:
+            return jsonify({"error": "unauthorized"}), 401
+        user = fetch_user(token)
+        if not user:
+            return jsonify({"error": "forbidden"}), 403
+        uid = str(user.get("id", ""))
+        if uid == OWNER_ID:
+            return f(*args, **kwargs)
+        guilds = user.get("guilds", [])
+        has_perm = any(
+            g.get("permissions", 0) & 0x20 == 0x20
+            for g in guilds
+        )
+        if not has_perm:
+            return jsonify({"error": "precisa de permissão Manage Server"}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+
 @app.route("/api/mod/stats")
 @mod_required
 def mod_stats() -> Any:
@@ -1064,27 +1087,32 @@ def mod_reset_user() -> Any:
 
 
 @app.route("/api/mod/broadcast", methods=["POST"])
-@mod_required
+@broadcast_allowed
 def mod_broadcast() -> Any:
     try:
         db = get_db()
         data = request.get_json(force=True)
         message = data.get("message", "").strip()
+        bc_channel = data.get("broadcast_channel", "").strip()
         if not message:
             return jsonify({"error": "mensagem vazia"}), 400
+        token = request.cookies.get("token")
+        user = fetch_user(token) if token else None
+        sent_by = int(user.get("id", 0)) if user else 0
+        channel_id = int(bc_channel) if bc_channel and bc_channel.isdigit() else None
         db["broadcasts"].insert_one({
             "message": message,
-            "from": "owner",
-            "active": True,
+            "sent_by": sent_by,
+            "broadcast_channel": channel_id,
+            "pending": True,
         })
-        count = db["usuarios"].count_documents({})
-        return jsonify({"ok": True, "users_reached": count})
+        return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/mod/get_broadcasts")
-@mod_required
+@broadcast_allowed
 def mod_get_broadcasts() -> Any:
     try:
         db = get_db()
@@ -1093,7 +1121,9 @@ def mod_get_broadcasts() -> Any:
         for b in broadcasts:
             result.append({
                 "message": b.get("message", ""),
-                "active": b.get("active", True),
+                "pending": b.get("pending", False),
+                "sent_by": b.get("sent_by", 0),
+                "broadcast_channel": b.get("broadcast_channel"),
                 "id": str(b.get("_id", "")),
             })
         return jsonify({"broadcasts": result})

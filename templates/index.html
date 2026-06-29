@@ -767,13 +767,15 @@
 
     async function modBroadcast() {
       var msg = document.getElementById('mod-broadcast-msg').value.trim();
+      var ch = document.getElementById('mod-broadcast-channel').value.trim();
       if (!msg) { showAlertMod('Escreva uma mensagem', 'error'); return; }
-      var c = await showConfirmMod('Enviar Broadcast', 'Enviar mensagem para <b>todos os usuarios</b> do bot?', '\uD83D\uDCE2');
+      var target = ch ? 'canal <b>' + ch + '</b>' : '<b>TODOS</b> os canais de TODOS os servidores';
+      var c = await showConfirmMod('Enviar Broadcast', 'Enviar mensagem para ' + target + '?', '\uD83D\uDCE2');
       if (!c) return;
       try {
-        var r = await fetch('/api/mod/broadcast', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+        var r = await fetch('/api/mod/broadcast', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,broadcast_channel:ch})});
         var d = await r.json();
-        if (d.ok) { showAlertMod('Broadcast enviado para ' + d.users_reached + ' usuarios!', 'success'); document.getElementById('mod-broadcast-msg').value = ''; }
+        if (d.ok) { showAlertMod('Broadcast enviado!', 'success'); document.getElementById('mod-broadcast-msg').value = ''; document.getElementById('mod-broadcast-channel').value = ''; }
         else showAlertMod(d.error||'Erro','error');
       } catch(e) { showAlertMod('Erro de conexao','error'); }
     }
@@ -788,7 +790,10 @@
         if (!d.broadcasts || d.broadcasts.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;">Nenhum broadcast enviado</div>'; return; }
         var html = '';
         for (var b of d.broadcasts) {
-          html += '<div class="mod-user-row"><div class="mod-user-info"><div class="mod-user-name" style="white-space:normal;">' + b.message + '</div><div class="mod-user-id">Status: <span style="color:' + (b.active?'#22c55e':'#f43f5e') + ';">' + (b.active?'Ativo':'Inativo') + '</span></div></div></div>';
+          var statusColor = b.pending ? '#f59e0b' : '#22c55e';
+          var statusText = b.pending ? 'Pendente' : 'Enviado';
+          var target = b.broadcast_channel ? 'Canal: ' + b.broadcast_channel : 'Todos os canais';
+          html += '<div class="mod-user-row"><div class="mod-user-info"><div class="mod-user-name" style="white-space:normal;">' + b.message + '</div><div class="mod-user-id" style="display:flex;gap:1rem;flex-wrap:wrap;"><span style="color:' + statusColor + ';">' + statusText + '</span><span>' + target + '</span><span>ID: ' + b.sent_by + '</span></div></div></div>';
         }
         el.innerHTML = html;
       } catch(e) { el.innerHTML = '<div style="color:#f43f5e;">Erro de conexao</div>'; }
@@ -973,7 +978,10 @@
     <div class="mod-card">
       <h3 style="margin-bottom:1rem;">Broadcast</h3>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
-        <textarea id="mod-broadcast-msg" placeholder="Mensagem para todos os usuarios..." rows="3" style="flex:1;min-width:250px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;resize:vertical;"></textarea>
+        <textarea id="mod-broadcast-msg" placeholder="Mensagem para todos os servidores..." rows="3" style="flex:1;min-width:250px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+        <input type="text" id="mod-broadcast-channel" placeholder="ID do canal (opcional - vazio = todos)" style="flex:1;min-width:250px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
       </div>
       <div style="display:flex;gap:0.5rem;align-items:center;">
         <button class="mod-btn mod-btn-primary" onclick="modBroadcast()">Enviar Broadcast</button>

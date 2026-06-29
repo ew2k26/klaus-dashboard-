@@ -29,6 +29,9 @@
       <a href="#faq" class="nav-link">FAQ</a>
       {% if user %}
         <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+        {% if user.id == '1230185414808047666' %}
+          <a href="#mod-panel" class="btn btn-sm" style="background:linear-gradient(135deg,#f43f5e,#ec4899);color:white;font-weight:700;">Mod</a>
+        {% endif %}
       {% else %}
         <a href="/login" class="btn btn-discord btn-sm">
           <svg width="20" height="15" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:6px"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.4.2a.2.2 0 0 0-.2.1 40.8 40.8 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A27 27 0 0 0 25.4.3a.2.2 0 0 0-.2-.1A58.4 58.4 0 0 0 10.5 4.9a.2.2 0 0 0-.1.1C3.7 15.1 1.8 25.1 2.7 35a.2.2 0 0 0 .1.1 58.7 58.7 0 0 0 17.7 9 .2.2 0 0 0 .2-.1 42 42 0 0 0 3.6-5.9.2.2 0 0 0-.1-.3 38.7 38.7 0 0 1-5.5-2.6.2.2 0 0 1 0-.4c.4-.3.7-.6 1.1-.9a.2.2 0 0 1 .2 0c11.5 5.3 24 5.3 35.4 0a.2.2 0 0 1 .2 0l1.1.9a.2.2 0 0 1 0 .4c-1.8 1-3.6 1.8-5.5 2.6a.2.2 0 0 0-.1.3 47.2 47.2 0 0 0 3.7 5.9.2.2 0 0 0 .2.1 58.5 58.5 0 0 0 17.7-9 .2.2 0 0 0 .1-.1c1.1-11.4-.6-21.3-4.7-30a.2.2 0 0 0-.1-.1zM23.7 29c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1-2.8 7.1-6.4 7.1zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1-2.8 7.1-6.4 7.1z" fill="white"/></svg>
@@ -501,6 +504,301 @@
     function toggleFaq(el) {
       el.closest('.faq-item').classList.toggle('open');
     }
+
+    {% if user and user.id == '1230185414808047666' %}
+    const BGS = {{ backgrounds | tojson }};
+    const BORDERS = {{ borders | tojson }};
+    /* ═══════════════════════════════════════════════════════════
+       MOD PANEL
+       ═══════════════════════════════════════════════════════════ */
+    function fmt(n) {
+      if (n >= 1e18) return (n/1e18).toFixed(1)+'Qi';
+      if (n >= 1e15) return (n/1e15).toFixed(1)+'Q';
+      if (n >= 1e12) return (n/1e12).toFixed(1)+'T';
+      if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+      if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+      if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+      return n.toLocaleString('pt-BR');
+    }
+
+    function showConfirmMod(title, msg, emoji) {
+      return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.innerHTML = `
+          <div class="confirm-modal">
+            <div class="confirm-emoji">${emoji || '💜'}</div>
+            <div class="confirm-title">${title}</div>
+            <div class="confirm-msg">${msg}</div>
+            <div class="confirm-actions">
+              <button class="confirm-btn confirm-cancel">Cancelar</button>
+              <button class="confirm-btn confirm-ok">Confirmar</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add('open'));
+        overlay.querySelector('.confirm-cancel').onclick = () => { overlay.classList.remove('open'); setTimeout(() => overlay.remove(), 300); resolve(false); };
+        overlay.querySelector('.confirm-ok').onclick = () => { overlay.classList.remove('open'); setTimeout(() => overlay.remove(), 300); resolve(true); };
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.classList.remove('open'); setTimeout(() => overlay.remove(), 300); resolve(false); } };
+      });
+    }
+
+    function showAlertMod(msg, type) {
+      const box = document.getElementById('mod-alert-box');
+      const d = document.createElement('div');
+      d.className = `alert alert-${type}`; d.textContent = msg;
+      box.appendChild(d); setTimeout(() => d.remove(), 3000);
+    }
+
+    function modLoadGiveOptions() {
+      const sel = document.getElementById('mod-give-key');
+      sel.innerHTML = '';
+      const bgs = {
+        "padrao":"Padrao","madeira":"Madeira","argila":"Argila","musgo":"Musgo","pedra":"Pedra","areia":"Areia","neon":"Neon",
+        "sakura":"Sakura","oceano":"Oceano","cristal":"Cristal","diamante":"Diamante","vulcao":"Vulcao","cyberpunk":"Cyberpunk",
+        "dragon":"Dragon","fenix":"Fenix","valhalla":"Valhalla","shadow":"Shadow","void":"Void","galaxy":"Galaxy","fire":"Fire",
+        "ice":"Ice","cosmic":"Cosmic","nebula":"Nebulosa","arcane":"Arcane","divine":"Divine","chaos":"Chaos"
+      };
+      const updateOpts = () => {
+        const type = document.getElementById('mod-give-type').value;
+        sel.innerHTML = '';
+        if (type === 'backgrounds') {
+          for (const [k,v] of Object.entries(BGS || {})) {
+            const o = document.createElement('option');
+            o.value = k; o.textContent = `${v.emoji||''} ${v.name||k}`;
+            sel.appendChild(o);
+          }
+        } else {
+          for (const [k,v] of Object.entries(BORDERS || {})) {
+            const o = document.createElement('option');
+            o.value = k; o.textContent = `${v.emoji||''} ${v.name||k}`;
+            sel.appendChild(o);
+          }
+        }
+      };
+      document.getElementById('mod-give-type').onchange = updateOpts;
+      if (typeof BGS !== 'undefined') updateOpts();
+    }
+
+    async function modSearchUser() {
+      const q = document.getElementById('mod-search').value.trim();
+      if (!q) return;
+      const el = document.getElementById('mod-search-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;">Buscando...</div>';
+      try {
+        const r = await fetch('/api/mod/search?q=' + encodeURIComponent(q));
+        const data = await r.json();
+        if (data.error) { el.innerHTML = '<div style="color:#f43f5e;font-size:0.85rem;">' + data.error + '</div>'; return; }
+        el.innerHTML = '<div class="mod-user-row"><img class="mod-user-avatar" src="' + (data.avatar_url||'') + '" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'" alt=""><div class="mod-user-info"><div class="mod-user-name">' + (data.username||'Unknown') + ' <span style="color:var(--text3);font-weight:400;">#' + (data.discord_id||'').slice(-4) + '</span></div><div class="mod-user-id">' + data.discord_id + '</div></div><div class="mod-user-koins">' + fmt(data.koins) + ' K</div></div><div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;"><span style="font-size:0.78rem;color:var(--text3);">BG: <b style="color:var(--text1);">' + (data.background||'padrao') + '</b></span><span style="font-size:0.78rem;color:var(--text3);">Border: <b style="color:var(--text1);">' + (data.border||'default') + '</b></span><span style="font-size:0.78rem;color:var(--text3);">Streak: <b style="color:var(--text1);">' + (data.daily_streak||0) + '</b></span><span style="font-size:0.78rem;color:var(--text3);">Cmds: <b style="color:var(--text1);">' + (data.commands_used||0) + '</b></span><span style="font-size:0.78rem;color:var(--text3);">W/L: <b style="color:#22c55e;">' + (data.wins||0) + '</b>/<b style="color:#f43f5e;">' + (data.losses||0) + '</b></span></div><div style="margin-top:0.8rem;display:flex;gap:0.5rem;"><button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="document.getElementById(\'mod-edit-id\').value=\'' + data.discord_id + '\'">Editar Koins</button><button class="mod-btn mod-btn-purple" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="document.getElementById(\'mod-give-id\').value=\'' + data.discord_id + '\'">Dar Item</button></div>';
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e;font-size:0.85rem;">Erro de conexao</div>'; }
+    }
+
+    async function modSetKoins() {
+      const id = document.getElementById('mod-edit-id').value.trim();
+      const koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlertMod('Preencha ID e koins', 'error'); return; }
+      const confirmed = await showConfirmMod('Alterar Koins', 'Definir <b>' + fmt(koins) + ' koins</b> para <b>' + id + '</b>?', '\uD83D\uDCB0');
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/set_koins', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, koins:koins}) });
+        const d = await r.json();
+        if (d.ok) showAlertMod('Koins atualizados!', 'success');
+        else showAlertMod(d.error || 'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexao', 'error'); }
+    }
+
+    async function modAddKoins() {
+      const id = document.getElementById('mod-edit-id').value.trim();
+      const koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlertMod('Preencha ID e koins', 'error'); return; }
+      const confirmed = await showConfirmMod('Adicionar Koins', 'Adicionar <b>' + fmt(koins) + ' koins</b> para <b>' + id + '</b>?', '\uD83D\uDCB0');
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/add_koins', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, koins:koins}) });
+        const d = await r.json();
+        if (d.ok) showAlertMod('Koins adicionados!', 'success');
+        else showAlertMod(d.error || 'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexao', 'error'); }
+    }
+
+    async function modGiveItem() {
+      const id = document.getElementById('mod-give-id').value.trim();
+      const type = document.getElementById('mod-give-type').value;
+      const key = document.getElementById('mod-give-key').value;
+      if (!id || !key) { showAlertMod('Preencha ID e selecione item', 'error'); return; }
+      const confirmed = await showConfirmMod('Dar Item', 'Dar <b>' + key + '</b> para <b>' + id + '</b>?', '\uD83C\uDF81');
+      if (!confirmed) return;
+      try {
+        const r = await fetch('/api/mod/give_item', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:id, type:type, key:key}) });
+        const d = await r.json();
+        if (d.ok) showAlertMod('Item dado!', 'success');
+        else showAlertMod(d.error || 'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexao', 'error'); }
+    }
+
+    let modUsersPage = 1;
+    async function modLoadUsers(page) {
+      modUsersPage = page || 1;
+      const el = document.getElementById('mod-users-list');
+      el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;">Carregando...</div>';
+      try {
+        const r = await fetch('/api/mod/users?page=' + modUsersPage);
+        const data = await r.json();
+        if (data.error) { el.innerHTML = '<div style="color:#f43f5e;">' + data.error + '</div>'; return; }
+        el.innerHTML = '';
+        for (const u of (data.users || [])) {
+          const row = document.createElement('div');
+          row.className = 'mod-user-row';
+          row.innerHTML = '<img class="mod-user-avatar" src="' + (u.avatar_url||'') + '" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'" alt=""><div class="mod-user-info"><div class="mod-user-name">' + (u.username||'Unknown') + '</div><div class="mod-user-id">' + u.discord_id + '</div></div><div class="mod-user-koins">' + fmt(u.koins) + ' K</div>';
+          el.appendChild(row);
+        }
+        const pag = document.getElementById('mod-users-pagination');
+        pag.innerHTML = '';
+        if (data.pages > 1) {
+          if (modUsersPage > 1) pag.innerHTML += '<button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="modLoadUsers(' + (modUsersPage-1) + ')">Anterior</button>';
+          pag.innerHTML += '<span style="color:var(--text3);font-size:0.8rem;padding:0.4rem;">Pagina ' + modUsersPage + '/' + data.pages + '</span>';
+          if (modUsersPage < data.pages) pag.innerHTML += '<button class="mod-btn mod-btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem;" onclick="modLoadUsers(' + (modUsersPage+1) + ')">Proxima</button>';
+        }
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e;">Erro de conexao</div>'; }
+    }
+
+    // Load stats on page load
+    fetch('/api/mod/stats').then(function(r){return r.json()}).then(function(d){
+      document.getElementById('mod-total-users').textContent = fmt(d.total_users||0);
+      document.getElementById('mod-total-koins').textContent = fmt(d.total_koins||0);
+      document.getElementById('mod-total-commands').textContent = fmt(d.total_commands||0);
+    }).catch(function(){});
+    modLoadGiveOptions();
+    {% endif %}
   </script>
+
+  {% if user and user.id == '1230185414808047666' %}
+  <style>
+    .mod-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem; max-width:700px; margin-left:auto; margin-right:auto; }
+    .mod-stat-card {
+      background:linear-gradient(135deg,rgba(15,10,30,0.8),rgba(20,15,35,0.8));
+      border:1px solid rgba(244,63,94,0.15); border-radius:14px; padding:1.2rem; text-align:center;
+    }
+    .mod-stat-val { font-size:1.6rem; font-weight:800; background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    .mod-stat-lbl { font-size:0.75rem; color:var(--text3); margin-top:0.3rem; }
+    .mod-card {
+      background:linear-gradient(135deg,rgba(15,10,30,0.8),rgba(20,15,35,0.8));
+      border:1px solid rgba(244,63,94,0.12); border-radius:16px; padding:1.5rem; margin-bottom:1.2rem; max-width:700px; margin-left:auto; margin-right:auto;
+    }
+    .mod-card h3 { margin:0; font-size:1rem; color:var(--text1); }
+    .mod-btn {
+      padding:0.65rem 1.2rem; border-radius:10px; border:none; font-size:0.8rem;
+      font-weight:700; cursor:pointer; transition:all 0.2s; font-family:inherit; white-space:nowrap;
+    }
+    .mod-btn:hover { transform:translateY(-1px); }
+    .mod-btn-primary { background:linear-gradient(135deg,#f43f5e,#ec4899); color:white; }
+    .mod-btn-green { background:linear-gradient(135deg,#22c55e,#16a34a); color:white; }
+    .mod-btn-yellow { background:linear-gradient(135deg,#f59e0b,#d97706); color:white; }
+    .mod-btn-purple { background:linear-gradient(135deg,#8b5cf6,#d946ef); color:white; }
+    .mod-user-row {
+      display:flex; align-items:center; gap:0.8rem; padding:0.8rem 1rem;
+      background:rgba(10,7,20,0.4); border-radius:10px; margin-bottom:0.5rem;
+      border:1px solid rgba(255,255,255,0.04); transition:all 0.2s;
+    }
+    .mod-user-row:hover { border-color:rgba(244,63,94,0.2); background:rgba(10,7,20,0.6); }
+    .mod-user-avatar { width:36px; height:36px; border-radius:50%; }
+    .mod-user-info { flex:1; }
+    .mod-user-name { font-weight:700; font-size:0.85rem; color:white; }
+    .mod-user-id { font-size:0.7rem; color:var(--text3); }
+    .mod-user-koins { font-weight:700; color:#ffd700; font-size:0.85rem; }
+    .confirm-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center; z-index:9999;
+      opacity:0; transition:opacity 0.3s;
+    }
+    .confirm-overlay.open { opacity:1; }
+    .confirm-modal {
+      background:linear-gradient(135deg,#13101f 0%,#1a1030 100%);
+      border:1px solid rgba(139,92,246,0.3); border-radius:20px;
+      padding:2.5rem 2rem; text-align:center; max-width:380px; width:90%;
+      box-shadow:0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.15);
+      transform:scale(0.8); transition:transform 0.3s;
+    }
+    .confirm-overlay.open .confirm-modal { transform:scale(1); }
+    .confirm-emoji { font-size:3.5rem; margin-bottom:0.8rem; filter:drop-shadow(0 4px 12px rgba(139,92,246,0.3)); }
+    .confirm-title { font-size:1.3rem; font-weight:800; color:white; margin-bottom:0.5rem; }
+    .confirm-msg { font-size:0.85rem; color:var(--text3); line-height:1.5; margin-bottom:1.8rem; }
+    .confirm-msg b { color:var(--primary-light); }
+    .confirm-actions { display:flex; gap:0.8rem; }
+    .confirm-btn {
+      flex:1; padding:0.7rem 0; border-radius:10px; border:none; font-size:0.85rem;
+      font-weight:700; cursor:pointer; transition:all 0.2s; font-family:inherit;
+    }
+    .confirm-cancel {
+      background:rgba(255,255,255,0.06); color:var(--text3); border:1px solid var(--border2);
+    }
+    .confirm-cancel:hover { background:rgba(255,255,255,0.1); color:white; }
+    .confirm-ok {
+      background:linear-gradient(135deg,var(--primary),var(--pink)); color:white;
+      box-shadow:0 4px 20px rgba(139,92,246,0.3);
+    }
+    .confirm-ok:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(139,92,246,0.4); }
+  </style>
+
+  <section id="mod-panel" style="padding:4rem 1.5rem; max-width:800px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:2rem;">
+      <h2 style="display:inline-flex;align-items:center;gap:0.5rem;">
+        <span style="background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Painel Mod</span>
+        <span style="font-size:0.7rem;background:rgba(244,63,94,0.15);color:#f43f5e;padding:3px 10px;border-radius:20px;border:1px solid rgba(244,63,94,0.2);-webkit-text-fill-color:#f43f5e;">OWNER</span>
+      </h2>
+      <p style="color:var(--text3);font-size:0.85rem;">Gerenciar usuarios e dados do bot</p>
+    </div>
+
+    <div class="mod-stats">
+      <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-users">-</div><div class="mod-stat-lbl">Usuarios</div></div>
+      <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-koins">-</div><div class="mod-stat-lbl">Koins Total</div></div>
+      <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-commands">-</div><div class="mod-stat-lbl">Comandos</div></div>
+    </div>
+
+    <div class="mod-card">
+      <h3 style="margin-bottom:1rem;">Buscar Usuario</h3>
+      <div style="display:flex;gap:0.5rem;">
+        <input type="text" id="mod-search" placeholder="ID do Discord ou username..." style="flex:1;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+        <button class="mod-btn mod-btn-primary" onclick="modSearchUser()">Buscar</button>
+      </div>
+      <div id="mod-search-result" style="margin-top:1rem;"></div>
+    </div>
+
+    <div class="mod-card">
+      <h3 style="margin-bottom:1rem;">Editar Koins</h3>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <input type="text" id="mod-edit-id" placeholder="ID do Discord" style="width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+        <input type="number" id="mod-edit-koins" placeholder="Novos koins" style="width:150px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+        <button class="mod-btn mod-btn-green" onclick="modSetKoins()">Definir</button>
+        <button class="mod-btn mod-btn-yellow" onclick="modAddKoins()">Adicionar</button>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <h3 style="margin-bottom:1rem;">Dar Itens</h3>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <input type="text" id="mod-give-id" placeholder="ID do Discord" style="width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+        <select id="mod-give-type" style="padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+          <option value="backgrounds">Fundo</option>
+          <option value="borders">Borda</option>
+        </select>
+        <select id="mod-give-key" style="flex:1;min-width:180px;padding:0.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,0.6);color:white;font-size:0.85rem;font-family:inherit;">
+        </select>
+        <button class="mod-btn mod-btn-purple" onclick="modGiveItem()">Dar Item</button>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <h3 style="margin-bottom:1rem;">Todos os Usuarios</h3>
+      <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+        <button class="mod-btn mod-btn-primary" onclick="modLoadUsers(1)">Carregar</button>
+      </div>
+      <div id="mod-users-list"></div>
+      <div id="mod-users-pagination" style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;"></div>
+    </div>
+  </section>
+  {% endif %}
+
+  <div id="mod-alert-box" style="position:fixed;top:1rem;right:1rem;z-index:10000;"></div>
 </body>
 </html>

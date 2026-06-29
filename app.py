@@ -87,7 +87,7 @@ def login_required(f: Any) -> Any:
 def index() -> str:
     token = request.cookies.get("token")
     user = fetch_user(token) if token else None
-    return render_template("index.html", user=user)
+    return render_template("index.html", user=user, backgrounds=PROFILE_BACKGROUNDS, borders=PROFILE_BORDERS)
 
 
 @app.route("/login")

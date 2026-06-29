@@ -1371,19 +1371,9 @@ def mod_leave_server() -> Any:
         guild_id = data.get("guild_id", "").strip()
         if not guild_id or not guild_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
-        bot_token = os.getenv("BOT_TOKEN", "").strip()
-        if not bot_token:
-            return jsonify({"error": "BOT_TOKEN nao configurado"}), 500
-        r = requests.delete(
-            f"https://discord.com/api/v10/users/@me/guilds/{guild_id}",
-            headers={"Authorization": f"Bot {bot_token}"},
-            timeout=10,
-        )
-        if r.status_code in (200, 204):
-            return jsonify({"ok": True})
-        if r.status_code == 403:
-            return jsonify({"error": "Bot nao tem acesso a este servidor (403)"}), 400
-        return jsonify({"error": f"Discord API: {r.status_code} {r.text[:200]}"}), 400
+        db = get_db()
+        db["leave_queue"].insert_one({"guild_id": int(guild_id), "status": "pending"})
+        return jsonify({"ok": True, "message": "Servidor na fila para remoção"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

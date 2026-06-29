@@ -1371,16 +1371,18 @@ def mod_leave_server() -> Any:
         guild_id = data.get("guild_id", "").strip()
         if not guild_id or not guild_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
-        BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
-        if not BOT_TOKEN:
+        bot_token = os.getenv("BOT_TOKEN", "").strip()
+        if not bot_token:
             return jsonify({"error": "BOT_TOKEN nao configurado"}), 500
         r = requests.delete(
             f"https://discord.com/api/v10/guilds/{guild_id}",
-            headers={"Authorization": f"Bot {BOT_TOKEN}"},
+            headers={"Authorization": f"Bot {bot_token}"},
             timeout=10,
         )
         if r.status_code in (200, 204):
             return jsonify({"ok": True})
+        if r.status_code == 403:
+            return jsonify({"error": "Bot nao tem acesso a este servidor (403)"}), 400
         return jsonify({"error": f"Discord API: {r.status_code} {r.text[:200]}"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1390,15 +1392,30 @@ def mod_leave_server() -> Any:
 @mod_required
 def mod_servers() -> Any:
     try:
+        bot_token = os.getenv("BOT_TOKEN", "").strip()
+        if not bot_token:
+            return jsonify({"error": "BOT_TOKEN nao configurado"}), 500
+        r = requests.get(
+            "https://discord.com/api/v10/users/@me/guilds",
+            headers={"Authorization": f"Bot {bot_token}"},
+            timeout=10,
+        )
+        if r.status_code != 200:
+            return jsonify({"error": "Erro ao buscar servidores"}), 400
+        api_guilds = r.json()
         db = get_db()
-        guilds = list(db["guilds"].find())
+        db_guilds = {str(g.get("guild_id", "")): g for g in db["guilds"].find()}
         result = []
-        for g in guilds:
+        for g in api_guilds:
+            gid = g.get("id", "")
+            cfg = db_guilds.get(gid, {})
             result.append({
-                "guild_id": str(g.get("guild_id", "")),
+                "guild_id": gid,
                 "name": g.get("name", "Unknown"),
-                "welcome_enabled": g.get("welcome_enabled", False),
-                "xp_enabled": g.get("xp_enabled", False),
+                "icon": g.get("icon", ""),
+                "member_count": g.get("member_count", 0),
+                "welcome_enabled": cfg.get("welcome_enabled", False),
+                "xp_enabled": cfg.get("xp_enabled", False),
             })
         return jsonify({"guilds": result})
     except Exception as e:

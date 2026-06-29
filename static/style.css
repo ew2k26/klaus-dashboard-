@@ -1447,3 +1447,24 @@ body::before {
 .footer-links a:hover::after {
   width: 100%;
 }
+
+/* ═══ JS FALLBACK — FORCE VISIBLE AFTER 3S ═══ */
+@keyframes forceVisible {
+  to { opacity: 1; transform: none; }
+}
+.feature-card,
+.stat-item,
+.command-category,
+.faq-item,
+.guild-card,
+.how-step {
+  animation: forceVisible 0s 3s forwards;
+}
+.feature-card.visible,
+.stat-item.visible,
+.command-category.visible,
+.faq-item.visible,
+.guild-card.visible,
+.how-step.visible {
+  animation: none;
+}

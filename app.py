@@ -1246,7 +1246,6 @@ def mod_set_xp() -> Any:
         key = {"discord_id": int(user_id), "guild_id": int(guild_id)}
         doc = db["users_xp"].find_one(key)
         old_level = doc.get("level", 0) if doc else 0
-        from config import settings as cfg
         level = 0
         remaining = xp
         while True:

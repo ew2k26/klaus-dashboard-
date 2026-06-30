@@ -1,87 +1,217 @@
-# Política de Privacidade — Klaus Bot
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade — Klaus Bot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #05030b;
+      color: #e2e0e7;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+    a { color: #8b5cf6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-**Última atualização:** 29 de junho de 2026
+    .legal-page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
 
-## 1. Dados Coletados
+    .legal-page h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #d946ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
 
-O Klaus Bot coleta os seguintes dados:
+    .legal-page .updated {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 40px;
+    }
 
-### Dados do Usuário
-- **ID do Discord** — identificador único
-- **Nome de usuário** e **nome de exibição**
-- **Avatar** (URL)
-- **Dados de perfil** (background, border, itens comprados)
+    .legal-page h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #d946ef;
+      margin-top: 36px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+    }
 
-### Dados de Uso
-- Comandos utilizados
-- Estatísticas de jogo (vitórias, derrotas, streak)
-- Saldo de koins e transações
-- Nível de XP e progresso
-- Conquistas desbloqueadas
+    .legal-page h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
 
-### Dados do Servidor
-- ID do servidor
-- Nome do servidor
-- Configurações personalizadas (canal de boas-vindas, auto-mod, etc.)
+    .legal-page p {
+      margin-bottom: 14px;
+      color: #c4c0cc;
+    }
 
-## 2. Uso dos Dados
+    .legal-page ul {
+      list-style: none;
+      margin-bottom: 14px;
+    }
 
-Os dados são utilizados para:
-- Fornecer as funcionalidades do Bot
-- Manter estatísticas e rankings
-- Melhorar a experiência do usuário
-- Detectar e prevenir abusos
+    .legal-page ul li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 8px;
+      color: #c4c0cc;
+    }
 
-## 3. Armazenamento
+    .legal-page ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #8b5cf6;
+      font-weight: 700;
+    }
 
-- Dados são armentos em servidores MongoDB seguros
-- Dados são retidos enquanto o Bot estiver ativo no servidor
-- Dados podem ser removidos sob solicitação
+    .legal-page strong {
+      color: #e2e0e7;
+      font-weight: 600;
+    }
 
-## 4. Compartilhamento
+    .legal-page hr {
+      border: none;
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      margin: 40px 0;
+    }
 
-**Não** compartilhamos dados com:
-- Terceiros para fins de marketing
-- Anunciantes
-- Outros serviços
+    .legal-page .disclaimer {
+      font-size: 0.85rem;
+      color: #666;
+      font-style: italic;
+    }
 
-Dados podem ser compartilhados apenas quando:
-- Exigido por lei
-- Necessário para proteger direitos legais
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      color: #8b5cf6;
+      font-size: 0.9rem;
+    }
 
-## 5. Cookies e Rastreamento
+    @media (max-width: 640px) {
+      .legal-page { padding: 40px 16px 60px; }
+      .legal-page h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="legal-page">
+    <a href="/" class="back-link">← Voltar ao site</a>
 
-O Bot não utiliza cookies. O dashboard usa cookies essenciais apenas para autenticação.
+    <h1>Política de Privacidade</h1>
+    <p class="updated">Última atualização: 29 de junho de 2026</p>
 
-## 6. Direitos do Usuário
+    <h2>1. Dados Coletados</h2>
+    <p>O Klaus Bot coleta os seguintes dados:</p>
 
-Você tem direito a:
-- **Acessar** seus dados pessoais
-- **Solicitar exclusão** de seus dados
-- **Exportar** seus dados
-- **Corrigir** dados incorretos
+    <h3>Dados do Usuário</h3>
+    <ul>
+      <li><strong>ID do Discord</strong> — identificador único</li>
+      <li><strong>Nome de usuário</strong> e <strong>nome de exibição</strong></li>
+      <li><strong>Avatar</strong> (URL)</li>
+      <li><strong>Dados de perfil</strong> — background, border, itens comprados</li>
+    </ul>
 
-## 7. Segurança
+    <h3>Dados de Uso</h3>
+    <ul>
+      <li>Comandos utilizados</li>
+      <li>Estatísticas de jogo (vitórias, derrotas, streak)</li>
+      <li>Saldo de koins e transações</li>
+      <li>Nível de XP e progresso</li>
+      <li>Conquistas desbloqueadas</li>
+    </ul>
 
-Implementamos medidas de segurança para proteger seus dados:
-- Conexões criptografadas (HTTPS)
-- Autenticação segura (OAuth2)
-- Acesso restrito a dados sensíveis
+    <h3>Dados do Servidor</h3>
+    <ul>
+      <li>ID do servidor</li>
+      <li>Nome do servidor</li>
+      <li>Configurações personalizadas (canal de boas-vindas, auto-mod, etc.)</li>
+    </ul>
 
-## 8. Menores de Idade
+    <h2>2. Uso dos Dados</h2>
+    <p>Os dados são utilizados para:</p>
+    <ul>
+      <li>Fornecer as funcionalidades do Bot</li>
+      <li>Manter estatísticas e rankings</li>
+      <li>Melhorar a experiência do usuário</li>
+      <li>Detectar e prevenir abusos</li>
+    </ul>
 
-O Bot é destinado a usuários com 13+ anos (conforme Termos do Discord). Não coletamos dados intencionalmente de menores.
+    <h2>3. Armazenamento</h2>
+    <ul>
+      <li>Dados são armazenados em servidores MongoDB seguros</li>
+      <li>Dados são retidos enquanto o Bot estiver ativo no servidor</li>
+      <li>Dados podem ser removidos sob solicitação</li>
+    </ul>
 
-## 9. Alterações
+    <h2>4. Compartilhamento</h2>
+    <p><strong>Não</strong> compartilhamos dados com:</p>
+    <ul>
+      <li>Terceiros para fins de marketing</li>
+      <li>Anunciantes</li>
+      <li>Outros serviços</li>
+    </ul>
+    <p>Dados podem ser compartilhados apenas quando:</p>
+    <ul>
+      <li>Exigido por lei</li>
+      <li>Necessário para proteger direitos legais</li>
+    </ul>
 
-Esta Política pode ser atualizada. Notificaremos sobre mudanças significativas.
+    <h2>5. Cookies e Rastreamento</h2>
+    <p>O Bot não utiliza cookies. O dashboard usa cookies essenciais apenas para autenticação via OAuth2 do Discord.</p>
 
-## 10. Contato
+    <h2>6. Direitos do Usuário</h2>
+    <p>Você tem direito a:</p>
+    <ul>
+      <li><strong>Acessar</strong> seus dados pessoais</li>
+      <li><strong>Solicitar exclusão</strong> de seus dados</li>
+      <li><strong>Exportar</strong> seus dados</li>
+      <li><strong>Corrigir</strong> dados incorretos</li>
+    </ul>
 
-Para exercer seus direitos ou esclarecer dúvidas:
-- Abra um ticket no dashboard do Bot
-- Entre em contato no servidor de suporte
+    <h2>7. Segurança</h2>
+    <p>Implementamos medidas de segurança para proteger seus dados:</p>
+    <ul>
+      <li>Conexões criptografadas (HTTPS)</li>
+      <li>Autenticação segura (OAuth2)</li>
+      <li>Acesso restrito a dados sensíveis</li>
+    </ul>
 
----
+    <h2>8. Menores de Idade</h2>
+    <p>O Bot é destinado a usuários com 13+ anos (conforme Termos do Discord). Não coletamos dados intencionalmente de menores.</p>
 
-*Esta Política é aplicável apenas ao Klaus Bot e não representam afiliação com a Discord Inc.*
+    <h2>9. Alterações</h2>
+    <p>Esta Política pode ser atualizada. Notificaremos sobre mudanças significativas no servidor de suporte.</p>
+
+    <h2>10. Contato</h2>
+    <p>Para exercer seus direitos ou esclarecer dúvidas:</p>
+    <ul>
+      <li>Abra um ticket no dashboard do Bot</li>
+      <li>Entre em contato no servidor de suporte</li>
+    </ul>
+
+    <hr>
+
+    <p class="disclaimer">Esta Política é aplicável apenas ao Klaus Bot e não representa afiliação com a Discord Inc.</p>
+  </div>
+</body>
+</html>

@@ -19,17 +19,42 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 MONGODB_URL = os.getenv("MONGODB_URL", "")
 API = "https://discord.com/api/v10"
 
+_mongo_client: pymongo.MongoClient | None = None
+_mongo_db = None
+
+
+def get_db() -> Any:
+    global _mongo_client, _mongo_db
+    if _mongo_db is None:
+        _mongo_client = pymongo.MongoClient(
+            MONGODB_URL,
+            tls=True,
+            tlsCAFile=certifi.where(),
+            maxPoolSize=10,
+            minPoolSize=1,
+        )
+        _mongo_db = _mongo_client["economia"]
+    return _mongo_db
+
+
+ALLOWED_GUILD_FIELDS = {
+    "welcome_enabled", "welcome_channel", "welcome_title", "welcome_message",
+    "farewell_enabled", "farewell_channel", "farewell_message",
+    "autorole_enabled", "autorole_role",
+    "log_channel", "log_enabled",
+    "xp_enabled", "xp_channel", "xp_multiplier",
+    "automod_enabled", "automod_bad_words", "automod_anti_spam",
+    "automod_anti_links", "automod_anti_mass_mentions",
+    "economy_enabled", "economy_daily_amount", "economy_work_amount",
+    "embed_color", "auto_response",
+}
+
 
 def get_redirect_uri() -> str:
     env = os.getenv("REDIRECT_URI", "")
     if env:
         return env
     return request.url_root.rstrip("/") + "/callback"
-
-
-def get_db() -> Any:
-    c = pymongo.MongoClient(MONGODB_URL, tls=True, tlsCAFile=certifi.where())
-    return c["economia"]
 
 
 def fetch_user(token: str) -> dict | None:
@@ -133,7 +158,7 @@ def callback() -> redirect:
 
     token = r.json()["access_token"]
     resp = redirect(url_for("dashboard"))
-    resp.set_cookie("token", token, max_age=60 * 60 * 24 * 7, httponly=True, samesite="Lax")
+    resp.set_cookie("token", token, max_age=60 * 60 * 24 * 7, httponly=True, secure=True, samesite="Lax")
     return resp
 
 
@@ -228,7 +253,10 @@ def api_save(guild_id: str) -> Any:
 
     try:
         db = get_db()
-        db["guilds"].update_one({"guild_id": int(guild_id)}, {"$set": data}, upsert=True)
+        safe_data = {k: v for k, v in data.items() if k in ALLOWED_GUILD_FIELDS}
+        if not safe_data:
+            return jsonify({"error": "no valid fields"}), 400
+        db["guilds"].update_one({"guild_id": int(guild_id)}, {"$set": safe_data}, upsert=True)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -362,7 +390,7 @@ def api_profile_config(user_id: str) -> Any:
 def api_profile_config_set(user_id: str) -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         update = {"$set": {}}
         if "background" in data:
             update["$set"]["profile_background"] = data["background"]
@@ -378,7 +406,7 @@ def api_profile_config_set(user_id: str) -> Any:
 def api_profile_buy() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id")
         item_type = data.get("type")
         key = data.get("key")
@@ -966,7 +994,7 @@ def mod_search() -> Any:
 def mod_set_koins() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         koins = int(data.get("koins", 0))
         if not user_id or not user_id.isdigit():
@@ -982,7 +1010,7 @@ def mod_set_koins() -> Any:
 def mod_add_koins() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         koins = int(data.get("koins", 0))
         if not user_id or not user_id.isdigit():
@@ -998,7 +1026,7 @@ def mod_add_koins() -> Any:
 def mod_give_item() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         item_type = data.get("type")
         key = data.get("key")
@@ -1048,7 +1076,7 @@ def mod_users() -> Any:
 def mod_ban_user() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         if not user_id or not user_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
@@ -1067,7 +1095,7 @@ def mod_ban_user() -> Any:
 def mod_unban_user() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         if not user_id or not user_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
@@ -1085,7 +1113,7 @@ def mod_unban_user() -> Any:
 def mod_reset_user() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         if not user_id or not user_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
@@ -1110,7 +1138,7 @@ def mod_reset_user() -> Any:
 def mod_broadcast() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         message = data.get("message", "").strip()
         bc_channel = data.get("broadcast_channel", "").strip()
         if not message:
@@ -1155,7 +1183,7 @@ def mod_get_broadcasts() -> Any:
 def mod_set_premium() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         premium = data.get("premium", True)
         if not user_id or not user_id.isdigit():
@@ -1175,7 +1203,7 @@ def mod_set_premium() -> Any:
 def mod_clear_warns() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         if not user_id or not user_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
@@ -1190,7 +1218,7 @@ def mod_clear_warns() -> Any:
 def mod_reset_economy() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         confirm = data.get("confirm", "")
         if confirm != "RESETAR_ECONOMIA":
             return jsonify({"error": "Digite RESETAR_ECONOMIA para confirmar"}), 400
@@ -1254,7 +1282,7 @@ def mod_user_warns(user_id: str) -> Any:
 def mod_set_xp() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         guild_id = data.get("guild_id", "").strip()
         xp = data.get("xp", 0)
@@ -1267,7 +1295,7 @@ def mod_set_xp() -> Any:
         old_level = doc.get("level", 0) if doc else 0
         level = 0
         remaining = xp
-        while True:
+        while level < 10000 and remaining > 0:
             needed = 5 * (level ** 2) + 50 * level + 100
             if remaining < needed:
                 break
@@ -1304,7 +1332,7 @@ def mod_user_investments(user_id: str) -> Any:
 def mod_add_achievement() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         achievement = data.get("achievement", "").strip()
         remove = data.get("remove", False)
@@ -1333,7 +1361,7 @@ def mod_add_achievement() -> Any:
 def mod_reset_profile() -> Any:
     try:
         db = get_db()
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         user_id = data.get("user_id", "").strip()
         if not user_id or not user_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400
@@ -1377,7 +1405,7 @@ def mod_user_pet(user_id: str) -> Any:
 @mod_required
 def mod_leave_server() -> Any:
     try:
-        data = request.get_json(force=True)
+        data = request.get_json(force=False)
         guild_id = data.get("guild_id", "").strip()
         if not guild_id or not guild_id.isdigit():
             return jsonify({"error": "ID invalido"}), 400

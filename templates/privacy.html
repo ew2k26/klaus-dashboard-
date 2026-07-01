@@ -3,215 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Política de Privacidade — Klaus Bot</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Privacidade — Klaus Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=32">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #05030b;
-      color: #e2e0e7;
-      line-height: 1.75;
-      min-height: 100vh;
-    }
-    a { color: #8b5cf6; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    .legal-page {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 60px 24px 80px;
-    }
-
-    .legal-page h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #8b5cf6, #d946ef);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-
-    .legal-page .updated {
-      color: #888;
-      font-size: 0.9rem;
-      margin-bottom: 40px;
-    }
-
-    .legal-page h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #d946ef;
-      margin-top: 36px;
-      margin-bottom: 12px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.15);
-    }
-
-    .legal-page h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #a78bfa;
-      margin-top: 20px;
-      margin-bottom: 8px;
-    }
-
-    .legal-page p {
-      margin-bottom: 14px;
-      color: #c4c0cc;
-    }
-
-    .legal-page ul {
-      list-style: none;
-      margin-bottom: 14px;
-    }
-
-    .legal-page ul li {
-      position: relative;
-      padding-left: 22px;
-      margin-bottom: 8px;
-      color: #c4c0cc;
-    }
-
-    .legal-page ul li::before {
-      content: '•';
-      position: absolute;
-      left: 0;
-      color: #8b5cf6;
-      font-weight: 700;
-    }
-
-    .legal-page strong {
-      color: #e2e0e7;
-      font-weight: 600;
-    }
-
-    .legal-page hr {
-      border: none;
-      border-top: 1px solid rgba(139, 92, 246, 0.2);
-      margin: 40px 0;
-    }
-
-    .legal-page .disclaimer {
-      font-size: 0.85rem;
-      color: #666;
-      font-style: italic;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 32px;
-      color: #8b5cf6;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 640px) {
-      .legal-page { padding: 40px 16px 60px; }
-      .legal-page h1 { font-size: 1.6rem; }
-    }
+    .legal-content{max-width:720px;margin:0 auto;line-height:1.8}
+    .legal-content h3{font-size:1.1rem;color:var(--text);margin:2rem 0 .8rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+    .legal-content p,.legal-content li{font-size:.88rem;color:var(--text2)}
+    .legal-content p{margin-bottom:.8rem}
+    .legal-content ul{padding-left:1.5rem;margin-bottom:1rem}
+    .legal-content li{margin-bottom:.4rem}
+    .legal-content strong{color:var(--text)}
+    .legal-updated{font-size:.75rem;color:var(--text3);text-align:center;margin-top:2rem}
+    @media(max-width:480px){.legal-content h3{font-size:1rem;margin:1.5rem 0 .6rem}.legal-content p,.legal-content li{font-size:.82rem}.card{padding:1.5rem!important}}
   </style>
 </head>
 <body>
-  <div class="legal-page">
-    <a href="/" class="back-link">← Voltar ao site</a>
+  <div class="cursor-glow" id="cursor-glow"></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <div class="ambient-orb"></div><div class="ambient-orb"></div><div class="ambient-orb"></div>
+  <div class="aurora"></div>
+  <canvas id="particles-canvas"></canvas>
 
-    <h1>Política de Privacidade</h1>
-    <p class="updated">Última atualização: 29 de junho de 2026</p>
+  <nav class="nav" id="nav">
+    <a href="/" class="nav-brand"><span class="brand-icon">💜</span><span class="brand-text">KLAUS</span></a>
+    <button class="hamburger" id="hamburger-btn" onclick="document.getElementById('mobile-menu').classList.toggle('open');this.classList.toggle('active')"><span></span><span></span><span></span></button>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_home">Home</a>
+      <a href="/status" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_status">Status</a>
+      <a href="/leaderboard" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_leaderboard">Leaderboard</a>
+      <a href="/dashboard" class="btn btn-primary" data-i18n="nav_dashboard">Dashboard</a>
+    </div>
+    <div class="nav-links">
+      <a href="/" class="nav-link" data-i18n="nav_home">Home</a>
+      <a href="/status" class="nav-link" data-i18n="nav_status">Status</a>
+      <a href="/leaderboard" class="nav-link" data-i18n="nav_leaderboard">Leaderboard</a>
+      <div class="lang-toggle" onclick="toggleLang()"><span id="lang-flag">🇧🇷</span><span id="lang-code">PT</span></div>
+      <a href="/dashboard" class="btn btn-primary btn-sm" data-i18n="nav_dashboard">Dashboard</a>
+    </div>
+  </nav>
 
-    <h2>1. Dados Coletados</h2>
-    <p>O Klaus Bot coleta os seguintes dados:</p>
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge" data-i18n="priv_badge">Legal</span>
+      <h2 data-i18n="priv_title">Política de Privacidade</h2>
+    </div>
 
-    <h3>Dados do Usuário</h3>
-    <ul>
-      <li><strong>ID do Discord</strong> — identificador único</li>
-      <li><strong>Nome de usuário</strong> e <strong>nome de exibição</strong></li>
-      <li><strong>Avatar</strong> (URL)</li>
-      <li><strong>Dados de perfil</strong> — background, border, itens comprados</li>
-    </ul>
+    <div class="card legal-content" style="padding:2rem 2.5rem">
+      <h3 data-i18n="priv_h1">1. Dados Coletados</h3>
+      <p data-i18n="priv_p1">O Klaus Bot coleta apenas dados essenciais para seu funcionamento:</p>
+      <ul>
+        <li data-i18n="priv_li1"><strong>ID do Discord</strong> — identificador único do usuário</li>
+        <li data-i18n="priv_li2"><strong>Nome de usuário e avatar</strong> — para exibição no bot</li>
+        <li data-i18n="priv_li3"><strong>Dados de economia</strong> — koins, itens, inventário e streaks</li>
+        <li data-i18n="priv_li4"><strong>Configurações de servidor</strong> — canais, permissões e preferências</li>
+        <li data-i18n="priv_li5"><strong>Logs de moderação</strong> — ações administrativas registradas</li>
+      </ul>
 
-    <h3>Dados de Uso</h3>
-    <ul>
-      <li>Comandos utilizados</li>
-      <li>Estatísticas de jogo (vitórias, derrotas, streak)</li>
-      <li>Saldo de koins e transações</li>
-      <li>Nível de XP e progresso</li>
-      <li>Conquistas desbloqueadas</li>
-    </ul>
+      <h3 data-i18n="priv_h2">2. Uso dos Dados</h3>
+      <p data-i18n="priv_p2">Os dados são utilizados exclusivamente para: fornecer e melhorar os serviços do Bot, personalizar sua experiência, garantir a segurança e prevenir abusos.</p>
 
-    <h3>Dados do Servidor</h3>
-    <ul>
-      <li>ID do servidor</li>
-      <li>Nome do servidor</li>
-      <li>Configurações personalizadas (canal de boas-vindas, auto-mod, etc.)</li>
-    </ul>
+      <h3 data-i18n="priv_h3">3. Compartilhamento</h3>
+      <p data-i18n="priv_p3">Não vendemos, alugamos ou compartilhamos seus dados pessoais com terceiros. Os dados podem ser acessados apenas pela equipe de desenvolvimento do Klaus para fins de suporte e manutenção.</p>
 
-    <h2>2. Uso dos Dados</h2>
-    <p>Os dados são utilizados para:</p>
-    <ul>
-      <li>Fornecer as funcionalidades do Bot</li>
-      <li>Manter estatísticas e rankings</li>
-      <li>Melhorar a experiência do usuário</li>
-      <li>Detectar e prevenir abusos</li>
-    </ul>
+      <h3 data-i18n="priv_h4">4. Armazenamento</h3>
+      <p data-i18n="priv_p4">Os dados são armazenados em servidores seguros com criptografia. Utilizamos MongoDB Atlas com acesso restrito e autenticação.</p>
 
-    <h2>3. Armazenamento</h2>
-    <ul>
-      <li>Dados são armazenados em servidores MongoDB seguros</li>
-      <li>Dados são retidos enquanto o Bot estiver ativo no servidor</li>
-      <li>Dados podem ser removidos sob solicitação</li>
-    </ul>
+      <h3 data-i18n="priv_h5">5. Retenção</h3>
+      <p data-i18n="priv_p5">Os dados são mantidos enquanto o bot estiver ativo no servidor ou enquanto o usuário não solicitar sua remoção. Dados de servidores removidos são automaticamente limpos.</p>
 
-    <h2>4. Compartilhamento</h2>
-    <p><strong>Não</strong> compartilhamos dados com:</p>
-    <ul>
-      <li>Terceiros para fins de marketing</li>
-      <li>Anunciantes</li>
-      <li>Outros serviços</li>
-    </ul>
-    <p>Dados podem ser compartilhados apenas quando:</p>
-    <ul>
-      <li>Exigido por lei</li>
-      <li>Necessário para proteger direitos legais</li>
-    </ul>
+      <h3 data-i18n="priv_h6">6. Cookies</h3>
+      <p data-i18n="priv_p6">O dashboard utiliza cookies para autenticação via Discord OAuth2. Cookies de sessão são criptografados e expiram em 7 dias.</p>
 
-    <h2>5. Cookies e Rastreamento</h2>
-    <p>O Bot não utiliza cookies. O dashboard usa cookies essenciais apenas para autenticação via OAuth2 do Discord.</p>
+      <h3 data-i18n="priv_h7">7. Seus Direitos</h3>
+      <p data-i18n="priv_p7">Você pode solicitar a exclusão de seus dados a qualquer momento através do comando <code>/config</code> ou entrando em contato com a equipe de suporte.</p>
 
-    <h2>6. Direitos do Usuário</h2>
-    <p>Você tem direito a:</p>
-    <ul>
-      <li><strong>Acessar</strong> seus dados pessoais</li>
-      <li><strong>Solicitar exclusão</strong> de seus dados</li>
-      <li><strong>Exportar</strong> seus dados</li>
-      <li><strong>Corrigir</strong> dados incorretos</li>
-    </ul>
+      <h3 data-i18n="priv_h8">8. Contato</h3>
+      <p data-i18n="priv_p8">Em caso de dúvidas sobre privacidade, entre em contato através do nosso servidor de suporte no Discord.</p>
 
-    <h2>7. Segurança</h2>
-    <p>Implementamos medidas de segurança para proteger seus dados:</p>
-    <ul>
-      <li>Conexões criptografadas (HTTPS)</li>
-      <li>Autenticação segura (OAuth2)</li>
-      <li>Acesso restrito a dados sensíveis</li>
-    </ul>
-
-    <h2>8. Menores de Idade</h2>
-    <p>O Bot é destinado a usuários com 13+ anos (conforme Termos do Discord). Não coletamos dados intencionalmente de menores.</p>
-
-    <h2>9. Alterações</h2>
-    <p>Esta Política pode ser atualizada. Notificaremos sobre mudanças significativas no servidor de suporte.</p>
-
-    <h2>10. Contato</h2>
-    <p>Para exercer seus direitos ou esclarecer dúvidas:</p>
-    <ul>
-      <li>Abra um ticket no dashboard do Bot</li>
-      <li>Entre em contato no servidor de suporte</li>
-    </ul>
-
-    <hr>
-
-    <p class="disclaimer">Esta Política é aplicável apenas ao Klaus Bot e não representa afiliação com a Discord Inc.</p>
+      <p class="legal-updated" data-i18n="priv_updated">Última atualização: Junho de 2026</p>
+    </div>
   </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand"><span class="brand-icon">💜</span><span>KLAUS BOT</span></div>
+      <p data-i18n="footer_made">Feito com dedicação para a comunidade Discord</p>
+      <div class="footer-links"><a href="/" data-i18n="nav_home">Home</a><a href="/status">Status</a><a href="/leaderboard">Leaderboard</a><a href="/terms" data-i18n="footer_terms">Termos de Serviço</a><a href="/privacy" data-i18n="footer_privacy">Privacidade</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const cursorGlow=document.getElementById('cursor-glow');let mouseX=0,glowX=0,glowY=0;document.addEventListener('mousemove',e=>{mouseX=e.clientX;glowY=e.clientY});function animateGlow(){glowX+=(mouseX-glowX)*.08;glowY+=(glowY-glowY)*.08;cursorGlow.style.left=glowX+'px';cursorGlow.style.top=glowY+'px';requestAnimationFrame(animateGlow)}if(window.innerWidth>768)animateGlow();
+    const sp=document.getElementById('scroll-progress');window.addEventListener('scroll',()=>{const t=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-document.documentElement.clientHeight;sp.style.transform=`scaleX(${h>0?t/h:0})`});
+
+    (function(){const c=document.getElementById('particles-canvas'),x=c.getContext('2d');let p=[],s=[],w,h;function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight}resize();window.addEventListener('resize',resize);const cols=[[139,92,246],[217,70,239],[59,130,246],[244,63,94],[167,139,250]];class P{constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.r=Math.random()*2.5+.3;this.a=Math.random()*.35+.04;this.p=Math.random()*Math.PI*2;this.ps=Math.random()*.018+.005;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=this.vx;this.y+=this.vy;this.p+=this.ps;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1}draw(){const a=this.a+Math.sin(this.p)*.12;x.beginPath();x.arc(this.x,this.y,this.r,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a})`;x.fill();x.beginPath();x.arc(this.x,this.y,this.r*3.5,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a*.06})`;x.fill()}}class S{constructor(){this.reset()}reset(){this.x=Math.random()*w;this.y=Math.random()*h*.5;this.l=Math.random()*100+50;this.sp=Math.random()*7+4;this.ang=Math.PI/4+(Math.random()-.5)*.3;this.a=1;this.d=Math.random()*.02+.01;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=Math.cos(this.ang)*this.sp;this.y+=Math.sin(this.ang)*this.sp;this.a-=this.d;if(this.a<=0)this.reset()}draw(){const tx=this.x-Math.cos(this.ang)*this.l,ty=this.y-Math.sin(this.ang)*this.l,g=x.createLinearGradient(tx,ty,this.x,this.y);g.addColorStop(0,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},0)`);g.addColorStop(1,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${this.a*.7})`);x.beginPath();x.moveTo(tx,ty);x.lineTo(this.x,this.y);x.strokeStyle=g;x.lineWidth=1.8;x.stroke();x.beginPath();x.arc(this.x,this.y,2.5,0,Math.PI*2);x.fillStyle=`rgba(255,255,255,${this.a*.9})`;x.fill()}}const mob=window.innerWidth<768;for(let i=0;i<(mob?25:100);i++)p.push(new P);for(let i=0;i<(mob?1:4);i++)s.push(new S);let ls=0;function anim(t){x.clearRect(0,0,w,h);if(t-ls>3500+Math.random()*5000){s.push(new S);ls=t;if(s.length>7)s.shift()}s.forEach(v=>{v.update();v.draw()});p.forEach(v=>{v.update();v.draw()});if(!mob)for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){x.beginPath();x.moveTo(p[i].x,p[i].y);x.lineTo(p[j].x,p[j].y);x.strokeStyle=`rgba(139,92,246,${.04*(1-d/130)})`;x.lineWidth=.5;x.stroke()}}requestAnimationFrame(anim)}requestAnimationFrame(anim)})();
+
+    window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50)});
+
+    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_dashboard:"Dashboard",priv_badge:"Legal",priv_title:"Política de Privacidade",priv_h1:"1. Dados Coletados",priv_p1:"O Klaus Bot coleta apenas dados essenciais para seu funcionamento:",priv_li1:"ID do Discord — identificador único do usuário",priv_li2:"Nome de usuário e avatar — para exibição no bot",priv_li3:"Dados de economia — koins, itens, inventário e streaks",priv_li4:"Configurações de servidor — canais, permissões e preferências",priv_li5:"Logs de moderação — ações administrativas registradas",priv_h2:"2. Uso dos Dados",priv_p2:"Os dados são utilizados exclusivamente para: fornecer e melhorar os serviços do Bot, personalizar sua experiência, garantir a segurança e prevenir abusos.",priv_h3:"3. Compartilhamento",priv_p3:"Não vendemos, alugamos ou compartilhamos seus dados pessoais com terceiros. Os dados podem ser acessados apenas pela equipe de desenvolvimento do Klaus para fins de suporte e manutenção.",priv_h4:"4. Armazenamento",priv_p4:"Os dados são armazenados em servidores seguros com criptografia. Utilizamos MongoDB Atlas com acesso restrito e autenticação.",priv_h5:"5. Retenção",priv_p5:"Os dados são mantidos enquanto o bot estiver ativo no servidor ou enquanto o usuário não solicitar sua remoção. Dados de servidores removidos são automaticamente limpos.",priv_h6:"6. Cookies",priv_p6:"O dashboard utiliza cookies para autenticação via Discord OAuth2. Cookies de sessão são criptografados e expiram em 7 dias.",priv_h7:"7. Seus Direitos",priv_p7:"Você pode solicitar a exclusão de seus dados a qualquer momento através do comando /config ou entrando em contato com a equipe de suporte.",priv_h8:"8. Contato",priv_p8:"Em caso de dúvidas sobre privacidade, entre em contato através do nosso servidor de suporte no Discord.",priv_updated:"Última atualização: Junho de 2026",footer_made:"Feito com dedicação para a comunidade Discord",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_dashboard:"Dashboard",priv_badge:"Legal",priv_title:"Privacy Policy",priv_h1:"1. Data Collected",priv_p1:"Klaus Bot collects only essential data for its operation:",priv_li1:"Discord ID — unique user identifier",priv_li2:"Username and avatar — for display in the bot",priv_li3:"Economy data — koins, items, inventory and streaks",priv_li4:"Server settings — channels, permissions and preferences",priv_li5:"Moderation logs — recorded administrative actions",priv_h2:"2. Data Usage",priv_p2:"Data is used exclusively to: provide and improve Bot services, personalize your experience, ensure security and prevent abuse.",priv_h3:"3. Sharing",priv_p3:"We do not sell, rent, or share your personal data with third parties. Data may only be accessed by the Klaus development team for support and maintenance purposes.",priv_h4:"4. Storage",priv_p4:"Data is stored on secure servers with encryption. We use MongoDB Atlas with restricted access and authentication.",priv_h5:"5. Retention",priv_p5:"Data is kept while the bot is active on the server or until the user requests its removal. Data from removed servers is automatically cleaned.",priv_h6:"6. Cookies",priv_p6:"The dashboard uses cookies for Discord OAuth2 authentication. Session cookies are encrypted and expire in 7 days.",priv_h7:"7. Your Rights",priv_p7:"You can request deletion of your data at any time through the /config command or by contacting the support team.",priv_h8:"8. Contact",priv_p8:"If you have any questions about privacy, please contact us through our Discord support server.",priv_updated:"Last updated: June 2026",footer_made:"Made with dedication for the Discord community",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
+    let currentLang=localStorage.getItem('klaus_lang')||'pt';
+    function applyLang(lang){currentLang=lang;localStorage.setItem('klaus_lang',lang);const d=I18N[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(d[k])el.textContent=d[k]});document.getElementById('lang-flag').textContent=lang==='pt'?'🇧🇷':'🇺🇸';document.getElementById('lang-code').textContent=lang.toUpperCase();document.documentElement.lang=lang==='pt'?'pt-BR':'en'}
+    function toggleLang(){applyLang(currentLang==='pt'?'en':'pt')}
+    applyLang(currentLang);
+  </script>
 </body>
 </html>

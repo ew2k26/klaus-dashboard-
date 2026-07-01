@@ -5,28 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Klaus Bot — O Bot Mais Completo do Discord</title>
   <meta name="description" content="Klaus Bot: Economia, Moderação, Diversão, XP System e Dashboard Web. O bot mais completo para seu servidor Discord.">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=31">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=32">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .consent-overlay{position:fixed;inset:0;z-index:99999;background:rgba(5,3,11,0.92);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .4s}
+    .consent-overlay{position:fixed;inset:0;z-index:99999;background:rgba(5,3,11,0.88);backdrop-filter:blur(30px) saturate(200%);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .5s var(--transition)}
     .consent-overlay.hidden{opacity:0;pointer-events:none}
-    .consent-box{background:linear-gradient(145deg,rgba(20,14,40,0.95),rgba(10,7,20,0.98));border:1px solid rgba(139,92,246,0.25);border-radius:20px;padding:2.5rem;max-width:500px;width:90%;text-align:center;box-shadow:0 0 80px rgba(139,92,246,0.15)}
-    .consent-box h2{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#d946ef);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem}
-    .consent-box p{color:#a8a3b5;font-size:.9rem;line-height:1.6;margin-bottom:1.5rem}
-    .consent-box a{color:#8b5cf6;text-decoration:none;font-weight:600}
-    .consent-box a:hover{text-decoration:underline}
+    .consent-box{background:linear-gradient(145deg,rgba(20,14,40,0.92),rgba(10,7,20,0.96));border:1px solid rgba(139,92,246,0.2);border-radius:24px;padding:3rem 2.5rem;max-width:500px;width:90%;text-align:center;box-shadow:0 0 120px rgba(139,92,246,0.12),0 30px 80px rgba(0,0,0,0.5);backdrop-filter:blur(60px);animation:consentIn .6s var(--spring) both}
+    @keyframes consentIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .consent-box h2{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#d946ef);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;letter-spacing:-0.5px}
+    .consent-box>p{color:#a8a3b5;font-size:.9rem;line-height:1.7;margin-bottom:1.5rem}
+    .consent-box a{color:#8b5cf6;text-decoration:none;font-weight:600;transition:color .2s}
+    .consent-box a:hover{color:#a78bfa;text-decoration:underline}
     .consent-checkboxes{text-align:left;margin-bottom:1.5rem}
-    .consent-checkboxes label{display:flex;align-items:flex-start;gap:.6rem;color:#c4c0cc;font-size:.85rem;margin-bottom:.8rem;cursor:pointer;line-height:1.4}
-    .consent-checkboxes input[type=checkbox]{width:18px;height:18px;accent-color:#8b5cf6;margin-top:2px;flex-shrink:0}
+    .consent-checkboxes label{display:flex;align-items:flex-start;gap:.7rem;color:#c4c0cc;font-size:.85rem;margin-bottom:.9rem;cursor:pointer;line-height:1.5;transition:color .2s}
+    .consent-checkboxes label:hover{color:white}
+    .consent-checkboxes input[type=checkbox]{width:18px;height:18px;accent-color:#8b5cf6;margin-top:2px;flex-shrink:0;border-radius:4px}
     .consent-btns{display:flex;gap:.8rem;justify-content:center}
-    .consent-btn-accept{padding:.8rem 2rem;border-radius:12px;border:none;font-weight:700;font-size:.95rem;cursor:pointer;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;transition:all .2s}
-    .consent-btn-accept:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(139,92,246,0.4)}
-    .consent-btn-accept:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-    .consent-btn-decline{padding:.8rem 1.5rem;border-radius:12px;border:1px solid rgba(139,92,246,0.3);background:transparent;color:#8b5cf6;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s}
-    .consent-btn-decline:hover{background:rgba(139,92,246,0.1)}
-    .lang-toggle{display:flex;align-items:center;gap:4px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:.8rem;color:#c4c0cc;transition:all .2s}
-    .lang-toggle:hover{background:rgba(139,92,264,0.2);border-color:rgba(139,92,246,0.4)}
+    .consent-btn-accept{padding:.85rem 2.2rem;border-radius:14px;border:none;font-weight:700;font-size:.95rem;cursor:pointer;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;transition:all .3s var(--spring);box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .consent-btn-accept:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(139,92,246,0.5)}
+    .consent-btn-accept:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+    .consent-btn-decline{padding:.85rem 1.5rem;border-radius:14px;border:1px solid rgba(139,92,246,0.2);background:rgba(139,92,246,0.04);color:#8b5cf6;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s}
+    .consent-btn-decline:hover{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3)}
+    .lang-toggle{display:flex;align-items:center;gap:5px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:5px 12px;cursor:pointer;font-size:.8rem;color:#c4c0cc;transition:all .3s var(--spring)}
+    .lang-toggle:hover{background:rgba(139,92,246,0.18);border-color:rgba(139,92,246,0.35);transform:translateY(-1px)}
     .lang-toggle span{font-weight:600;color:#8b5cf6}
   </style>
 </head>
@@ -49,11 +51,20 @@
       </div>
     </div>
   </div>
+
+  <!-- CURSOR GLOW -->
+  <div class="cursor-glow" id="cursor-glow"></div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- AMBIENT ORBS -->
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+
   <div class="aurora"></div>
   <canvas id="particles-canvas"></canvas>
-  <div class="bg-glow"></div>
-  <div class="bg-glow bg-glow-2"></div>
-  <div class="bg-glow bg-glow-3"></div>
 
   <nav class="nav" id="nav">
     <a href="/" class="nav-brand">
@@ -110,11 +121,11 @@
     </h1>
     <div class="hero-buttons">
       {% if user %}
-        <a href="/dashboard" class="btn btn-primary btn-lg" data-i18n="hero_dashboard">Meu Dashboard →</a>
+        <a href="/dashboard" class="btn btn-primary btn-xl" data-i18n="hero_dashboard">Meu Dashboard →</a>
       {% else %}
-        <a href="/login" class="btn btn-discord btn-lg" data-i18n="hero_start">Começar Agora</a>
+        <a href="/login" class="btn btn-discord btn-xl" data-i18n="hero_start">Começar Agora</a>
       {% endif %}
-      <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver Recursos ↓</a>
+      <a href="#features" class="btn btn-ghost btn-xl" data-i18n="hero_features">Ver Recursos ↓</a>
     </div>
     <div class="live-status">
       <span class="live-dot"></span>
@@ -152,7 +163,8 @@
     </div>
 
     <div class="features-grid">
-      <div class="feature-card feature-card-large" style="--accent: #8b5cf6">
+      <div class="feature-card feature-card-large tilt-card" style="--accent: #8b5cf6">
+        <div class="card-shine"></div>
         <div class="feature-icon">💰</div>
         <h3 data-i18n="feat_economy">Economia Completa</h3>
         <p data-i18n="feat_economy_desc">Diário com streak progressivo, trabalho, mineração, forja, loja interativa, ranking, perfil e muito mais!</p>
@@ -166,7 +178,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #d946ef">
+      <div class="feature-card tilt-card" style="--accent: #d946ef">
+        <div class="card-shine"></div>
         <div class="feature-icon">🎰</div>
         <h3 data-i18n="feat_casino">Cassino</h3>
         <p data-i18n="feat_casino_desc">Roleta com botões, Coinflip, Dados, Blackjack, Loteria e Cases Gacha!</p>
@@ -178,7 +191,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #ec4899">
+      <div class="feature-card tilt-card" style="--accent: #ec4899">
+        <div class="card-shine"></div>
         <div class="feature-icon">⚔️</div>
         <h3 data-i18n="feat_pvp">PvP & Aventura</h3>
         <p data-i18n="feat_pvp_desc">Desafie jogadores em duelo, roube koins, cometa crimes e heists!</p>
@@ -190,7 +204,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #14b8a6">
+      <div class="feature-card tilt-card" style="--accent: #14b8a6">
+        <div class="card-shine"></div>
         <div class="feature-icon">🏦</div>
         <h3 data-i18n="feat_savings">Poupança & Investimentos</h3>
         <p data-i18n="feat_savings_desc">Deposite no cofre com juros, invista em cripto, ações e imóveis!</p>
@@ -201,7 +216,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #f97316">
+      <div class="feature-card tilt-card" style="--accent: #f97316">
+        <div class="card-shine"></div>
         <div class="feature-icon">🐾</div>
         <h3 data-i18n="feat_pets">Pets & Desafios</h3>
         <p data-i18n="feat_pets_desc">Adote um pet, complete desafios diários e ganhe recompensas!</p>
@@ -212,7 +228,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #3b82f6">
+      <div class="feature-card tilt-card" style="--accent: #3b82f6">
+        <div class="card-shine"></div>
         <div class="feature-icon">🎮</div>
         <h3 data-i18n="feat_fun">Diversão</h3>
         <p data-i18n="feat_fun_desc">Truth or Dare com 120+ perguntas, Magic Ball, hug, kiss, ship, batalha, piadas e memes!</p>
@@ -224,7 +241,8 @@
         </div>
       </div>
 
-      <div class="feature-card" style="--accent: #ef4444">
+      <div class="feature-card tilt-card" style="--accent: #ef4444">
+        <div class="card-shine"></div>
         <div class="feature-icon">🛡️</div>
         <h3 data-i18n="feat_mod">Moderação & AutoMod</h3>
         <p data-i18n="feat_mod_desc">Ban, kick, mute, warn, anti-spam, anti-links e logs automáticos!</p>
@@ -236,7 +254,8 @@
         </div>
       </div>
 
-      <div class="feature-card feature-card-large" style="--accent: #8b5cf6">
+      <div class="feature-card feature-card-large tilt-card" style="--accent: #8b5cf6">
+        <div class="card-shine"></div>
         <div class="feature-icon">⚙️</div>
         <h3 data-i18n="feat_dashboard">Dashboard Web</h3>
         <p data-i18n="feat_dashboard_desc">Configure boas-vindas, auto cargo, logs, XP, automod, economia e cores pelo site! Tudo em tempo real.</p>
@@ -260,17 +279,20 @@
       <p data-i18n="how_sub">Simples, rápido e poderoso</p>
     </div>
     <div class="how-it-works">
-      <div class="how-step">
+      <div class="how-step tilt-card">
+        <div class="card-shine"></div>
         <div class="how-step-num">1</div>
         <h3 data-i18n="how_step1_title">Adicione o Bot</h3>
         <p data-i18n="how_step1_desc">Clique em "Entrar com Discord" e autorize o Klaus no seu servidor. Leva 10 segundos!</p>
       </div>
-      <div class="how-step">
+      <div class="how-step tilt-card">
+        <div class="card-shine"></div>
         <div class="how-step-num">2</div>
         <h3 data-i18n="how_step2_title">Configure Tudo</h3>
         <p data-i18n="how_step2_desc">Acesse o Dashboard para ativar boas-vindas, auto cargo, logs, XP e mais pelo site!</p>
       </div>
-      <div class="how-step">
+      <div class="how-step tilt-card">
+        <div class="card-shine"></div>
         <div class="how-step-num">3</div>
         <h3 data-i18n="how_step3_title">Curta o Bot</h3>
         <p data-i18n="how_step3_desc">Use /daily, /apostar, /minerar e dezenas de comandos. Ganhe koins, suba de level e compete!</p>
@@ -456,7 +478,73 @@
   </footer>
 
   <script>
+    // ═══════════════════════════════════════════
+    // CURSOR GLOW FOLLOWER
+    // ═══════════════════════════════════════════
+    const cursorGlow = document.getElementById('cursor-glow');
+    let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
+    document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animateGlow() {
+      glowX += (mouseX - glowX) * 0.08;
+      glowY += (mouseY - glowY) * 0.08;
+      cursorGlow.style.left = glowX + 'px';
+      cursorGlow.style.top = glowY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    if (window.innerWidth > 768) animateGlow();
+
+    // ═══════════════════════════════════════════
+    // SCROLL PROGRESS BAR
+    // ═══════════════════════════════════════════
+    const scrollProgress = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+      scrollProgress.style.transform = `scaleX(${progress})`;
+    });
+
+    // ═══════════════════════════════════════════
+    // 3D TILT CARD EFFECT
+    // ═══════════════════════════════════════════
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = (y - centerY) / centerY * -4;
+          const rotateY = (x - centerX) / centerX * 4;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // MAGNETIC BUTTON EFFECT
+    // ═══════════════════════════════════════════
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) translateY(-3px) scale(1.02)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════
     // Particles with connections + shooting stars
+    // ═══════════════════════════════════════════
     (function() {
       const canvas = document.getElementById('particles-canvas');
       const ctx = canvas.getContext('2d');
@@ -483,12 +571,12 @@
         constructor() {
           this.x = Math.random() * w;
           this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 0.2;
-          this.vy = (Math.random() - 0.5) * 0.2;
+          this.vx = (Math.random() - 0.5) * 0.25;
+          this.vy = (Math.random() - 0.5) * 0.25;
           this.r = Math.random() * 2.5 + 0.3;
-          this.alpha = Math.random() * 0.3 + 0.04;
+          this.alpha = Math.random() * 0.35 + 0.04;
           this.pulse = Math.random() * Math.PI * 2;
-          this.pulseSpeed = Math.random() * 0.015 + 0.004;
+          this.pulseSpeed = Math.random() * 0.018 + 0.005;
           this.color = colors[Math.floor(Math.random() * colors.length)];
         }
         update() {
@@ -499,28 +587,25 @@
           if (this.y < 0 || this.y > h) this.vy *= -1;
         }
         draw() {
-          const a = this.alpha + Math.sin(this.pulse) * 0.1;
+          const a = this.alpha + Math.sin(this.pulse) * 0.12;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${a})`;
           ctx.fill();
-          // Glow effect
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.r * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${a * 0.08})`;
+          ctx.arc(this.x, this.y, this.r * 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${a * 0.06})`;
           ctx.fill();
         }
       }
 
       class ShootingStar {
-        constructor() {
-          this.reset();
-        }
+        constructor() { this.reset(); }
         reset() {
           this.x = Math.random() * w;
           this.y = Math.random() * h * 0.5;
-          this.len = Math.random() * 80 + 40;
-          this.speed = Math.random() * 6 + 3;
+          this.len = Math.random() * 100 + 50;
+          this.speed = Math.random() * 7 + 4;
           this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
           this.alpha = 1;
           this.decay = Math.random() * 0.02 + 0.01;
@@ -537,24 +622,23 @@
           const tailY = this.y - Math.sin(this.angle) * this.len;
           const gradient = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
           gradient.addColorStop(0, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 0)`);
-          gradient.addColorStop(1, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.alpha * 0.6})`);
+          gradient.addColorStop(1, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.alpha * 0.7})`);
           ctx.beginPath();
           ctx.moveTo(tailX, tailY);
           ctx.lineTo(this.x, this.y);
           ctx.strokeStyle = gradient;
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = 1.8;
           ctx.stroke();
-          // Head glow
           ctx.beginPath();
-          ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.8})`;
+          ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.9})`;
           ctx.fill();
         }
       }
 
       const isMobile = window.innerWidth < 768;
-      const particleCount = isMobile ? 25 : 90;
-      const starCount = isMobile ? 1 : 3;
+      const particleCount = isMobile ? 25 : 100;
+      const starCount = isMobile ? 1 : 4;
       for (let i = 0; i < particleCount; i++) particles.push(new Particle());
       for (let i = 0; i < starCount; i++) shootingStars.push(new ShootingStar());
 
@@ -562,32 +646,26 @@
 
       function animate(t) {
         ctx.clearRect(0, 0, w, h);
-
-        // Shooting stars
-        if (t - lastStar > 4000 + Math.random() * 6000) {
+        if (t - lastStar > 3500 + Math.random() * 5000) {
           shootingStars.push(new ShootingStar());
           lastStar = t;
-          if (shootingStars.length > 6) shootingStars.shift();
+          if (shootingStars.length > 7) shootingStars.shift();
         }
         shootingStars.forEach(s => { s.update(); s.draw(); });
-
-        // Particles
         particles.forEach(p => { p.update(); p.draw(); });
-
-        // Connections (skip on mobile for performance)
         if (!isMobile) {
           for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
               const dx = particles[i].x - particles[j].x;
               const dy = particles[i].y - particles[j].y;
               const dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < 120) {
-                const alpha = 0.035 * (1 - dist / 120);
+              if (dist < 130) {
+                const alpha = 0.04 * (1 - dist / 130);
                 ctx.beginPath();
                 ctx.moveTo(particles[i].x, particles[i].y);
                 ctx.lineTo(particles[j].x, particles[j].y);
                 ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
-                ctx.lineWidth = 0.4;
+                ctx.lineWidth = 0.5;
                 ctx.stroke();
               }
             }
@@ -605,9 +683,9 @@
 
     // Intersection observer for animations
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
+      entries.forEach((e, i) => {
         if (e.isIntersecting) {
-          e.target.classList.add('visible');
+          setTimeout(() => e.target.classList.add('visible'), i * 60);
         }
       });
     }, { threshold: 0.1 });
@@ -640,7 +718,7 @@
       });
     }).catch(() => {});
 
-    // Counter animation for static numbers
+    // Counter animation for static numbers with easing
     document.querySelectorAll('.stat-number[data-count]').forEach(el => {
       const target = parseInt(el.dataset.count);
       const suffix = el.dataset.suffix || '+';
@@ -648,12 +726,17 @@
         entries.forEach(e => {
           if (e.isIntersecting) {
             let current = 0;
-            const step = Math.ceil(target / 45);
-            const timer = setInterval(() => {
-              current += step;
-              if (current >= target) { current = target; clearInterval(timer); }
+            const duration = 1200;
+            const startTime = performance.now();
+            function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+            function step(now) {
+              const elapsed = now - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              current = Math.round(easeOutExpo(progress) * target);
               el.textContent = current + suffix;
-            }, 25);
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
             obs.unobserve(el);
           }
         });
@@ -1171,7 +1254,7 @@
       border:1px solid rgba(139,92,246,0.3); border-radius:20px;
       padding:2.5rem 2rem; text-align:center; max-width:380px; width:90%;
       box-shadow:0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.15);
-      transform:scale(0.8); transition:transform 0.3s;
+      transform:scale(0.8); transition:transform 0.3s var(--spring);
     }
     .confirm-overlay.open .confirm-modal { transform:scale(1); }
     .confirm-emoji { font-size:3.5rem; margin-bottom:0.8rem; filter:drop-shadow(0 4px 12px rgba(139,92,246,0.3)); }

@@ -4,29 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=32">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+  <style>
+    .dash-user{display:flex;align-items:center;gap:.8rem;padding:.4rem 0}
+    .dash-user img{width:36px;height:36px;border-radius:50%;border:2px solid var(--primary)}
+    .dash-user span{font-size:.85rem;font-weight:600;color:var(--text2)}
+    .dash-nav{display:flex;align-items:center;gap:1rem}
+    .guild-card{opacity:0;transform:translateY(18px);transition:all .5s var(--transition)}
+    .guild-card.visible{opacity:1;transform:translateY(0)}
+    .empty-state{text-align:center;padding:4rem 2rem}
+    .empty-state .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.3}
+    .empty-state h3{margin-bottom:.5rem}
+    .empty-state p{color:var(--text2);margin-bottom:1.5rem}
+    @media(max-width:480px){.guild-card{padding:1rem}.guild-card img,.guild-icon{width:42px;height:42px}.guild-info h4{font-size:.9rem}.btn{padding:8px 16px;font-size:.78rem}}
+  </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
+  <div class="cursor-glow" id="cursor-glow"></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <div class="ambient-orb"></div><div class="ambient-orb"></div><div class="ambient-orb"></div>
+  <div class="aurora"></div>
+  <canvas id="particles-canvas"></canvas>
 
-  <nav class="nav">
-    <a href="/" class="nav-brand">
-      <span class="brand-icon">💜</span>
-      <span class="brand-text">KLAUS</span>
-    </a>
-    <div class="nav-user">
-      <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
-      <span>{{ user.username }}</span>
-      <a href="/logout" class="btn btn-outline btn-sm" style="background:transparent;color:var(--text2);border:1px solid var(--border2);">Sair</a>
+  <nav class="nav" id="nav">
+    <a href="/" class="nav-brand"><span class="brand-icon">💜</span><span class="brand-text">KLAUS</span></a>
+    <button class="hamburger" id="hamburger-btn" onclick="document.getElementById('mobile-menu').classList.toggle('open');this.classList.toggle('active')"><span></span><span></span><span></span></button>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_home">Home</a>
+      <a href="/status" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_status">Status</a>
+      <a href="/leaderboard" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_leaderboard">Leaderboard</a>
+      <a href="/profile" onclick="this.parentElement.classList.remove('open')" data-i18n="nav_profile">Perfil</a>
+      <a href="/logout" class="btn btn-ghost" data-i18n="nav_logout">Sair</a>
+    </div>
+    <div class="nav-links">
+      <a href="/" class="nav-link" data-i18n="nav_home">Home</a>
+      <a href="/status" class="nav-link" data-i18n="nav_status">Status</a>
+      <a href="/leaderboard" class="nav-link" data-i18n="nav_leaderboard">Leaderboard</a>
+      <a href="/profile" class="nav-link" data-i18n="nav_profile">Perfil</a>
+      <div class="dash-user">
+        <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png?size=64" alt="">
+        <span>{{ user.username }}</span>
+      </div>
+      <a href="/logout" class="btn btn-ghost btn-sm" data-i18n="nav_logout">Sair</a>
     </div>
   </nav>
 
   <div class="container">
-    <div class="section-header" style="margin-bottom: 2rem;">
-      <span class="section-badge">Dashboard</span>
-      <h2>Seus Servidores</h2>
-      <p>Escolha um servidor para configurar o Klaus</p>
+    <div class="section-header" style="margin-bottom:2rem">
+      <span class="section-badge" data-i18n="dash_badge">Dashboard</span>
+      <h2 data-i18n="dash_title">Seus Servidores</h2>
+      <p data-i18n="dash_sub">Escolha um servidor para configurar o Klaus</p>
     </div>
 
     {% for g in guilds %}
@@ -40,35 +68,53 @@
         <h4>{{ g.name }}</h4>
         <p>
           {% if g.in_bot %}
-            <span class="badge badge-green">Bot no servidor</span>
+            <span class="badge badge-green" data-i18n="dash_bot_added">Bot no servidor</span>
           {% else %}
-            <span class="badge badge-yellow">Bot não adicionado</span>
+            <span class="badge badge-yellow" data-i18n="dash_bot_not_added">Bot não adicionado</span>
           {% endif %}
         </p>
       </div>
       {% if g.in_bot %}
-        <a href="/server/{{ g.id }}" class="btn btn-primary btn-sm">Configurar</a>
+        <a href="/server/{{ g.id }}" class="btn btn-primary btn-sm" data-i18n="dash_config">Configurar</a>
       {% else %}
-        <a href="https://discord.com/oauth2/authorize?client_id=1502096967055184024&scope=bot%20applications.commands&permissions=8&guild_id={{ g.id }}" class="btn btn-success btn-sm" target="_blank">Adicionar Bot</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1502096967055184024&scope=bot%20applications.commands&permissions=8&guild_id={{ g.id }}" class="btn btn-success btn-sm" target="_blank" data-i18n="dash_add_bot">Adicionar Bot</a>
       {% endif %}
     </div>
     {% endfor %}
 
     {% if not guilds %}
-    <div class="card" style="text-align: center; padding: 4rem 2rem;">
-      <div style="font-size: 3rem; margin-bottom: 1rem;">😔</div>
-      <h3 style="margin-bottom: 0.5rem;">Nenhum servidor encontrado</h3>
-      <p style="color: var(--text2); margin-bottom: 1.5rem;">Você precisa de permissão de administrador em um servidor</p>
-      <a href="https://discord.com/oauth2/authorize?client_id=1502096967055184024&scope=bot%20applications.commands&permissions=8" class="btn btn-discord" target="_blank">Adicionar Klaus a um servidor</a>
+    <div class="empty-state card">
+      <div class="empty-icon">😔</div>
+      <h3 data-i18n="dash_empty">Nenhum servidor encontrado</h3>
+      <p data-i18n="dash_empty_desc">Você precisa de permissão de administrador em um servidor</p>
+      <a href="https://discord.com/oauth2/authorize?client_id=1502096967055184024&scope=bot%20applications.commands&permissions=8" class="btn btn-discord" target="_blank" data-i18n="dash_add_klaus">Adicionar Klaus a um servidor</a>
     </div>
     {% endif %}
   </div>
 
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand"><span class="brand-icon">💜</span><span>KLAUS BOT</span></div>
+      <p data-i18n="footer_made">Feito com dedicação para a comunidade Discord</p>
+      <div class="footer-links"><a href="/" data-i18n="nav_home">Home</a><a href="/status">Status</a><a href="/terms" data-i18n="footer_terms">Termos de Serviço</a><a href="/privacy" data-i18n="footer_privacy">Privacidade</a></div>
+    </div>
+  </footer>
+
   <script>
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.guild-card').forEach(el => observer.observe(el));
+    const cursorGlow=document.getElementById('cursor-glow');let mouseX=0,glowX=0,glowY=0;document.addEventListener('mousemove',e=>{mouseX=e.clientX;glowY=e.clientY});function animateGlow(){glowX+=(mouseX-glowX)*.08;glowY+=(glowY-glowY)*.08;cursorGlow.style.left=glowX+'px';cursorGlow.style.top=glowY+'px';requestAnimationFrame(animateGlow)}if(window.innerWidth>768)animateGlow();
+    const sp=document.getElementById('scroll-progress');window.addEventListener('scroll',()=>{const t=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-document.documentElement.clientHeight;sp.style.transform=`scaleX(${h>0?t/h:0})`});
+
+    (function(){const c=document.getElementById('particles-canvas'),x=c.getContext('2d');let p=[],s=[],w,h;function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight}resize();window.addEventListener('resize',resize);const cols=[[139,92,246],[217,70,239],[59,130,246],[244,63,94],[167,139,250]];class P{constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.r=Math.random()*2.5+.3;this.a=Math.random()*.35+.04;this.p=Math.random()*Math.PI*2;this.ps=Math.random()*.018+.005;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=this.vx;this.y+=this.vy;this.p+=this.ps;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1}draw(){const a=this.a+Math.sin(this.p)*.12;x.beginPath();x.arc(this.x,this.y,this.r,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a})`;x.fill();x.beginPath();x.arc(this.x,this.y,this.r*3.5,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a*.06})`;x.fill()}}class S{constructor(){this.reset()}reset(){this.x=Math.random()*w;this.y=Math.random()*h*.5;this.l=Math.random()*100+50;this.sp=Math.random()*7+4;this.ang=Math.PI/4+(Math.random()-.5)*.3;this.a=1;this.d=Math.random()*.02+.01;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=Math.cos(this.ang)*this.sp;this.y+=Math.sin(this.ang)*this.sp;this.a-=this.d;if(this.a<=0)this.reset()}draw(){const tx=this.x-Math.cos(this.ang)*this.l,ty=this.y-Math.sin(this.ang)*this.l,g=x.createLinearGradient(tx,ty,this.x,this.y);g.addColorStop(0,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},0)`);g.addColorStop(1,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${this.a*.7})`);x.beginPath();x.moveTo(tx,ty);x.lineTo(this.x,this.y);x.strokeStyle=g;x.lineWidth=1.8;x.stroke();x.beginPath();x.arc(this.x,this.y,2.5,0,Math.PI*2);x.fillStyle=`rgba(255,255,255,${this.a*.9})`;x.fill()}}const mob=window.innerWidth<768;for(let i=0;i<(mob?25:100);i++)p.push(new P);for(let i=0;i<(mob?1:4);i++)s.push(new S);let ls=0;function anim(t){x.clearRect(0,0,w,h);if(t-ls>3500+Math.random()*5000){s.push(new S);ls=t;if(s.length>7)s.shift()}s.forEach(v=>{v.update();v.draw()});p.forEach(v=>{v.update();v.draw()});if(!mob)for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){x.beginPath();x.moveTo(p[i].x,p[i].y);x.lineTo(p[j].x,p[j].y);x.strokeStyle=`rgba(139,92,246,${.04*(1-d/130)})`;x.lineWidth=.5;x.stroke()}}requestAnimationFrame(anim)}requestAnimationFrame(anim)})();
+
+    window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50)});
+    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.1});
+    document.querySelectorAll('.guild-card').forEach(el=>obs.observe(el));
+
+    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Perfil",nav_logout:"Sair",dash_badge:"Dashboard",dash_title:"Seus Servidores",dash_sub:"Escolha um servidor para configurar o Klaus",dash_bot_added:"Bot no servidor",dash_bot_not_added:"Bot não adicionado",dash_config:"Configurar",dash_add_bot:"Adicionar Bot",dash_empty:"Nenhum servidor encontrado",dash_empty_desc:"Você precisa de permissão de administrador em um servidor",dash_add_klaus:"Adicionar Klaus a um servidor",footer_made:"Feito com dedicação para a comunidade Discord",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Profile",nav_logout:"Logout",dash_badge:"Dashboard",dash_title:"Your Servers",dash_sub:"Choose a server to configure Klaus",dash_bot_added:"Bot in server",dash_bot_not_added:"Bot not added",dash_config:"Configure",dash_add_bot:"Add Bot",dash_empty:"No servers found",dash_empty_desc:"You need admin permission on a server",dash_add_klaus:"Add Klaus to a server",footer_made:"Made with dedication for the Discord community",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
+    let currentLang=localStorage.getItem('klaus_lang')||'pt';
+    function applyLang(lang){currentLang=lang;localStorage.setItem('klaus_lang',lang);const d=I18N[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(d[k])el.textContent=d[k]});document.documentElement.lang=lang==='pt'?'pt-BR':'en'}
+    function toggleLang(){applyLang(currentLang==='pt'?'en':'pt')}
+    applyLang(currentLang);
   </script>
 </body>
 </html>

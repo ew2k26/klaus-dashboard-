@@ -15,6 +15,18 @@
     .pf-no-image code{background:rgba(139,92,246,.15);padding:2px 8px;border-radius:4px;color:var(--primary-light);font-size:.85rem}
     .spinner{width:32px;height:32px;border:3px solid rgba(139,92,246,.2);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+    .shop-toolbar{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.2rem}
+    .shop-search{position:relative;display:flex;align-items:center}
+    .shop-search-icon{position:absolute;left:.8rem;font-size:1rem;z-index:1;pointer-events:none;opacity:.5}
+    .shop-filters{display:flex;gap:.4rem;flex-wrap:wrap}
+    .shop-filter{padding:.4rem .9rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+    .shop-filter:hover{border-color:var(--primary);color:var(--primary-light)}
+    .shop-filter.active{background:linear-gradient(135deg,var(--primary),var(--pink));color:white;border-color:transparent;box-shadow:0 2px 10px rgba(139,92,246,.3)}
+    .shop-tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+    .shop-tab{flex:1;padding:.7rem 1rem;border-radius:12px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .25s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .shop-tab:hover{border-color:var(--primary);color:var(--primary-light)}
+    .shop-tab.active{background:rgba(139,92,246,.08);border-color:var(--primary);color:var(--primary-light)}
+    .shop-tab-count{font-size:.7rem;opacity:.6;font-weight:600}
     .shop-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
     .shop-section-header h3{margin:0}
     .shop-count{font-size:.8rem;color:var(--text3)}
@@ -73,7 +85,7 @@
     .mod-user-name{font-weight:700;font-size:.85rem}
     .mod-user-id{font-size:.7rem;color:var(--text3)}
     .mod-user-koins{font-weight:700;color:#ffd700;font-size:.85rem}
-    @media(max-width:480px){.shop-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}.pf-image-wrap{max-width:100%;border-radius:12px}.confirm-modal{padding:1.5rem 1rem;border-radius:16px}.confirm-emoji{font-size:2.5rem}.confirm-title{font-size:1.1rem}.mod-stats{grid-template-columns:1fr 1fr}.mod-card{padding:1rem}.mod-btn{padding:.5rem .8rem;font-size:.75rem}.mod-input{padding:.6rem .8rem;font-size:.8rem}.mod-user-row{padding:.6rem .8rem}.pf-hero-actions{flex-wrap:wrap}.sc-btn{font-size:.62rem;padding:4px 0}.sc-name{font-size:.72rem}.sc-price{font-size:.62rem}}
+    @media(max-width:480px){.shop-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}.pf-image-wrap{max-width:100%;border-radius:12px}.confirm-modal{padding:1.5rem 1rem;border-radius:16px}.confirm-emoji{font-size:2.5rem}.confirm-title{font-size:1.1rem}.mod-stats{grid-template-columns:1fr 1fr}.mod-card{padding:1rem}.mod-btn{padding:.5rem .8rem;font-size:.75rem}.mod-input{padding:.6rem .8rem;font-size:.8rem}.mod-user-row{padding:.6rem .8rem}.pf-hero-actions{flex-wrap:wrap}.sc-btn{font-size:.62rem;padding:4px 0}.sc-name{font-size:.72rem}.sc-price{font-size:.62rem}.shop-toolbar{gap:.6rem}.shop-filters{gap:.3rem}.shop-filter{padding:.35rem .7rem;font-size:.7rem}.shop-tab{padding:.6rem .8rem;font-size:.8rem}.shop-tab-count{font-size:.65rem}}
   </style>
 </head>
 <body>
@@ -134,19 +146,33 @@
         <h2 data-i18n="pf_shop_title">Loja de Perfil</h2>
         <p data-i18n="pf_shop_sub">Compre fundos e bordas exclusivas com seus koins</p>
       </div>
-      <div class="card shop-section">
-        <div class="shop-section-header">
-          <h3 data-i18n="pf_backgrounds">Fundos</h3>
-          <span class="shop-count" id="bg-count">0/15</span>
+
+      <div class="shop-toolbar">
+        <div class="shop-search">
+          <span class="shop-search-icon">🔍</span>
+          <input type="text" id="shop-search-input" class="mod-input" style="flex:1;padding-left:2.2rem" data-i18n-placeholder="pf_search_ph" placeholder="Buscar fundo ou borda..." oninput="filterShop()">
         </div>
-        <div class="shop-grid" id="bg-grid"></div>
+        <div class="shop-filters">
+          <button class="shop-filter active" onclick="setShopFilter('all',this)" data-i18n="pf_filter_all">Todos</button>
+          <button class="shop-filter" onclick="setShopFilter('owned',this)" data-i18n="pf_filter_owned">Possuo</button>
+          <button class="shop-filter" onclick="setShopFilter('not_owned',this)" data-i18n="pf_filter_not_owned">Nao possuo</button>
+          <button class="shop-filter" onclick="setShopFilter('cheap',this)" data-i18n="pf_filter_cheap">Baratos</button>
+          <button class="shop-filter" onclick="setShopFilter('expensive',this)" data-i18n="pf_filter_expensive">Caros</button>
+        </div>
       </div>
-      <div class="card shop-section" style="margin-top:1.5rem">
-        <div class="shop-section-header">
-          <h3 data-i18n="pf_borders">Bordas</h3>
-          <span class="shop-count" id="border-count">0/12</span>
+
+      <div class="shop-tabs">
+        <button class="shop-tab active" onclick="switchShopTab('bg',this)">🎨 <span data-i18n="pf_backgrounds">Fundos</span> <span class="shop-tab-count" id="bg-count">0/0</span></button>
+        <button class="shop-tab" onclick="switchShopTab('border',this)">🖼️ <span data-i18n="pf_borders">Bordas</span> <span class="shop-tab-count" id="border-count">0/0</span></button>
+      </div>
+
+      <div class="card shop-section" style="padding:1.5rem">
+        <div class="shop-grid" id="bg-grid"></div>
+        <div class="shop-grid" id="border-grid" style="display:none"></div>
+        <div id="shop-empty" style="display:none;text-align:center;padding:2rem;color:var(--text3)">
+          <div style="font-size:2rem;margin-bottom:.5rem;opacity:.4">🔍</div>
+          <p data-i18n="pf_no_results">Nenhum resultado encontrado</p>
         </div>
-        <div class="shop-grid" id="border-grid"></div>
       </div>
     </div>
 
@@ -235,28 +261,46 @@
 
     function loadProfileImage(){const img=document.getElementById('pf-image'),ld=document.getElementById('pf-loading'),ni=document.getElementById('pf-no-image');img.onload=function(){ld.style.display='none';ni.style.display='none';img.style.display='block'};img.onerror=function(){ld.style.display='none';ni.style.display='flex';img.style.display='none'};img.src=`/api/profile_image/${USER_ID}?t=${Date.now()}`}
 
+    let currentShopTab='bg',currentShopFilter='all';
+    function switchShopTab(tab,btn){currentShopTab=tab;document.querySelectorAll('.shop-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('bg-grid').style.display=tab==='bg'?'':'none';document.getElementById('border-grid').style.display=tab==='border'?'':'none';filterShop()}
+    function setShopFilter(f,btn){currentShopFilter=f;document.querySelectorAll('.shop-filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');filterShop()}
     function renderShop(){
       const oBg=profile.purchased_backgrounds||["padrao"],oBd=profile.purchased_borders||["default"];
       let bC=0,bdC=0;
       const bgG=document.getElementById('bg-grid');bgG.innerHTML='';
+      const bdG=document.getElementById('border-grid');bdG.innerHTML='';
+      const q=document.getElementById('shop-search-input').value.toLowerCase();
       for(const[key,bg]of Object.entries(BGS)){
         const owned=oBg.includes(key),active=key===activeBg;if(owned)bC++;
+        if(q&&!bg.name.toLowerCase().includes(q)&&!key.includes(q))continue;
+        if(currentShopFilter==='owned'&&!owned)continue;
+        if(currentShopFilter==='not_owned'&&owned)continue;
+        if(currentShopFilter==='cheap'&&bg.price>5000)continue;
+        if(currentShopFilter==='expensive'&&bg.price<10000)continue;
         const c=document.createElement('div');c.className=`shop-card ${owned?'owned':''} ${active?'active':''}`;
         c.innerHTML=`<div class="sc-preview" style="background:${bg.colors.bg}"><div class="sc-accent" style="background:${bg.colors.accent}"></div></div><div class="sc-info"><span class="sc-emoji">${bg.emoji}</span><span class="sc-name">${bg.name}</span><span class="sc-price">${bg.price===0?(currentLang==='en'?'Free':'Gratis'):fmt(bg.price)+' K'}</span></div><div class="sc-actions">${active?`<button class="sc-btn sc-btn-active">${currentLang==='en'?'Active':'Ativo'}</button>`:owned?`<button class="sc-btn sc-btn-equip" onclick="equipBg('${key}')">${currentLang==='en'?'Equip':'Equipar'}</button>`:`<button class="sc-btn sc-btn-buy" onclick="buyItem('backgrounds','${key}',${bg.price},'${bg.name.replace(/'/g,"\\'")}','${bg.emoji}')">${currentLang==='en'?'Buy':'Comprar'}</button>`}</div>`;
         bgG.appendChild(c);
       }
-      document.getElementById('bg-count').textContent=`${bC}/${Object.keys(BGS).length}`;
-      const bdG=document.getElementById('border-grid');bdG.innerHTML='';
       for(const[key,b]of Object.entries(BORDERS)){
         const owned=oBd.includes(key),active=key===activeBorder;if(owned)bdC++;
+        if(q&&!b.name.toLowerCase().includes(q)&&!key.includes(q))continue;
+        if(currentShopFilter==='owned'&&!owned)continue;
+        if(currentShopFilter==='not_owned'&&owned)continue;
+        if(currentShopFilter==='cheap'&&b.price>5000)continue;
+        if(currentShopFilter==='expensive'&&b.price<10000)continue;
         const c=document.createElement('div');c.className=`shop-card ${owned?'owned':''} ${active?'active':''}`;
         c.innerHTML=`<div class="sc-preview" style="background:#0a0a14"><div class="sc-border-circle" style="border-color:${b.color}"></div></div><div class="sc-info"><span class="sc-emoji">${b.emoji}</span><span class="sc-name">${b.name}</span><span class="sc-price">${b.price===0?(currentLang==='en'?'Free':'Gratis'):fmt(b.price)+' K'}</span></div><div class="sc-actions">${active?`<button class="sc-btn sc-btn-active">${currentLang==='en'?'Active':'Ativo'}</button>`:owned?`<button class="sc-btn sc-btn-equip" onclick="equipBorder('${key}')">${currentLang==='en'?'Equip':'Equipar'}</button>`:`<button class="sc-btn sc-btn-buy" onclick="buyItem('borders','${key}',${b.price},'${b.name.replace(/'/g,"\\'")}','${b.emoji}')">${currentLang==='en'?'Buy':'Comprar'}</button>`}</div>`;
         bdG.appendChild(c);
       }
+      document.getElementById('bg-count').textContent=`${bC}/${Object.keys(BGS).length}`;
       document.getElementById('border-count').textContent=`${bdC}/${Object.keys(BORDERS).length}`;
+      const empty=document.getElementById('shop-empty');
+      const activeG=currentShopTab==='bg'?bgG:bdG;
+      empty.style.display=activeG.children.length===0?'block':'none';
       const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.05});
       document.querySelectorAll('.shop-card:not(.visible)').forEach(el=>obs.observe(el));
     }
+    function filterShop(){renderShop()}
 
     async function autoSave(){try{await fetch(`/api/profile_config/${USER_ID}/set`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({background:activeBg,border:activeBorder})})}catch(e){}}
     function equipBg(k){activeBg=k;renderShop();autoSave()}
@@ -284,7 +328,7 @@
     let modUsersPage=1;
     async function modLoadUsers(page){modUsersPage=page||1;const el=document.getElementById('mod-users-list');el.innerHTML=`<div style="color:var(--text3);font-size:.85rem">${currentLang==='en'?'Loading...':'Carregando...'}</div>`;try{const r=await fetch(`/api/mod/users?page=${modUsersPage}`);const d=await r.json();if(d.error){el.innerHTML=`<div style="color:#f43f5e">${d.error}</div>`;return}el.innerHTML='';for(const u of(d.users||[])){const row=document.createElement('div');row.className='mod-user-row';row.innerHTML=`<img class="mod-user-avatar" src="${u.avatar_url||''}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt=""><div class="mod-user-info"><div class="mod-user-name">${u.username||'Unknown'}</div><div class="mod-user-id">${u.discord_id}</div></div><div class="mod-user-koins">${fmt(u.koins)} K</div>`;el.appendChild(row)}const pg=document.getElementById('mod-users-pagination');pg.innerHTML='';if(d.pages>1){if(modUsersPage>1)pg.innerHTML+=`<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(${modUsersPage-1})">${currentLang==='en'?'Prev':'Anterior'}</button>`;pg.innerHTML+=`<span style="color:var(--text3);font-size:.8rem;padding:.4rem">${currentLang==='en'?'Page':'Pagina'} ${modUsersPage}/${d.pages}</span>`;if(modUsersPage<d.pages)pg.innerHTML+=`<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(${modUsersPage+1})">${currentLang==='en'?'Next':'Proxima'}</button>`}}catch(e){el.innerHTML=`<div style="color:#f43f5e">${currentLang==='en'?'Connection error':'Erro de conexao'}</div>`}}
 
-    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Perfil",nav_dashboard:"Dashboard",pf_badge:"Perfil",pf_title:"Meu Perfil",pf_sub:"Customize sua imagem de perfil com a loja",pf_loading:"Carregando...",pf_no_image:"Use <code>/perfil</code> no Discord para gerar seu perfil",pf_edit:"Editar Perfil",pf_shop_title:"Loja de Perfil",pf_shop_sub:"Compre fundos e bordas exclusivas com seus koins",pf_backgrounds:"Fundos",pf_borders:"Bordas",mod_title:"Painel Mod",mod_sub:"Gerenciar usuarios e dados do bot",mod_users:"Usuarios",mod_commands:"Comandos",mod_search_title:"Buscar Usuario",mod_search_ph:"ID do Discord ou username...",mod_search_btn:"Buscar",mod_edit_koins_title:"Editar Koins",mod_set:"Definir",mod_add:"Adicionar",mod_give_title:"Dar Itens",mod_give_btn:"Dar Item",mod_all_users:"Todos os Usuarios",mod_load:"Carregar",footer_made:"Feito com dedicação para a comunidade Discord",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Profile",nav_dashboard:"Dashboard",pf_badge:"Profile",pf_title:"My Profile",pf_sub:"Customize your profile image with the shop",pf_loading:"Loading...",pf_no_image:"Use <code>/perfil</code> on Discord to generate your profile",pf_edit:"Edit Profile",pf_shop_title:"Profile Shop",pf_shop_sub:"Buy exclusive backgrounds and borders with your koins",pf_backgrounds:"Backgrounds",pf_borders:"Borders",mod_title:"Mod Panel",mod_sub:"Manage users and bot data",mod_users:"Users",mod_commands:"Commands",mod_search_title:"Search User",mod_search_ph:"Discord ID or username...",mod_search_btn:"Search",mod_edit_koins_title:"Edit Koins",mod_set:"Set",mod_add:"Add",mod_give_title:"Give Items",mod_give_btn:"Give Item",mod_all_users:"All Users",mod_load:"Load",footer_made:"Made with dedication for the Discord community",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
+    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Perfil",nav_dashboard:"Dashboard",pf_badge:"Perfil",pf_title:"Meu Perfil",pf_sub:"Customize sua imagem de perfil com a loja",pf_loading:"Carregando...",pf_no_image:"Use <code>/perfil</code> no Discord para gerar seu perfil",pf_edit:"Editar Perfil",pf_shop_title:"Loja de Perfil",pf_shop_sub:"Compre fundos e bordas exclusivas com seus koins",pf_backgrounds:"Fundos",pf_borders:"Bordas",pf_search_ph:"Buscar fundo ou borda...",pf_filter_all:"Todos",pf_filter_owned:"Possuo",pf_filter_not_owned:"Nao possuo",pf_filter_cheap:"Baratos",pf_filter_expensive:"Caros",pf_no_results:"Nenhum resultado encontrado",mod_title:"Painel Mod",mod_sub:"Gerenciar usuarios e dados do bot",mod_users:"Usuarios",mod_commands:"Comandos",mod_search_title:"Buscar Usuario",mod_search_ph:"ID do Discord ou username...",mod_search_btn:"Buscar",mod_edit_koins_title:"Editar Koins",mod_set:"Definir",mod_add:"Adicionar",mod_give_title:"Dar Itens",mod_give_btn:"Dar Item",mod_all_users:"Todos os Usuarios",mod_load:"Carregar",footer_made:"Feito com dedicação para a comunidade Discord",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Profile",nav_dashboard:"Dashboard",pf_badge:"Profile",pf_title:"My Profile",pf_sub:"Customize your profile image with the shop",pf_loading:"Loading...",pf_no_image:"Use <code>/perfil</code> on Discord to generate your profile",pf_edit:"Edit Profile",pf_shop_title:"Profile Shop",pf_shop_sub:"Buy exclusive backgrounds and borders with your koins",pf_backgrounds:"Backgrounds",pf_borders:"Borders",pf_search_ph:"Search backgrounds or borders...",pf_filter_all:"All",pf_filter_owned:"Owned",pf_filter_not_owned:"Not owned",pf_filter_cheap:"Cheap",pf_filter_expensive:"Expensive",pf_no_results:"No results found",mod_title:"Mod Panel",mod_sub:"Manage users and bot data",mod_users:"Users",mod_commands:"Commands",mod_search_title:"Search User",mod_search_ph:"Discord ID or username...",mod_search_btn:"Search",mod_edit_koins_title:"Edit Koins",mod_set:"Set",mod_add:"Add",mod_give_title:"Give Items",mod_give_btn:"Give Item",mod_all_users:"All Users",mod_load:"Load",footer_made:"Made with dedication for the Discord community",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
     let currentLang=localStorage.getItem('klaus_lang')||'pt';
     function applyLang(lang){currentLang=lang;localStorage.setItem('klaus_lang',lang);const d=I18N[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(d[k])el.innerHTML=d[k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.getAttribute('data-i18n-placeholder');if(d[k])el.placeholder=d[k]});document.getElementById('lang-flag').textContent=lang==='pt'?'🇧🇷':'🇺🇸';document.getElementById('lang-code').textContent=lang.toUpperCase();document.documentElement.lang=lang==='pt'?'pt-BR':'en';renderShop()}
     function toggleLang(){applyLang(currentLang==='pt'?'en':'pt')}

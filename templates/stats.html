@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaus — Estatísticas ao Vivo</title>
+  <link rel="stylesheet" href="/static/style.css?v=32">
+  <style>
+    .stats-hero { text-align:center; padding:4rem 1rem 2rem; position:relative; overflow:hidden; }
+    .stats-hero h1 { font-size:clamp(2rem,5vw,3.5rem); font-weight:900; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .stats-hero .sub { color:var(--text-muted); font-size:1.1rem; margin-top:0.5rem; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.25rem; max-width:1100px; margin:2rem auto; padding:0 1.5rem; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center; transition:all 0.3s; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gradient); }
+    .stat-card:hover { transform:translateY(-4px); border-color:var(--primary); }
+    .stat-card .icon { font-size:2rem; margin-bottom:0.75rem; }
+    .stat-card .value { font-size:2.2rem; font-weight:900; color:var(--text); font-variant-numeric:tabular-nums; }
+    .stat-card .label { color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:0.25rem; }
+    .live-section { max-width:1100px; margin:3rem auto; padding:0 1.5rem; }
+    .live-section h2 { font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:1rem; }
+    .live-bar { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+    .live-bar .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+    .live-bar .label { color:var(--text-muted); font-size:0.9rem; }
+    .live-bar .value { color:var(--text); font-weight:700; }
+    .progress-track { height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+    .progress-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+    .pulse { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:6px; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    .loading { color:var(--text-muted); text-align:center; padding:4rem; }
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr; gap:0.75rem;}.stat-card .value{font-size:1.6rem;}}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="aurora-bg"><div class="aurora aurora-1"></div><div class="aurora aurora-2"></div><div class="aurora aurora-3"></div></div>
+  <div class="ambient-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+
+  <nav class="glass-nav">
+    <div class="nav-container">
+      <a href="/" class="logo"><span class="logo-k">K</span><span class="logo-text">klaus</span></a>
+      <button class="mobile-toggle" id="mobileToggle"><span></span><span></span><span></span></button>
+      <div class="nav-links" id="navLinks">
+        <a href="/leaderboard" class="nav-link" data-i18n="nav_leaderboard">Ranking</a>
+        <a href="/status" class="nav-link" data-i18n="nav_status">Status</a>
+        <a href="/stats" class="nav-link active" data-i18n="nav_stats">Estatísticas</a>
+      </div>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="pt">PT</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="stats-hero">
+      <h1 data-i18n="stats_title">Estatísticas ao Vivo</h1>
+      <p class="sub" data-i18n="stats_sub">Dados atualizados em tempo real do Klaus</p>
+      <p style="margin-top:0.75rem"><span class="pulse"></span><span data-i18n="stats_live">Conectado ao banco de dados</span></p>
+    </section>
+
+    <section class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="icon">👥</div><div class="value" id="sUsers">—</div><div class="label" data-i18n="stats_users">Usuários</div></div>
+      <div class="stat-card"><div class="icon">💰</div><div class="value" id="sKoins">—</div><div class="label" data-i18n="stats_total_koins">Koins Totais</div></div>
+      <div class="stat-card"><div class="icon">📊</div><div class="value" id="sPremium">—</div><div class="label" data-i18n="stats_premium">Premium</div></div>
+      <div class="stat-card"><div class="icon">📈</div><div class="value" id="sAchievements">—</div><div class="label" data-i18n="stats_achievements">Conquistas</div></div>
+      <div class="stat-card"><div class="icon">⛏️</div><div class="value" id="sMines">—</div><div class="label" data-i18n="stats_mines">Minerações</div></div>
+      <div class="stat-card"><div class="icon">🎰</div><div class="value" id="sCasino">—</div><div class="label" data-i18n="stats_casino">Apostas Casino</div></div>
+      <div class="stat-card"><div class="icon">🕵️</div><div class="value" id="sCrimes">—</div><div class="label" data-i18n="stats_crimes">Crimes</div></div>
+      <div class="stat-card"><div class="icon">💼</div><div class="value" id="sWorks">—</div><div class="label" data-i18n="stats_works">Trabalhos</div></div>
+    </section>
+
+    <section class="live-section">
+      <h2 data-i18n="stats_top_rich">Top 5 Mais Ricos</h2>
+      <div id="topRich"><div class="loading"><span class="pulse"></span> <span data-i18n="stats_loading">Carregando...</span></div></div>
+    </section>
+
+    <section class="live-section">
+      <h2 data-i18n="stats_top_streaks">Maiores Sequências</h2>
+      <div id="topStreaks"><div class="loading"><span class="pulse"></span> <span data-i18n="stats_loading2">Carregando...</span></div></div>
+    </section>
+
+    <section class="live-section">
+      <h2 data-i18n="stats_top_achievements">Mais Conquistas</h2>
+      <div id="topAchievements"><div class="loading"><span class="pulse"></span> <span data-i18n="stats_loading3">Carregando...</span></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand"><span class="logo-k">K</span> <span>klaus</span></div>
+      <div class="footer-links">
+        <a href="/terms">Termos</a>
+        <a href="/privacy">Privacidade</a>
+        <a href="/stats">Estatísticas</a>
+      </div>
+      <div class="footer-copy">Feito com 💜 por etdddddd</div>
+    </div>
+  </footer>
+
+  <script src="/static/main.js"></script>
+  <script>
+    const I18N = {
+      pt: {
+        nav_leaderboard:'Ranking', nav_status:'Status', nav_stats:'Estatísticas',
+        stats_title:'Estatísticas ao Vivo', stats_sub:'Dados atualizados em tempo real do Klaus',
+        stats_live:'Conectado ao banco de dados',
+        stats_users:'Usuários', stats_total_koins:'Koins Totais', stats_premium:'Premium',
+        stats_achievements:'Conquistas', stats_mines:'Minerações', stats_casino:'Apostas Casino',
+        stats_crimes:'Crimes', stats_works:'Trabalhos',
+        stats_top_rich:'Top 5 Mais Ricos', stats_top_streaks:'Maiores Sequências',
+        stats_top_achievements:'Mais Conquistas',
+        stats_loading:'Carregando...', stats_loading2:'Carregando...', stats_loading3:'Carregando...',
+        stats_rank:'#', stats_koins:'koins', stats_streak:'dias', stats_ach_count:'conquistas',
+      },
+      en: {
+        nav_leaderboard:'Leaderboard', nav_status:'Status', nav_stats:'Statistics',
+        stats_title:'Live Statistics', stats_sub:'Real-time data from Klaus',
+        stats_live:'Connected to database',
+        stats_users:'Users', stats_total_koins:'Total Koins', stats_premium:'Premium',
+        stats_achievements:'Achievements', stats_mines:'Mines', stats_casino:'Casino Bets',
+        stats_crimes:'Crimes', stats_works:'Jobs',
+        stats_top_rich:'Top 5 Richest', stats_top_streaks:'Longest Streaks',
+        stats_top_achievements:'Most Achievements',
+        stats_loading:'Loading...', stats_loading2:'Loading...', stats_loading3:'Loading...',
+        stats_rank:'#', stats_koins:'koins', stats_streak:'days', stats_ach_count:'achievements',
+      }
+    };
+    let currentLang = localStorage.getItem('klaus_lang') || 'pt';
+    function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || key; }
+    function applyLang(lang) {
+      currentLang = lang;
+      localStorage.setItem('klaus_lang', lang);
+      document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); el.textContent = t(k); });
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      loadStats();
+    }
+    document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+    function fmt(n) { return n >= 1e9 ? (n/1e9).toFixed(1)+'B' : n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : n.toLocaleString(); }
+
+    async function loadStats() {
+      try {
+        const r = await fetch('/api/stats/detailed');
+        const d = await r.json();
+        document.getElementById('sUsers').textContent = fmt(d.total_users || 0);
+        document.getElementById('sKoins').textContent = fmt(d.total_koins || 0);
+        document.getElementById('sPremium').textContent = fmt(d.premium_users || 0);
+        document.getElementById('sAchievements').textContent = fmt(d.total_achievements || 0);
+        document.getElementById('sMines').textContent = fmt(d.total_mines || 0);
+        document.getElementById('sCasino').textContent = fmt(d.total_casino || 0);
+        document.getElementById('sCrimes').textContent = fmt(d.total_crimes || 0);
+        document.getElementById('sWorks').textContent = fmt(d.total_works || 0);
+
+        if (d.top_rich && d.top_rich.length) {
+          document.getElementById('topRich').innerHTML = d.top_rich.map((u, i) =>
+            `<div class="live-bar"><div class="row"><span class="label">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]} ${u.username}</span><span class="value">${fmt(u.koins)} ${t('stats_koins')}</span></div><div class="progress-track"><div class="progress-fill" style="width:${Math.min((u.koins/d.top_rich[0].koins)*100,100)}%;background:var(--gradient)"></div></div></div>`
+          ).join('');
+        }
+        if (d.top_streaks && d.top_streaks.length) {
+          document.getElementById('topStreaks').innerHTML = d.top_streaks.map((u, i) =>
+            `<div class="live-bar"><div class="row"><span class="label">${['🔥','⚡','✨','💫','🌟'][i]} ${u.username}</span><span class="value">${u.streak} ${t('stats_streak')}</span></div><div class="progress-track"><div class="progress-fill" style="width:${Math.min((u.streak/d.top_streaks[0].streak)*100,100)}%;background:var(--gradient)"></div></div></div>`
+          ).join('');
+        }
+        if (d.top_achievements && d.top_achievements.length) {
+          document.getElementById('topAchievements').innerHTML = d.top_achievements.map((u, i) =>
+            `<div class="live-bar"><div class="row"><span class="label">${['🏆','🎖️','🥇','🥈','🥉'][i]} ${u.username}</span><span class="value">${u.count} ${t('stats_ach_count')}</span></div><div class="progress-track"><div class="progress-fill" style="width:${Math.min((u.count/d.top_achievements[0].count)*100,100)}%;background:var(--gradient)"></div></div></div>`
+          ).join('');
+        }
+      } catch(e) { console.error('Stats load error:', e); }
+    }
+    loadStats();
+    setInterval(loadStats, 15000);
+    applyLang(currentLang);
+  </script>
+</body>
+</html>

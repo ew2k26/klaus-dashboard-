@@ -332,6 +332,75 @@ def api_stats() -> Any:
         return jsonify({"error": str(e), "total_users": 0, "total_koins": 0})
 
 
+@app.route("/api/stats/detailed")
+def api_stats_detailed() -> Any:
+    try:
+        db = get_db()
+        total_users = db["usuarios"].count_documents({})
+
+        # Total koins
+        pipeline = [{"$group": {"_id": None, "total_koins": {"$sum": "$koins"}}}]
+        result = list(db["usuarios"].aggregate(pipeline))
+        total_koins = result[0]["total_koins"] if result else 0
+
+        # Premium users
+        premium_users = db["usuarios"].count_documents({"premium": True})
+
+        # Total achievements
+        ach_pipeline = [{"$project": {"count": {"$size": {"$ifNull": ["$achievements", []]}}}}, {"$group": {"_id": None, "total": {"$sum": "$count"}}}]
+        ach_result = list(db["usuarios"].aggregate(ach_pipeline))
+        total_achievements = ach_result[0]["total"] if ach_result else 0
+
+        # Total mines
+        mines_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.mines_count", 0]}}}}]
+        mines_result = list(db["usuarios"].aggregate(mines_pipeline))
+        total_mines = mines_result[0]["total"] if mines_result else 0
+
+        # Total casino
+        casino_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.bet_count", 0]}}}}]
+        casino_result = list(db["usuarios"].aggregate(casino_pipeline))
+        total_casino = casino_result[0]["total"] if casino_result else 0
+
+        # Total crimes
+        crimes_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.crimes_count", 0]}}}}]
+        crimes_result = list(db["usuarios"].aggregate(crimes_pipeline))
+        total_crimes = crimes_result[0]["total"] if crimes_result else 0
+
+        # Total works
+        works_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.work_count", 0]}}}}]
+        works_result = list(db["usuarios"].aggregate(works_pipeline))
+        total_works = works_result[0]["total"] if works_result else 0
+
+        # Top 5 richest
+        top_rich = list(db["usuarios"].find({}, {"username": 1, "koins": 1, "discord_id": 1}).sort("koins", -1).limit(5))
+        top_rich = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "koins": u.get("koins", 0)} for u in top_rich]
+
+        # Top 5 streaks
+        top_streaks = list(db["usuarios"].find({}, {"username": 1, "stats.daily_streak": 1, "discord_id": 1}).sort("stats.daily_streak", -1).limit(5))
+        top_streaks = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "streak": u.get("stats", {}).get("daily_streak", 0)} for u in top_streaks]
+        top_streaks = [s for s in top_streaks if s["streak"] > 0]
+
+        # Top 5 achievements
+        top_ach = list(db["usuarios"].find({}, {"username": 1, "achievements": 1, "discord_id": 1}).sort({"$expr": {"$size": {"$ifNull": ["$achievements", []]}}}, -1).limit(5))
+        top_ach = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "count": len(u.get("achievements", []))} for u in top_ach]
+
+        return jsonify({
+            "total_users": total_users,
+            "total_koins": total_koins,
+            "premium_users": premium_users,
+            "total_achievements": total_achievements,
+            "total_mines": total_mines,
+            "total_casino": total_casino,
+            "total_crimes": total_crimes,
+            "total_works": total_works,
+            "top_rich": top_rich,
+            "top_streaks": top_streaks,
+            "top_achievements": top_ach,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route("/api/profile/<user_id>")
 def api_profile(user_id: str) -> Any:
     try:
@@ -583,6 +652,11 @@ def status_page() -> str:
 @app.route("/leaderboard")
 def leaderboard_page() -> str:
     return render_template("leaderboard.html")
+
+
+@app.route("/stats")
+def stats_page() -> str:
+    return render_template("stats.html")
 
 
 PROFILE_BORDERS = {

@@ -276,6 +276,23 @@ def api_save(guild_id: str) -> Any:
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/<guild_id>/stats")
+def api_guild_stats(guild_id: str) -> Any:
+    try:
+        db = get_db()
+        col = db["command_stats"]
+        pipeline = [
+            {"$match": {"guild_id": int(guild_id)}},
+            {"$group": {"_id": "$command", "count": {"$sum": "$count"}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 20},
+        ]
+        results = list(col.aggregate(pipeline))
+        return jsonify({"commands": results})
+    except Exception:
+        return jsonify({"commands": []})
+
+
 @app.route("/api/<guild_id>/roles")
 def api_roles(guild_id: str) -> Any:
     user_token = request.cookies.get("token")

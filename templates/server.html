@@ -161,6 +161,14 @@
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
           Diversão
         </button>
+        <button class="tab-btn" onclick="tab('commands',this)">
+          <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Comandos
+        </button>
+        <button class="tab-btn" onclick="tab('premium',this)">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Premium
+        </button>
       </div>
 
       <div class="tab-panels">
@@ -435,6 +443,49 @@
       </div>
     </div>
 
+    <!-- COMANDOS -->
+    <div id="tab-commands" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg> Uso de Comandos</h3>
+          <p style="color:var(--text3);font-size:.82rem;margin-bottom:1rem">Estatisticas de uso dos comandos do bot neste servidor.</p>
+          <div id="cmd-stats-loading" style="color:var(--text3);font-size:.85rem">Carregando...</div>
+          <div id="cmd-stats-list"></div>
+        </div>
+        <div class="info-card">
+          <h3>Estatisticas</h3>
+          <p>Veja quais comandos sao mais usados no seu servidor.<br><br>
+          <strong>Dados atualizados em tempo real</strong> a cada uso de comando.<br><br>
+          Use essas informacoes para saber quais funcionalidades seus membros mais aproveitam.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div id="tab-premium" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Premium do Servidor</h3>
+          <div id="premium-status" style="margin-bottom:1rem"></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>3x Daily</h4><p>Recompensa diaria triplicada</p></div><span id="prem-daily" style="font-size:1.2rem"></span></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>2x Trabalho</h4><p>Ganhos do trabalho dobrados</p></div><span id="prem-work" style="font-size:1.2rem"></span></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>2x Roubar</h4><p>Chance de roubo dobrada</p></div><span id="prem-rob" style="font-size:1.2rem"></span></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>2x XP</h4><p>Experiencia dobrada</p></div><span id="prem-xp" style="font-size:1.2rem"></span></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>10 Slots de Investimento</h4><p>5x mais slots que免费</p></div><span id="prem-invest" style="font-size:1.2rem"></span></div>
+        </div>
+        <div class="info-card">
+          <h3>Vantagens Premium</h3>
+          <p>O Premium oferece beneficios exclusivos para quem apoia o bot:<br><br>
+          <strong>3x Daily</strong> — Ganhe 3x mais no daily<br>
+          <strong>2x Trabalho</strong> — Ganhos de trabalho em dobro<br>
+          <strong>2x Roubar</strong> — Chances de roubo aumentadas<br>
+          <strong>2x XP</strong> — Suba de level mais rapido<br>
+          <strong>10 Invest Slots</strong> — Invista em ate 10 projetos<br><br>
+          Para ativar, fale com o desenvolvedor do bot.</p>
+        </div>
+      </div>
+    </div>
+
       </div>
     </div>
   </div>
@@ -447,7 +498,7 @@
     document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='light'?'☀️':'🌙';
   </script>
   <script>window.__config={{ config|tojson }}</script>
-  <script src="{{ url_for('static', filename='script.js') }}?v=7"></script>
+  <script src="{{ url_for('static', filename='script.js') }}?v=8"></script>
   <script>init("{{ guild.id }}")</script>
 </body>
 </html>

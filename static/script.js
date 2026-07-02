@@ -59,6 +59,8 @@ function init(id) {
       const cfg = window.__config || {};
       if (cfg.autorole_role) el.value = cfg.autorole_role;
       loadXpRoles();
+      loadCmdStats();
+      loadPremium();
     })
     .catch(e => console.log('Erro ao carregar cargos:', e));
 
@@ -341,4 +343,53 @@ function removeXpRole(lvl) {
     if (res.ok) { showAlert('Recompensa removida!', 'success'); renderXpRoles(); }
     else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
   }).catch(() => showAlert('Erro de conexao', 'error'));
+}
+
+function loadCmdStats() {
+  const loading = document.getElementById('cmd-stats-loading');
+  const list = document.getElementById('cmd-stats-list');
+  if (!list) return;
+  fetch(`/api/${GUILD}/stats`)
+    .then(r => r.json())
+    .then(data => {
+      if (loading) loading.style.display = 'none';
+      const cmds = data.commands || data.top_commands || [];
+      if (cmds.length === 0) {
+        list.innerHTML = '<p style="color:var(--text3);font-size:.82rem">Nenhum dado de uso ainda.</p>';
+        return;
+      }
+      list.innerHTML = cmds.slice(0, 15).map((c, i) => {
+        const name = c._id || c.command || c.name || '?';
+        const count = c.count || c.usages || 0;
+        const pct = cmds[0] ? Math.round((count / (cmds[0].count || cmds[0].usages || 1)) * 100) : 0;
+        return `<div style="display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:.35rem;font-size:.85rem">
+          <span style="color:var(--text3);min-width:1.5rem">${i + 1}.</span>
+          <span style="flex:1;font-weight:600">/${name}</span>
+          <span style="color:var(--text3)">${count} usos</span>
+          <div style="width:60px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--primary),var(--pink));border-radius:3px"></div>
+          </div>
+        </div>`;
+      }).join('');
+    })
+    .catch(() => {
+      if (loading) loading.textContent = 'Erro ao carregar stats.';
+    });
+}
+
+function loadPremium() {
+  const cfg = window.__config || {};
+  const prem = document.getElementById('premium-status');
+  const isPremium = cfg.premium || cfg.is_premium || false;
+  if (prem) {
+    prem.innerHTML = isPremium
+      ? '<div style="padding:.8rem 1rem;background:linear-gradient(135deg,rgba(217,70,239,.15),rgba(139,92,246,.15));border:1px solid rgba(217,70,239,.3);border-radius:12px;font-size:.88rem;font-weight:600;color:#d946ef">⭐ Premium Ativo</div>'
+      : '<div style="padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;font-size:.88rem;color:var(--text3)">Premium nao ativo. Fale com o desenvolvedor.</div>';
+  }
+  const setIcon = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val ? '✅' : '❌'; };
+  setIcon('prem-daily', isPremium);
+  setIcon('prem-work', isPremium);
+  setIcon('prem-rob', isPremium);
+  setIcon('prem-xp', isPremium);
+  setIcon('prem-invest', isPremium);
 }

@@ -336,53 +336,31 @@ def api_stats() -> Any:
 def api_stats_detailed() -> Any:
     try:
         db = get_db()
-        total_users = db["usuarios"].count_documents({})
+        col = db["usuarios"]
 
-        # Total koins
-        pipeline = [{"$group": {"_id": None, "total_koins": {"$sum": "$koins"}}}]
-        result = list(db["usuarios"].aggregate(pipeline))
-        total_koins = result[0]["total_koins"] if result else 0
+        total_users = col.count_documents({})
+        all_users = list(col.find({}, {"username": 1, "koins": 1, "discord_id": 1, "premium": 1, "achievements": 1, "stats": 1}))
 
-        # Premium users
-        premium_users = db["usuarios"].count_documents({"premium": True})
+        total_koins = sum(u.get("koins", 0) for u in all_users)
+        premium_users = sum(1 for u in all_users if u.get("premium"))
+        total_achievements = sum(len(u.get("achievements", [])) for u in all_users)
 
-        # Total achievements
-        ach_pipeline = [{"$project": {"count": {"$size": {"$ifNull": ["$achievements", []]}}}}, {"$group": {"_id": None, "total": {"$sum": "$count"}}}]
-        ach_result = list(db["usuarios"].aggregate(ach_pipeline))
-        total_achievements = ach_result[0]["total"] if ach_result else 0
+        total_mines = sum(u.get("stats", {}).get("mines_count", 0) for u in all_users)
+        total_casino = sum(u.get("stats", {}).get("bet_count", 0) for u in all_users)
+        total_crimes = sum(u.get("stats", {}).get("crimes_count", 0) for u in all_users)
+        total_works = sum(u.get("stats", {}).get("work_count", 0) for u in all_users)
 
-        # Total mines
-        mines_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.mines_count", 0]}}}}]
-        mines_result = list(db["usuarios"].aggregate(mines_pipeline))
-        total_mines = mines_result[0]["total"] if mines_result else 0
+        def _name(u):
+            return u.get("username") or f"User#{str(u.get('discord_id', ''))[-4:]}"
 
-        # Total casino
-        casino_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.bet_count", 0]}}}}]
-        casino_result = list(db["usuarios"].aggregate(casino_pipeline))
-        total_casino = casino_result[0]["total"] if casino_result else 0
+        top_rich = sorted(all_users, key=lambda u: u.get("koins", 0), reverse=True)[:5]
+        top_rich = [{"username": _name(u), "koins": u.get("koins", 0)} for u in top_rich]
 
-        # Total crimes
-        crimes_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.crimes_count", 0]}}}}]
-        crimes_result = list(db["usuarios"].aggregate(crimes_pipeline))
-        total_crimes = crimes_result[0]["total"] if crimes_result else 0
+        top_streaks = sorted(all_users, key=lambda u: u.get("stats", {}).get("daily_streak", 0), reverse=True)[:5]
+        top_streaks = [{"username": _name(u), "streak": u.get("stats", {}).get("daily_streak", 0)} for u in top_streaks if u.get("stats", {}).get("daily_streak", 0) > 0]
 
-        # Total works
-        works_pipeline = [{"$group": {"_id": None, "total": {"$sum": {"$ifNull": ["$stats.work_count", 0]}}}}]
-        works_result = list(db["usuarios"].aggregate(works_pipeline))
-        total_works = works_result[0]["total"] if works_result else 0
-
-        # Top 5 richest
-        top_rich = list(db["usuarios"].find({}, {"username": 1, "koins": 1, "discord_id": 1}).sort("koins", -1).limit(5))
-        top_rich = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "koins": u.get("koins", 0)} for u in top_rich]
-
-        # Top 5 streaks
-        top_streaks = list(db["usuarios"].find({}, {"username": 1, "stats.daily_streak": 1, "discord_id": 1}).sort("stats.daily_streak", -1).limit(5))
-        top_streaks = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "streak": u.get("stats", {}).get("daily_streak", 0)} for u in top_streaks]
-        top_streaks = [s for s in top_streaks if s["streak"] > 0]
-
-        # Top 5 achievements
-        top_ach = list(db["usuarios"].find({}, {"username": 1, "achievements": 1, "discord_id": 1}).sort({"$expr": {"$size": {"$ifNull": ["$achievements", []]}}}, -1).limit(5))
-        top_ach = [{"username": u.get("username", f"User#{str(u.get('discord_id',''))[-4:]}"), "count": len(u.get("achievements", []))} for u in top_ach]
+        top_ach = sorted(all_users, key=lambda u: len(u.get("achievements", [])), reverse=True)[:5]
+        top_ach = [{"username": _name(u), "count": len(u.get("achievements", []))} for u in top_ach if len(u.get("achievements", [])) > 0]
 
         return jsonify({
             "total_users": total_users,
@@ -398,7 +376,9 @@ def api_stats_detailed() -> Any:
             "top_achievements": top_ach,
         })
     except Exception as e:
-        return jsonify({"error": str(e)})
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e), "total_users": 0, "total_koins": 0, "premium_users": 0, "total_achievements": 0, "total_mines": 0, "total_casino": 0, "total_crimes": 0, "total_works": 0, "top_rich": [], "top_streaks": [], "top_achievements": []})
 
 
 @app.route("/api/profile/<user_id>")

@@ -109,7 +109,7 @@
         <a href="/privacy">Privacidade</a>
         <a href="/stats">Estatísticas</a>
       </div>
-      <div class="footer-copy">Feito com 💜 por etdddddd</div>
+      <div class="footer-copy">Feito com 💜 por kadu</div>
     </div>
   </footer>
 
@@ -197,7 +197,7 @@
       try {
         const r = await fetch('/api/stats/detailed');
         const d = await r.json();
-        if (d.error) { console.error('API error:', d.error); return; }
+        console.log('Stats API:', d);
 
         document.getElementById('sUsers').textContent = fmt(d.total_users);
         document.getElementById('sKoins').textContent = fmt(d.total_koins);

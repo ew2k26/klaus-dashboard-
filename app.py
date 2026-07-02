@@ -298,7 +298,10 @@ def api_test_welcome(guild_id: str) -> Any:
     user_token = request.cookies.get("token")
     if not user_token:
         return jsonify({"error": "no token"}), 401
-    guilds = fetch_user_guilds(user_token)
+    user = fetch_user(user_token)
+    if not user:
+        return jsonify({"error": "invalid token"}), 401
+    guilds = user.get("guilds", [])
     guild = next((g for g in guilds if g["id"] == guild_id), None)
     if not guild or not (int(guild.get("permissions", 0)) & 0x20):
         return jsonify({"error": "no permission"}), 403
@@ -358,7 +361,10 @@ def api_test_farewell(guild_id: str) -> Any:
     user_token = request.cookies.get("token")
     if not user_token:
         return jsonify({"error": "no token"}), 401
-    guilds = fetch_user_guilds(user_token)
+    user = fetch_user(user_token)
+    if not user:
+        return jsonify({"error": "invalid token"}), 401
+    guilds = user.get("guilds", [])
     guild = next((g for g in guilds if g["id"] == guild_id), None)
     if not guild or not (int(guild.get("permissions", 0)) & 0x20):
         return jsonify({"error": "no permission"}), 403

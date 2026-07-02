@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ guild.name }} - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=36">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=37">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
   <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('klaus_theme')||'dark')</script>
   <style>
@@ -542,7 +542,7 @@
     document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='light'?'☀️':'🌙';
   </script>
   <script>window.__config={{ config|tojson }}</script>
-  <script src="{{ url_for('static', filename='script.js') }}?v=10"></script>
+  <script src="{{ url_for('static', filename='script.js') }}?v=11"></script>
   <script>init("{{ guild.id }}")</script>
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <button onclick="tab('welcome',document.querySelector('[onclick*=welcome]'))"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Boas-vindas</span></button>

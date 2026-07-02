@@ -235,7 +235,6 @@ def server(user: dict, guild_id: str) -> str:
         "embed_color_primary": "#8b5cf6", "embed_color_success": "#22c55e",
         "embed_color_error": "#ef4444", "embed_color_warning": "#f59e0b",
         "welcome_footer": "Klaus Bot", "farewell_footer": "Klaus Bot",
-        "reaction_role_channel": "",
     }
     try:
         db = get_db()

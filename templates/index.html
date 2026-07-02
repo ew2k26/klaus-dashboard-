@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Klaus Bot — O Bot Mais Completo do Discord</title>
   <meta name="description" content="Klaus Bot: Economia, Moderação, Diversão, XP System e Dashboard Web. O bot mais completo para seu servidor Discord.">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=33">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=37">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
   <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('klaus_theme')||'dark')</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -222,11 +222,12 @@
         <div class="card-shine"></div>
         <div class="feature-icon">🐾</div>
         <h3 data-i18n="feat_pets">Pets & Desafios</h3>
-        <p data-i18n="feat_pets_desc">Adote um pet, complete desafios diários e ganhe recompensas!</p>
+        <p data-i18n="feat_pets_desc">Adote um pet, complete desafios, gire a sorte e sobreviva a aventuras!</p>
         <div class="feature-tags">
           <span class="tag">/pet</span>
           <span class="tag">/challenges</span>
-          <span class="tag">/lucky_wheel</span>
+          <span class="tag">/slot</span>
+          <span class="tag">/sobrevivencia</span>
         </div>
       </div>
 
@@ -234,12 +235,13 @@
         <div class="card-shine"></div>
         <div class="feature-icon">🎮</div>
         <h3 data-i18n="feat_fun">Diversão</h3>
-        <p data-i18n="feat_fun_desc">Truth or Dare com 120+ perguntas, Magic Ball, hug, kiss, ship, batalha, piadas e memes!</p>
+        <p data-i18n="feat_fun_desc">Hug, kiss, ship com imagem, batalha de dados, piadas, memes, corrida e quiz!</p>
         <div class="feature-tags">
-          <span class="tag">/tod</span>
-          <span class="tag">/magic</span>
           <span class="tag">/ship</span>
-          <span class="tag">/piada</span>
+          <span class="tag">/hug</span>
+          <span class="tag">/kiss</span>
+          <span class="tag">/corrida</span>
+          <span class="tag">/reacao</span>
         </div>
       </div>
 
@@ -250,7 +252,7 @@
         <p data-i18n="feat_mod_desc">Ban, kick, mute, warn, anti-spam, anti-links e logs automáticos!</p>
         <div class="feature-tags">
           <span class="tag">/ban</span>
-          <span class="tag">/automod</span>
+          <span class="tag">/add_badword</span>
           <span class="tag">/warn</span>
           <span class="tag">/mute</span>
         </div>
@@ -269,6 +271,12 @@
           <span class="tag">AutoMod</span>
           <span class="tag">Economia</span>
           <span class="tag">Cores</span>
+          <span class="tag">XP Recompensas</span>
+          <span class="tag">AutoMod++</span>
+          <span class="tag">Moderação</span>
+          <span class="tag">Diversão</span>
+          <span class="tag">Comandos</span>
+          <span class="tag">Premium</span>
         </div>
       </div>
     </div>
@@ -305,7 +313,7 @@
   <div class="container" id="commands">
     <div class="section-header">
       <span class="section-badge" data-i18n="cmd_badge">Comandos</span>
-      <h2 data-i18n="cmd_title">94 Comandos Disponíveis</h2>
+      <h2 data-i18n="cmd_title">100 Comandos Disponíveis</h2>
       <p data-i18n="cmd_sub">Use / para ver todos os comandos no Discord</p>
     </div>
 
@@ -314,17 +322,23 @@
         <h3>💰 Economia</h3>
         <div class="command-list">
           <div class="command-item"><code>/daily</code><span>Recompensa diária</span></div>
+          <div class="command-item"><code>/weekly</code><span>Recompensa semanal</span></div>
           <div class="command-item"><code>/streak</code><span>Sequência de dias</span></div>
+          <div class="command-item"><code>/recompensa</code><span>Ver recompensas</span></div>
           <div class="command-item"><code>/trabalhar</code><span>Ganhe koins</span></div>
           <div class="command-item"><code>/minerar</code><span>Minere koins</span></div>
           <div class="command-item"><code>/forjar</code><span>Forje itens</span></div>
           <div class="command-item"><code>/loja</code><span>Compre itens</span></div>
+          <div class="command-item"><code>/vender</code><span>Venda itens</span></div>
           <div class="command-item"><code>/saldo</code><span>Ver saldo</span></div>
           <div class="command-item"><code>/carteira</code><span>Carteira completa</span></div>
           <div class="command-item"><code>/perfil</code><span>Seu perfil</span></div>
           <div class="command-item"><code>/ranking</code><span>Top 10 ricos</span></div>
           <div class="command-item"><code>/conquistas</code><span>Suas conquistas</span></div>
           <div class="command-item"><code>/pagar</code><span>Transferir koins</span></div>
+          <div class="command-item"><code>/correio</code><span>Enviar mensagem</span></div>
+          <div class="command-item"><code>/doar</code><span>Doar koins</span></div>
+          <div class="command-item"><code>/sobrevivencia</code><span>Aventura survival</span></div>
         </div>
       </div>
 
@@ -335,7 +349,9 @@
           <div class="command-item"><code>/coinflip</code><span>Cara ou coroa</span></div>
           <div class="command-item"><code>/aposta_dados</code><span>Aposta nos dados</span></div>
           <div class="command-item"><code>/blackjack</code><span>Blackjack 21</span></div>
+          <div class="command-item"><code>/slot</code><span>Caça-niquel</span></div>
           <div class="command-item"><code>/duel</code><span>Duelo PvP</span></div>
+          <div class="command-item"><code>/batalhar</code><span>Batalha koins</span></div>
           <div class="command-item"><code>/lottery</code><span>Loteria</span></div>
           <div class="command-item"><code>/case</code><span>Case Gacha</span></div>
         </div>
@@ -350,20 +366,82 @@
           <div class="command-item"><code>/bounty</code><span>Coloque bounty</span></div>
           <div class="command-item"><code>/cofre</code><span>Sua poupança</span></div>
           <div class="command-item"><code>/invest</code><span>Invista koins</span></div>
-          <div class="command-item"><code>/pet</code><span>Adote um pet</span></div>
+          <div class="command-item"><code>/challenges</code><span>Desafios diários</span></div>
+          <div class="command-item"><code>/caixa_fortuna</code><span>Caixa da sorte</span></div>
         </div>
       </div>
 
       <div class="command-category">
         <h3>🎮 Diversão</h3>
         <div class="command-list">
-          <div class="command-item"><code>/tod</code><span>Truth or Dare</span></div>
-          <div class="command-item"><code>/magic</code><span>Bola Mágica</span></div>
-          <div class="command-item"><code>/russian</code><span>Roulette Russo</span></div>
           <div class="command-item"><code>/hug</code><span>Abraçar</span></div>
           <div class="command-item"><code>/kiss</code><span>Beijo</span></div>
-          <div class="command-item"><code>/ship</code><span>Ship</span></div>
+          <div class="command-item"><code>/slap</code><span>Tapa</span></div>
+          <div class="command-item"><code>/pat</code><span>Carinho</span></div>
+          <div class="command-item"><code>/ship</code><span>Ship com imagem</span></div>
+          <div class="command-item"><code>/casal</code><span>Casal Calculator</span></div>
+          <div class="command-item"><code>/coin</code><span>Moeda</span></div>
+          <div class="command-item"><code>/rps</code><span>Pedra, papel, tesoura</span></div>
+          <div class="command-item"><code>/batalha</code><span>Batalha PvP</span></div>
           <div class="command-item"><code>/piada</code><span>Piadas</span></div>
+          <div class="command-item"><code>/meme</code><span>Memes</span></div>
+          <div class="command-item"><code>/8ball</code><span>Bola 8</span></div>
+          <div class="command-item"><code>/roll</code><span>D20</span></div>
+          <div class="command-item"><code>/quiz</code><span>Quiz rápido</span></div>
+          <div class="command-item"><code>/poll</code><span>Enquete</span></div>
+          <div class="command-item"><code>/reacao</code><span>Teste reflexos</span></div>
+          <div class="command-item"><code>/adivinha</code><span>Adivinhe o nº</span></div>
+          <div class="command-item"><code>/corrida</code><span>Corrida PvP</span></div>
+          <div class="command-item"><code>/aventura</code><span>Aventura texto</span></div>
+          <div class="command-item"><code>/ranking_social</code><span>Social ranking</span></div>
+        </div>
+      </div>
+
+      <div class="command-category">
+        <h3>🛡️ Moderação</h3>
+        <div class="command-list">
+          <div class="command-item"><code>/ban</code><span>Banir</span></div>
+          <div class="command-item"><code>/kick</code><span>Expulsar</span></div>
+          <div class="command-item"><code>/mute</code><span>Silenciar</span></div>
+          <div class="command-item"><code>/unmute</code><span>Desmutar</span></div>
+          <div class="command-item"><code>/warn</code><span>Advertir</span></div>
+          <div class="command-item"><code>/warnings</code><span>Ver warns</span></div>
+          <div class="command-item"><code>/clearwarnings</code><span>Limpar warns</span></div>
+          <div class="command-item"><code>/slowmode_all</code><span>Slowmode geral</span></div>
+          <div class="command-item"><code>/lock</code><span>Trancar canal</span></div>
+          <div class="command-item"><code>/unlock</code><span>Destravar canal</span></div>
+          <div class="command-item"><code>/clearchannel</code><span>Limpar msgs</span></div>
+          <div class="command-item"><code>/nuke</code><span>Nuke canal</span></div>
+          <div class="command-item"><code>/modlog</code><span>Hist. moderação</span></div>
+        </div>
+      </div>
+
+      <div class="command-category">
+        <h3>⚙️ Utilidades</h3>
+        <div class="command-list">
+          <div class="command-item"><code>/ping</code><span>Latência</span></div>
+          <div class="command-item"><code>/uptime</code><span>Tempo online</span></div>
+          <div class="command-item"><code>/calcular</code><span>Calculadora</span></div>
+          <div class="command-item"><code>/userinfo</code><span>Info usuário</span></div>
+          <div class="command-item"><code>/serverinfo</code><span>Info servidor</span></div>
+          <div class="command-item"><code>/embed</code><span>Embed customizado</span></div>
+          <div class="command-item"><code>/dashboard</code><span>Painel config</span></div>
+          <div class="command-item"><code>/help</code><span>Lista comandos</span></div>
+          <div class="command-item"><code>/rank</code><span>Seu rank XP</span></div>
+          <div class="command-item"><code>/xpleaderboard</code><span>Ranking XP</span></div>
+        </div>
+      </div>
+
+      <div class="command-category">
+        <h3>💜 Social</h3>
+        <div class="command-list">
+          <div class="command-item"><code>/marry</code><span>Casar</span></div>
+          <div class="command-item"><code>/divorce</code><span>Divorciar</span></div>
+          <div class="command-item"><code>/comprar</code><span>Comprar item</span></div>
+          <div class="command-item"><code>/afk</code><span>Ficar AFK</span></div>
+          <div class="command-item"><code>/afk_off</code><span>Sair AFK</span></div>
+          <div class="command-item"><code>/pet_name</code><span>Renomear pet</span></div>
+          <div class="command-item"><code>/inventario</code><span>Seus itens</span></div>
         </div>
       </div>
     </div>
@@ -1519,15 +1597,15 @@
         feat_economy: "Economia Completa",
         feat_economy_desc: "Diário com streak progressivo, trabalho, mineração, forja, loja interativa, ranking, perfil e muito mais!",
         feat_casino: "Cassino",
-        feat_casino_desc: "Roleta com botões, Coinflip, Dados, Blackjack, Loteria e Cases Gacha!",
+        feat_casino_desc: "Roleta com botões, Coinflip, Dados, Blackjack, Slot, Loteria e Cases Gacha!",
         feat_pvp: "PvP & Aventura",
         feat_pvp_desc: "Desafie jogadores em duelo, roube koins, cometa crimes e heists!",
         feat_savings: "Poupança & Investimentos",
         feat_savings_desc: "Deposite no cofre com juros, invista em cripto, ações e imóveis!",
         feat_pets: "Pets & Desafios",
-        feat_pets_desc: "Adote um pet, complete desafios diários e ganhe recompensas!",
+        feat_pets_desc: "Adote um pet, complete desafios, gire a sorte e sobreviva a aventuras!",
         feat_fun: "Diversão",
-        feat_fun_desc: "Truth or Dare com 120+ perguntas, Magic Ball, hug, kiss, ship, batalha, piadas e memes!",
+        feat_fun_desc: "Hug, kiss, ship com imagem, batalha de dados, piadas, memes, corrida e quiz!",
         feat_mod: "Moderação & AutoMod",
         feat_mod_desc: "Ban, kick, mute, warn, anti-spam, anti-links e logs automáticos!",
         feat_dashboard: "Dashboard Web",
@@ -1536,7 +1614,7 @@
         how_step1_title: "Adicione o Bot", how_step1_desc: 'Clique em "Entrar com Discord" e autorize o Klaus no seu servidor. Leva 10 segundos!',
         how_step2_title: "Configure Tudo", how_step2_desc: "Acesse o Dashboard para ativar boas-vindas, auto cargo, logs, XP e mais pelo site!",
         how_step3_title: "Curta o Bot", how_step3_desc: "Use /daily, /apostar, /minerar e dezenas de comandos. Ganhe koins, suba de level e compete!",
-        cmd_badge: "Comandos", cmd_title: "94 Comandos Disponíveis",
+        cmd_badge: "Comandos", cmd_title: "100 Comandos Disponíveis",
         cmd_sub: "Use / para ver todos os comandos no Discord",
         faq_badge: "Perguntas", faq_title: "Perguntas Frequentes",
         faq_sub: "Tire suas dúvidas sobre o Klaus Bot",
@@ -1562,15 +1640,15 @@
         feat_economy: "Full Economy",
         feat_economy_desc: "Daily with progressive streak, work, mining, forge, interactive shop, ranking, profile and more!",
         feat_casino: "Casino",
-        feat_casino_desc: "Roulette with buttons, Coinflip, Dice, Blackjack, Lottery and Gacha Cases!",
+        feat_casino_desc: "Roulette with buttons, Coinflip, Dice, Blackjack, Slot, Lottery and Gacha Cases!",
         feat_pvp: "PvP & Adventure",
         feat_pvp_desc: "Challenge players in duels, steal koins, commit crimes and heists!",
         feat_savings: "Savings & Investments",
         feat_savings_desc: "Deposit in the vault with interest, invest in crypto, stocks and real estate!",
         feat_pets: "Pets & Challenges",
-        feat_pets_desc: "Adopt a pet, complete daily challenges and earn rewards!",
+        feat_pets_desc: "Adopt a pet, complete challenges, spin the wheel and survive adventures!",
         feat_fun: "Fun",
-        feat_fun_desc: "Truth or Dare with 120+ questions, Magic Ball, hug, kiss, ship, battle, jokes and memes!",
+        feat_fun_desc: "Hug, kiss, ship with image, dice battle, jokes, memes, race and quiz!",
         feat_mod: "Moderation & AutoMod",
         feat_mod_desc: "Ban, kick, mute, warn, anti-spam, anti-links and automatic logs!",
         feat_dashboard: "Web Dashboard",
@@ -1579,7 +1657,7 @@
         how_step1_title: "Add the Bot", how_step1_desc: 'Click "Login with Discord" and authorize Klaus on your server. Takes 10 seconds!',
         how_step2_title: "Configure Everything", how_step2_desc: "Access the Dashboard to enable welcome, auto role, logs, XP and more on the site!",
         how_step3_title: "Enjoy the Bot", how_step3_desc: "Use /daily, /apostar, /minerar and dozens of commands. Earn koins, level up and compete!",
-        cmd_badge: "Commands", cmd_title: "94 Available Commands",
+        cmd_badge: "Commands", cmd_title: "100 Available Commands",
         cmd_sub: "Use / to see all commands in Discord",
         faq_badge: "Questions", faq_title: "Frequently Asked Questions",
         faq_sub: "Get your questions answered about Klaus Bot",

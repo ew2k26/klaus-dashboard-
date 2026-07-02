@@ -1849,3 +1849,42 @@ def mod_leaderboard_snapshot() -> Any:
         return jsonify({"rich": rich, "active": active, "streak": streak})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/guild_premium_status/<guild_id>")
+@mod_required
+def mod_guild_premium_status(guild_id: str) -> Any:
+    try:
+        db = get_db()
+        cfg = db["guilds"].find_one({"guild_id": guild_id}) or {}
+        premium = cfg.get("premium_guild", False)
+        multiplier = cfg.get("premium_multiplier", 2)
+        perks = cfg.get("premium_guild_perks", {})
+        return jsonify({"premium": premium, "multiplier": multiplier, "perks": perks})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/mod/set_guild_premium", methods=["POST"])
+@mod_required
+def mod_set_guild_premium() -> Any:
+    try:
+        data = request.get_json(force=True)
+        guild_id = data.get("guild_id", "")
+        if not guild_id:
+            return jsonify({"error": "guild_id obrigatorio"}), 400
+        db = get_db()
+        update: dict[str, Any] = {}
+        if "premium" in data:
+            update["premium_guild"] = bool(data["premium"])
+        if "premium_multiplier" in data:
+            update["premium_multiplier"] = max(1.0, min(10.0, float(data["premium_multiplier"])))
+        if "perk" in data and "value" in data:
+            perk_key = f"premium_guild_perks.{data['perk']}"
+            update[perk_key] = data["value"]
+        if not update:
+            return jsonify({"error": "nenhum dado para atualizar"}), 400
+        db["guilds"].update_one({"guild_id": guild_id}, {"$set": update}, upsert=True)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -113,6 +113,10 @@
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
         <a href="/profile" class="nav-link">Perfil</a>
         <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+        <div class="lang-toggle" onclick="toggleLang()" style="cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,.6);font-size:.8rem;font-weight:700;color:var(--text2);transition:all .2s">
+          <span id="lang-flag">🇧🇷</span><span id="lang-code">PT</span>
+        </div>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="background:rgba(10,7,20,.6);border:1px solid var(--border2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s">🌙</button>
       </div>
     </nav>
 
@@ -202,7 +206,63 @@
             <h3><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Ações Rápidas</h3>
             <div class="mod-section">
               <button class="mod-save-all" onclick="testModLog()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px rgba(59,130,246,.3)">Testar Log</button>
-              <button class="mod-save-all" onclick="clearAllWarnings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,.3)">Limpar Todos Warnings</button>
+              <button class="mod-save-all" onclick="clearAllWarnings()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,.3)">Limpar Todos Warnings</button>
+              <button class="mod-save-all" onclick="modToggleGuildPremium()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#ffd700,#f59e0b);box-shadow:0 4px 20px rgba(255,215,0,.3);color:#1a1030">👑 Ativar Premium no Servidor</button>
+              <button class="mod-save-all" onclick="modRemoveGuildPremium()" style="background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border2);box-shadow:none">🚫 Remover Premium do Servidor</button>
+            </div>
+          </div>
+
+          <!-- PREMIUM PERKS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Premium do Servidor</h3>
+            <div id="mod-premium-status"></div>
+            <div class="mod-section">
+              <div class="form-group">
+                <label>Multiplicador de Koins</label>
+                <div style="display:flex;gap:.5rem;align-items:center">
+                  <input type="number" id="mod-premium-multiplier" class="mod-input" style="width:100px" value="2" min="1" max="10" step="0.5">
+                  <span style="color:var(--text3);font-size:.8rem">x</span>
+                  <button class="mod-btn mod-btn-purple" onclick="modSetGuildMultiplier()">Aplicar</button>
+                </div>
+                <div class="hint">Multiplicador para daily, trabalho, roubar etc.</div>
+              </div>
+            </div>
+            <div class="mod-section">
+              <div class="mod-section-title">Perks Ativos</div>
+              <div style="display:flex;flex-direction:column;gap:.6rem">
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>2x XP</h4><p>Dobro de XP em mensagens</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_2x_xp" onchange="modSetGuildPremiumPerk('2x_xp',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>3x Daily</h4><p>Três vezes o daily reward</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_3x_daily" onchange="modSetGuildPremiumPerk('3x_daily',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>Slots Extra</h4><p>10 slots de investimento</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_extra_slots" onchange="modSetGuildPremiumPerk('extra_slots',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>Rob Chance Boost</h4><p>Chance reduzida de ser pego roubando</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_rob_boost" onchange="modSetGuildPremiumPerk('rob_boost',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>Crime Boost</h4><p>Maior chance de sucesso no crime</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_crime_boost" onchange="modSetGuildPremiumPerk('crime_boost',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>Heist Boost</h4><p>Maior chance no heist</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_heist_boost" onchange="modSetGuildPremiumPerk('heist_boost',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
+                  <div class="toggle-info"><h4>Cooldown Reduced</h4><p>Metade do cooldown de trabalho</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_cooldown_half" onchange="modSetGuildPremiumPerk('cooldown_half',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+                <label class="toggle-row" style="margin:0;padding:.6rem 0">
+                  <div class="toggle-info"><h4>Exclusive Commands</h4><p>Comandos exclusivos premium</p></div>
+                  <label class="toggle"><input type="checkbox" id="perk_exclusive_cmds" onchange="modSetGuildPremiumPerk('exclusive_cmds',this.checked)"><span class="toggle-slider"></span></label>
+                </label>
+              </div>
             </div>
           </div>
 
@@ -231,7 +291,6 @@
 
       <!-- ═══════════════════════════════════════════ -->
       <!-- TAB 2: USER MANAGEMENT -->
-      <!-- ═══════════════════════════════════════════ -->
       <div class="mod-tab-content" id="tab-users">
         <div class="mod-stats">
           <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-users">-</div><div class="mod-stat-lbl">Usuários</div></div>
@@ -545,7 +604,7 @@
       currentGuildId = guildId;
       document.getElementById('modGrid').style.display = 'grid';
       document.getElementById('modSaveWrap').style.display = 'block';
-      await Promise.all([loadModConfig(), loadModChannels(), loadModRoles(), loadModLogs()]);
+      await Promise.all([loadModConfig(), loadModChannels(), loadModRoles(), loadModLogs(), loadGuildPremiumStatus()]);
     }
 
     async function loadModConfig() {
@@ -1072,6 +1131,103 @@
         if (d.ok) showAlertMod('Economia resetada! ' + d.affected + ' usuários afetados.', 'success');
         else showAlertMod(d.error||'Erro','error');
       } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    /* ═══════════════════════════════════════════
+       THEME & LANGUAGE TOGGLES
+       ═══════════════════════════════════════════ */
+    function toggleTheme() {
+      var h = document.documentElement;
+      var n = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      h.setAttribute('data-theme', n);
+      localStorage.setItem('klaus_theme', n);
+      document.getElementById('themeToggle').textContent = n === 'light' ? '☀️' : '🌙';
+    }
+    document.getElementById('themeToggle').textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+
+    function toggleLang() {
+      var current = localStorage.getItem('klaus_lang') || 'pt';
+      var next = current === 'pt' ? 'en' : 'pt';
+      localStorage.setItem('klaus_lang', next);
+      document.getElementById('lang-flag').textContent = next === 'pt' ? '🇧🇷' : '🇺🇸';
+      document.getElementById('lang-code').textContent = next.toUpperCase();
+    }
+    (function() {
+      var lang = localStorage.getItem('klaus_lang') || 'pt';
+      document.getElementById('lang-flag').textContent = lang === 'pt' ? '🇧🇷' : '🇺🇸';
+      document.getElementById('lang-code').textContent = lang.toUpperCase();
+    })();
+
+    /* ═══════════════════════════════════════════
+       PREMIUM GUILD CONFIG
+       ═══════════════════════════════════════════ */
+    async function modToggleGuildPremium() {
+      if (!currentGuildId) { showAlertMod('Selecione um servidor', 'error'); return; }
+      var c = await showConfirmMod('Ativar Premium no Servidor', 'Ativar benefícios premium para <b>TODOS</b> os usuários neste servidor?', '👑');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_guild_premium', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({guild_id:currentGuildId,premium:true})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Premium ativado no servidor!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modRemoveGuildPremium() {
+      if (!currentGuildId) { showAlertMod('Selecione um servidor', 'error'); return; }
+      var c = await showConfirmMod('Remover Premium do Servidor', 'Remover benefícios premium de <b>todos</b> os usuários neste servidor?', '🚫');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_guild_premium', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({guild_id:currentGuildId,premium:false})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Premium removido do servidor!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modSetGuildMultiplier() {
+      if (!currentGuildId) { showAlertMod('Selecione um servidor', 'error'); return; }
+      var mult = document.getElementById('mod-premium-multiplier').value.trim();
+      if (!mult || isNaN(parseFloat(mult))) { showAlertMod('Insira um multiplicador válido', 'error'); return; }
+      var c = await showConfirmMod('Definir Multiplicador', 'Definir multiplicador premium para <b>' + mult + 'x</b> neste servidor?', '✨');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_guild_premium', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({guild_id:currentGuildId,premium_multiplier:parseFloat(mult)})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Multiplicador definido!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modSetGuildPremiumPerk(perk, val) {
+      if (!currentGuildId) { showAlertMod('Selecione um servidor', 'error'); return; }
+      try {
+        var r = await fetch('/api/mod/set_guild_premium', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({guild_id:currentGuildId,perk:perk,value:val})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Perk atualizada!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function loadGuildPremiumStatus() {
+      if (!currentGuildId) return;
+      try {
+        var r = await fetch('/api/mod/guild_premium_status/' + currentGuildId);
+        var d = await r.json();
+        var el = document.getElementById('mod-premium-status');
+        if (!el) return;
+        if (d.premium) {
+          el.innerHTML = '<div style="padding:1rem;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.2);margin-bottom:1rem"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem"><span style="font-size:1.2rem">👑</span><span style="font-weight:700;color:#ffd700">Premium Ativo</span></div><div style="font-size:.8rem;color:var(--text3)">Multiplicador: <b style="color:#ffd700">' + (d.multiplier||2) + 'x</b></div></div>';
+        } else {
+          el.innerHTML = '<div style="padding:1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border2);margin-bottom:1rem"><div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:1.2rem;opacity:.4">👑</span><span style="color:var(--text3)">Premium inativo neste servidor</span></div></div>';
+        }
+        document.getElementById('mod-premium-multiplier').value = d.multiplier || 2;
+        var perks = d.perks || {};
+        ['2x_xp','3x_daily','extra_slots','rob_boost','crime_boost','heist_boost','cooldown_half','exclusive_cmds'].forEach(function(k) {
+          var cb = document.getElementById('perk_' + k);
+          if (cb) cb.checked = perks[k] === true;
+        });
+      } catch(e) {}
     }
   </script>
 </body>

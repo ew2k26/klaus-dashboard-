@@ -306,7 +306,7 @@ function renderXpRoles() {
   }
   list.innerHTML = entries.map(([lvl, roleId]) => {
     const sel = document.getElementById('xprole_role');
-    const opt = sel ? sel.querySelector(`option[value="${roleId}"]` : null);
+    const opt = sel ? sel.querySelector(`option[value="${roleId}"]`) : null;
     const roleName = opt ? opt.textContent : `Cargo ${roleId}`;
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .7rem;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:.35rem;font-size:.85rem">
       <span>Level <strong>${lvl}</strong> → ${roleName}</span>

@@ -65,28 +65,7 @@
     .confirm-cancel:hover{background:rgba(255,255,255,.1);color:white}
     .confirm-ok{background:linear-gradient(135deg,var(--primary),var(--pink));color:white;box-shadow:0 4px 20px rgba(139,92,246,.3)}
     .confirm-ok:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(139,92,246,.4)}
-    .mod-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
-    .mod-stat-card{background:linear-gradient(135deg,rgba(15,10,30,.8),rgba(20,15,35,.8));border:1px solid rgba(244,63,94,.15);border-radius:14px;padding:1.2rem;text-align:center}
-    .mod-stat-val{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .mod-stat-lbl{font-size:.75rem;color:var(--text3);margin-top:.3rem}
-    .mod-card{background:linear-gradient(135deg,rgba(15,10,30,.8),rgba(20,15,35,.8));border:1px solid rgba(244,63,94,.12);border-radius:16px;padding:1.5rem;margin-bottom:1.2rem}
-    .mod-card h3{margin:0;font-size:1rem;color:var(--text1)}
-    .mod-btn{padding:.65rem 1.2rem;border-radius:10px;border:none;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap}
-    .mod-btn:hover{transform:translateY(-1px)}
-    .mod-btn-primary{background:linear-gradient(135deg,#f43f5e,#ec4899);color:white}
-    .mod-btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:white}
-    .mod-btn-yellow{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
-    .mod-btn-purple{background:linear-gradient(135deg,var(--primary),var(--pink));color:white}
-    .mod-input{padding:.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,.6);color:white;font-size:.85rem;font-family:inherit}
-    .mod-input::placeholder{color:var(--text3)}
-    .mod-user-row{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;background:rgba(10,7,20,.4);border-radius:10px;margin-bottom:.5rem;border:1px solid rgba(255,255,255,.04);transition:all .2s}
-    .mod-user-row:hover{border-color:rgba(244,63,94,.2);background:rgba(10,7,20,.6)}
-    .mod-user-avatar{width:36px;height:36px;border-radius:50%}
-    .mod-user-info{flex:1}
-    .mod-user-name{font-weight:700;font-size:.85rem}
-    .mod-user-id{font-size:.7rem;color:var(--text3)}
-    .mod-user-koins{font-weight:700;color:#ffd700;font-size:.85rem}
-    @media(max-width:480px){.shop-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}.pf-image-wrap{max-width:100%;border-radius:12px}.confirm-modal{padding:1.5rem 1rem;border-radius:16px}.confirm-emoji{font-size:2.5rem}.confirm-title{font-size:1.1rem}.mod-stats{grid-template-columns:1fr 1fr}.mod-card{padding:1rem}.mod-btn{padding:.5rem .8rem;font-size:.75rem}.mod-input{padding:.6rem .8rem;font-size:.8rem}.mod-user-row{padding:.6rem .8rem}.pf-hero-actions{flex-wrap:wrap}.sc-btn{font-size:.62rem;padding:4px 0}.sc-name{font-size:.72rem}.sc-price{font-size:.62rem}.shop-toolbar{gap:.6rem}.shop-filters{gap:.3rem}.shop-filter{padding:.35rem .7rem;font-size:.7rem}.shop-tab{padding:.6rem .8rem;font-size:.8rem}.shop-tab-count{font-size:.65rem}}
+    @media(max-width:480px){.shop-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}.pf-image-wrap{max-width:100%;border-radius:12px}.confirm-modal{padding:1.5rem 1rem;border-radius:16px}.confirm-emoji{font-size:2.5rem}.confirm-title{font-size:1.1rem}.pf-hero-actions{flex-wrap:wrap}.sc-btn{font-size:.62rem;padding:4px 0}.sc-name{font-size:.72rem}.sc-price{font-size:.62rem}.shop-toolbar{gap:.6rem}.shop-filters{gap:.3rem}.shop-filter{padding:.35rem .7rem;font-size:.7rem}.shop-tab{padding:.6rem .8rem;font-size:.8rem}.shop-tab-count{font-size:.65rem}}
   </style>
 </head>
 <body>
@@ -115,7 +94,6 @@
       <div class="lang-toggle" onclick="toggleLang()"><span id="lang-flag">🇧🇷</span><span id="lang-code">PT</span></div>
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
       <a href="/dashboard" class="btn btn-primary btn-sm" data-i18n="nav_dashboard">Dashboard</a>
-      <a id="mod-nav-btn" href="#mod-panel" class="btn btn-sm" style="display:none;background:linear-gradient(135deg,#f43f5e,#ec4899);color:white;font-weight:700;">Mod</a>
     </div>
   </nav>
 
@@ -176,58 +154,6 @@
           <div style="font-size:2rem;margin-bottom:.5rem;opacity:.4">🔍</div>
           <p data-i18n="pf_no_results">Nenhum resultado encontrado</p>
         </div>
-      </div>
-    </div>
-
-    <div id="mod-panel" style="display:none;margin-top:2rem">
-      <div class="section-header" style="margin-bottom:1.5rem">
-        <h2 style="display:flex;align-items:center;gap:.5rem">
-          <span style="background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent" data-i18n="mod_title">Painel Mod</span>
-          <span style="font-size:.7rem;background:rgba(244,63,94,.15);color:#f43f5e;padding:3px 10px;border-radius:20px;border:1px solid rgba(244,63,94,.2);-webkit-text-fill-color:#f43f5e">OWNER</span>
-        </h2>
-        <p style="color:var(--text3);font-size:.85rem" data-i18n="mod_sub">Gerenciar usuarios e dados do bot</p>
-      </div>
-      <div class="mod-stats" id="mod-stats">
-        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-users">-</div><div class="mod-stat-lbl" data-i18n="mod_users">Usuarios</div></div>
-        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-koins">-</div><div class="mod-stat-lbl">Koins Total</div></div>
-        <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-commands">-</div><div class="mod-stat-lbl" data-i18n="mod_commands">Comandos</div></div>
-      </div>
-      <div class="mod-card">
-        <h3 style="margin-bottom:1rem" data-i18n="mod_search_title">Buscar Usuario</h3>
-        <div style="display:flex;gap:.5rem">
-          <input type="text" id="mod-search" class="mod-input" style="flex:1" data-i18n-placeholder="mod_search_ph" placeholder="ID do Discord ou username...">
-          <button class="mod-btn mod-btn-primary" onclick="modSearchUser()" data-i18n="mod_search_btn">Buscar</button>
-        </div>
-        <div id="mod-search-result" style="margin-top:1rem"></div>
-      </div>
-      <div class="mod-card">
-        <h3 style="margin-bottom:1rem" data-i18n="mod_edit_koins_title">Editar Koins</h3>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <input type="text" id="mod-edit-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
-          <input type="number" id="mod-edit-koins" class="mod-input" style="width:150px" placeholder="Novos koins">
-          <button class="mod-btn mod-btn-green" onclick="modSetKoins()" data-i18n="mod_set">Definir</button>
-          <button class="mod-btn mod-btn-yellow" onclick="modAddKoins()" data-i18n="mod_add">Adicionar</button>
-        </div>
-      </div>
-      <div class="mod-card">
-        <h3 style="margin-bottom:1rem" data-i18n="mod_give_title">Dar Itens</h3>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <input type="text" id="mod-give-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
-          <select id="mod-give-type" class="mod-input">
-            <option value="backgrounds" data-i18n="pf_backgrounds">Fundo</option>
-            <option value="borders" data-i18n="pf_borders">Borda</option>
-          </select>
-          <select id="mod-give-key" class="mod-input" style="flex:1;min-width:180px"></select>
-          <button class="mod-btn mod-btn-purple" onclick="modGiveItem()" data-i18n="mod_give_btn">Dar Item</button>
-        </div>
-      </div>
-      <div class="mod-card">
-        <h3 style="margin-bottom:1rem" data-i18n="mod_all_users">Todos os Usuarios</h3>
-        <div style="display:flex;gap:.5rem;margin-bottom:1rem">
-          <button class="mod-btn mod-btn-primary" onclick="modLoadUsers(1)" data-i18n="mod_load">Carregar</button>
-        </div>
-        <div id="mod-users-list"></div>
-        <div id="mod-users-pagination" style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem"></div>
       </div>
     </div>
   </div>
@@ -313,25 +239,11 @@
 
     function showAlert(msg,type){const b=document.getElementById('alert-box'),d=document.createElement('div');d.className=`alert alert-${type}`;d.textContent=msg;b.appendChild(d);setTimeout(()=>d.remove(),3000)}
 
-    fetch(`/api/profile_config/${USER_ID}`).then(r=>r.json()).then(d=>{profile=d;activeBg=d.background||'padrao';activeBorder=d.border||'default';document.getElementById('koins-badge').textContent=fmt(d.koins)+' Koins';renderShop();loadProfileImage();if(USER_ID==='1230185414808047666')initModPanel()});
+    fetch(`/api/profile_config/${USER_ID}`).then(r=>r.json()).then(d=>{profile=d;activeBg=d.background||'padrao';activeBorder=d.border||'default';document.getElementById('koins-badge').textContent=fmt(d.koins)+' Koins';renderShop();loadProfileImage();});
 
     const OWNER_ID='1230185414808047666';
-    function initModPanel(){document.getElementById('mod-panel').style.display='block';document.getElementById('mod-nav-btn').style.display='inline-block';modLoadGiveOptions();fetch('/api/mod/stats').then(r=>r.json()).then(d=>{document.getElementById('mod-total-users').textContent=fmt(d.total_users||0);document.getElementById('mod-total-koins').textContent=fmt(d.total_koins||0);document.getElementById('mod-total-commands').textContent=fmt(d.total_commands||0)}).catch(()=>{})}
 
-    function modLoadGiveOptions(){const sel=document.getElementById('mod-give-key');sel.innerHTML='';const update=()=>{const t=document.getElementById('mod-give-type').value,items=t==='backgrounds'?BGS:BORDERS;sel.innerHTML='';for(const[k,v]of Object.entries(items)){const o=document.createElement('option');o.value=k;o.textContent=`${v.emoji} ${v.name}`;sel.appendChild(o)}};document.getElementById('mod-give-type').onchange=update;update()}
-
-    async function modSearchUser(){const q=document.getElementById('mod-search').value.trim();if(!q)return;const el=document.getElementById('mod-search-result');el.innerHTML=`<div style="color:var(--text3);font-size:.85rem">${currentLang==='en'?'Searching...':'Buscando...'}</div>`;try{const r=await fetch(`/api/mod/search?q=${encodeURIComponent(q)}`);const d=await r.json();if(d.error){el.innerHTML=`<div style="color:#f43f5e;font-size:.85rem">${d.error}</div>`;return}el.innerHTML=`<div class="mod-user-row"><img class="mod-user-avatar" src="${d.avatar_url||''}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt=""><div class="mod-user-info"><div class="mod-user-name">${d.username||'Unknown'} <span style="color:var(--text3);font-weight:400">#${(d.discord_id||'').slice(-4)}</span></div><div class="mod-user-id">${d.discord_id}</div></div><div class="mod-user-koins">${fmt(d.koins)} K</div></div><div style="margin-top:.8rem;display:flex;gap:.5rem;flex-wrap:wrap"><span style="font-size:.78rem;color:var(--text3)">BG: <b style="color:var(--text1)">${d.background||'padrao'}</b></span><span style="font-size:.78rem;color:var(--text3)">Border: <b style="color:var(--text1)">${d.border||'default'}</b></span><span style="font-size:.78rem;color:var(--text3)">Streak: <b style="color:var(--text1)">${d.daily_streak||0}</b></span><span style="font-size:.78rem;color:var(--text3)">Cmds: <b style="color:var(--text1)">${d.commands_used||0}</b></span><span style="font-size:.78rem;color:var(--text3)">W/L: <b style="color:#22c55e">${d.wins||0}</b>/<b style="color:#f43f5e">${d.losses||0}</b></span></div><div style="margin-top:.8rem;display:flex;gap:.5rem"><button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="document.getElementById('mod-edit-id').value='${d.discord_id}';document.getElementById('mod-edit-id').scrollIntoView({behavior:'smooth'})">${currentLang==='en'?'Edit Koins':'Editar Koins'}</button><button class="mod-btn mod-btn-purple" style="font-size:.75rem;padding:.4rem .8rem" onclick="document.getElementById('mod-give-id').value='${d.discord_id}';document.getElementById('mod-give-id').scrollIntoView({behavior:'smooth'})">${currentLang==='en'?'Give Item':'Dar Item'}</button></div>`}catch(e){el.innerHTML=`<div style="color:#f43f5e;font-size:.85rem">${currentLang==='en'?'Connection error':'Erro de conexao'}</div>`}}
-
-    async function modSetKoins(){const id=document.getElementById('mod-edit-id').value.trim(),k=parseInt(document.getElementById('mod-edit-koins').value);if(!id||isNaN(k)){showAlert(currentLang==='en'?'Fill in ID and koins':'Preencha ID e koins','error');return}const c=await showConfirm(currentLang==='en'?'Set Koins':'Alterar Koins',`${currentLang==='en'?'Set':'Definir'} <b>${fmt(k)} koins</b> ${currentLang==='en'?'for':'para'} <b>${id}</b>?`,'💰');if(!c)return;try{const r=await fetch('/api/mod/set_koins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,koins:k})});const d=await r.json();if(d.ok)showAlert(currentLang==='en'?'Koins updated!':'Koins atualizados!','success');else showAlert(d.error||'Erro','error')}catch(e){showAlert(currentLang==='en'?'Connection error':'Erro de conexao','error')}}
-
-    async function modAddKoins(){const id=document.getElementById('mod-edit-id').value.trim(),k=parseInt(document.getElementById('mod-edit-koins').value);if(!id||isNaN(k)){showAlert(currentLang==='en'?'Fill in ID and koins':'Preencha ID e koins','error');return}const c=await showConfirm(currentLang==='en'?'Add Koins':'Adicionar Koins',`${currentLang==='en'?'Add':'Adicionar'} <b>${fmt(k)} koins</b> ${currentLang==='en'?'to':'para'} <b>${id}</b>?`,'💰');if(!c)return;try{const r=await fetch('/api/mod/add_koins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,koins:k})});const d=await r.json();if(d.ok)showAlert(currentLang==='en'?'Koins added!':'Koins adicionados!','success');else showAlert(d.error||'Erro','error')}catch(e){showAlert(currentLang==='en'?'Connection error':'Erro de conexao','error')}}
-
-    async function modGiveItem(){const id=document.getElementById('mod-give-id').value.trim(),type=document.getElementById('mod-give-type').value,key=document.getElementById('mod-give-key').value;if(!id||!key){showAlert(currentLang==='en'?'Fill in ID and select item':'Preencha ID e selecione item','error');return}const items=type==='backgrounds'?BGS:BORDERS,item=items[key];const c=await showConfirm(currentLang==='en'?'Give Item':'Dar Item',`${currentLang==='en'?'Give':'Dar'} <b>${item.emoji} ${item.name}</b> ${currentLang==='en'?'to':'para'} <b>${id}</b>?`,item.emoji);if(!c)return;try{const r=await fetch('/api/mod/give_item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,type,key})});const d=await r.json();if(d.ok)showAlert(currentLang==='en'?'Item given!':'Item dado!','success');else showAlert(d.error||'Erro','error')}catch(e){showAlert(currentLang==='en'?'Connection error':'Erro de conexao','error')}}
-
-    let modUsersPage=1;
-    async function modLoadUsers(page){modUsersPage=page||1;const el=document.getElementById('mod-users-list');el.innerHTML=`<div style="color:var(--text3);font-size:.85rem">${currentLang==='en'?'Loading...':'Carregando...'}</div>`;try{const r=await fetch(`/api/mod/users?page=${modUsersPage}`);const d=await r.json();if(d.error){el.innerHTML=`<div style="color:#f43f5e">${d.error}</div>`;return}el.innerHTML='';for(const u of(d.users||[])){const row=document.createElement('div');row.className='mod-user-row';row.innerHTML=`<img class="mod-user-avatar" src="${u.avatar_url||''}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt=""><div class="mod-user-info"><div class="mod-user-name">${u.username||'Unknown'}</div><div class="mod-user-id">${u.discord_id}</div></div><div class="mod-user-koins">${fmt(u.koins)} K</div>`;el.appendChild(row)}const pg=document.getElementById('mod-users-pagination');pg.innerHTML='';if(d.pages>1){if(modUsersPage>1)pg.innerHTML+=`<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(${modUsersPage-1})">${currentLang==='en'?'Prev':'Anterior'}</button>`;pg.innerHTML+=`<span style="color:var(--text3);font-size:.8rem;padding:.4rem">${currentLang==='en'?'Page':'Pagina'} ${modUsersPage}/${d.pages}</span>`;if(modUsersPage<d.pages)pg.innerHTML+=`<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(${modUsersPage+1})">${currentLang==='en'?'Next':'Proxima'}</button>`}}catch(e){el.innerHTML=`<div style="color:#f43f5e">${currentLang==='en'?'Connection error':'Erro de conexao'}</div>`}}
-
-    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Perfil",nav_dashboard:"Dashboard",pf_badge:"Perfil",pf_title:"Meu Perfil",pf_sub:"Customize sua imagem de perfil com a loja",pf_loading:"Carregando...",pf_no_image:"Use <code>/perfil</code> no Discord para gerar seu perfil",pf_edit:"Editar Perfil",pf_shop_title:"Loja de Perfil",pf_shop_sub:"Compre fundos e bordas exclusivas com seus koins",pf_backgrounds:"Fundos",pf_borders:"Bordas",pf_search_ph:"Buscar fundo ou borda...",pf_filter_all:"Todos",pf_filter_owned:"Possuo",pf_filter_not_owned:"Nao possuo",pf_filter_cheap:"Baratos",pf_filter_expensive:"Caros",pf_no_results:"Nenhum resultado encontrado",mod_title:"Painel Mod",mod_sub:"Gerenciar usuarios e dados do bot",mod_users:"Usuarios",mod_commands:"Comandos",mod_search_title:"Buscar Usuario",mod_search_ph:"ID do Discord ou username...",mod_search_btn:"Buscar",mod_edit_koins_title:"Editar Koins",mod_set:"Definir",mod_add:"Adicionar",mod_give_title:"Dar Itens",mod_give_btn:"Dar Item",mod_all_users:"Todos os Usuarios",mod_load:"Carregar",footer_made:"Feito com 💜 por kadu",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Profile",nav_dashboard:"Dashboard",pf_badge:"Profile",pf_title:"My Profile",pf_sub:"Customize your profile image with the shop",pf_loading:"Loading...",pf_no_image:"Use <code>/perfil</code> on Discord to generate your profile",pf_edit:"Edit Profile",pf_shop_title:"Profile Shop",pf_shop_sub:"Buy exclusive backgrounds and borders with your koins",pf_backgrounds:"Backgrounds",pf_borders:"Borders",pf_search_ph:"Search backgrounds or borders...",pf_filter_all:"All",pf_filter_owned:"Owned",pf_filter_not_owned:"Not owned",pf_filter_cheap:"Cheap",pf_filter_expensive:"Expensive",pf_no_results:"No results found",mod_title:"Mod Panel",mod_sub:"Manage users and bot data",mod_users:"Users",mod_commands:"Commands",mod_search_title:"Search User",mod_search_ph:"Discord ID or username...",mod_search_btn:"Search",mod_edit_koins_title:"Edit Koins",mod_set:"Set",mod_add:"Add",mod_give_title:"Give Items",mod_give_btn:"Give Item",mod_all_users:"All Users",mod_load:"Load",footer_made:"Made with 💜 by kadu",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
+    const I18N={pt:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Perfil",nav_dashboard:"Dashboard",pf_badge:"Perfil",pf_title:"Meu Perfil",pf_sub:"Customize sua imagem de perfil com a loja",pf_loading:"Carregando...",pf_no_image:"Use <code>/perfil</code> no Discord para gerar seu perfil",pf_edit:"Editar Perfil",pf_shop_title:"Loja de Perfil",pf_shop_sub:"Compre fundos e bordas exclusivas com seus koins",pf_backgrounds:"Fundos",pf_borders:"Bordas",pf_search_ph:"Buscar fundo ou borda...",pf_filter_all:"Todos",pf_filter_owned:"Possuo",pf_filter_not_owned:"Nao possuo",pf_filter_cheap:"Baratos",pf_filter_expensive:"Caros",pf_no_results:"Nenhum resultado encontrado",footer_made:"Feito com 💜 por kadu",footer_terms:"Termos de Serviço",footer_privacy:"Privacidade"},en:{nav_home:"Home",nav_status:"Status",nav_leaderboard:"Leaderboard",nav_profile:"Profile",nav_dashboard:"Dashboard",pf_badge:"Profile",pf_title:"My Profile",pf_sub:"Customize your profile image with the shop",pf_loading:"Loading...",pf_no_image:"Use <code>/perfil</code> on Discord to generate your profile",pf_edit:"Edit Profile",pf_shop_title:"Profile Shop",pf_shop_sub:"Buy exclusive backgrounds and borders with your koins",pf_backgrounds:"Backgrounds",pf_borders:"Borders",pf_search_ph:"Search backgrounds or borders...",pf_filter_all:"All",pf_filter_owned:"Owned",pf_filter_not_owned:"Not owned",pf_filter_cheap:"Cheap",pf_filter_expensive:"Expensive",pf_no_results:"No results found",footer_made:"Made with 💜 by kadu",footer_terms:"Terms of Service",footer_privacy:"Privacy Policy"}};
     let currentLang=localStorage.getItem('klaus_lang')||'pt';
     function applyLang(lang){currentLang=lang;localStorage.setItem('klaus_lang',lang);const d=I18N[lang];document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(d[k])el.innerHTML=d[k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.getAttribute('data-i18n-placeholder');if(d[k])el.placeholder=d[k]});document.getElementById('lang-flag').textContent=lang==='pt'?'🇧🇷':'🇺🇸';document.getElementById('lang-code').textContent=lang.toUpperCase();document.documentElement.lang=lang==='pt'?'pt-BR':'en';renderShop()}
     function toggleLang(){applyLang(currentLang==='pt'?'en':'pt')}

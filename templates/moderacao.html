@@ -6,124 +6,82 @@
   <title>Klaus - Painel de Moderação</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=37">
   <style>
-    .mod-lock-overlay {
-      position: fixed; inset: 0; background: rgba(5,3,11,0.95); backdrop-filter: blur(30px);
-      display: flex; align-items: center; justify-content: center; z-index: 9999;
-    }
-    .mod-lock-box {
-      background: linear-gradient(145deg, rgba(20,14,40,0.95), rgba(10,7,20,0.98));
-      border: 1px solid rgba(239,68,68,0.2); border-radius: 24px; padding: 3rem 2.5rem;
-      max-width: 420px; width: 90%; text-align: center;
-      box-shadow: 0 0 120px rgba(239,68,68,0.08), 0 30px 80px rgba(0,0,0,0.5);
-    }
-    .mod-lock-box h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: .5rem;
-      background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .mod-lock-box p { color: #a89ec8; font-size: .9rem; margin-bottom: 1.5rem; }
-    .mod-lock-input {
-      width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(239,68,68,0.2);
-      background: rgba(8,5,16,0.8); color: #f1f0f5; font-size: 1rem; font-family: inherit;
-      outline: none; text-align: center; letter-spacing: 4px; margin-bottom: 1rem; transition: all .3s;
-    }
-    .mod-lock-input:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
-    .mod-lock-btn {
-      width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; font-size: 1rem;
-      cursor: pointer; background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
-      transition: all .3s; box-shadow: 0 4px 20px rgba(239,68,68,0.3);
-    }
-    .mod-lock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(239,68,68,0.5); }
-    .mod-lock-error { color: #ef4444; font-size: .82rem; margin-top: .5rem; display: none; }
-
-    .mod-page { display: none; }
-    .mod-page.active { display: block; }
-
-    .mod-header {
-      background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(249,115,22,0.05));
-      border: 1px solid rgba(239,68,68,0.12); border-radius: 20px; padding: 2rem;
-      margin-bottom: 2rem; text-align: center;
-    }
-    .mod-header h1 {
-      font-size: 2rem; font-weight: 800; margin-bottom: .5rem;
-      background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .mod-header p { color: #a89ec8; font-size: .95rem; }
-
-    .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .mod-card {
-      background: var(--card); backdrop-filter: blur(40px); border-radius: 20px;
-      border: 1px solid var(--card-border); padding: 1.8rem; transition: all .3s;
-    }
-    .mod-card:hover { border-color: rgba(239,68,68,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-    .mod-card h3 {
-      font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; padding-bottom: .8rem;
-      border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .6rem;
-    }
-    .mod-card h3 svg { width: 20px; height: 20px; fill: none; stroke: #ef4444; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .mod-section { margin-bottom: 1.5rem; }
-    .mod-section:last-child { margin-bottom: 0; }
-    .mod-section-title {
-      font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
-      color: #ef4444; margin-bottom: .8rem; opacity: .8;
-    }
-
-    .mod-channel-select {
-      width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border2);
-      background: rgba(8,5,16,0.8); color: var(--text); font-family: inherit; font-size: .85rem;
-      outline: none; cursor: pointer; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a89ec8'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
-    }
-    .mod-channel-select:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
-
-    .mod-role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .5rem; }
-    .mod-role-chip {
-      display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
-      border-radius: 8px; font-size: .75rem; font-weight: 600; cursor: pointer;
-      border: 1px solid var(--border2); background: rgba(8,5,16,0.6); color: var(--text2);
-      transition: all .2s;
-    }
-    .mod-role-chip.active { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #ef4444; }
-    .mod-role-chip:hover { border-color: rgba(239,68,68,0.3); }
-
-    .mod-stat-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 0; border-bottom: 1px solid var(--border);
-    }
-    .mod-stat-row:last-child { border-bottom: none; }
-    .mod-stat-label { font-size: .85rem; color: var(--text2); }
-    .mod-stat-value { font-size: .9rem; font-weight: 700; color: var(--text); }
-
-    .mod-save-all {
-      width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; font-size: 1rem;
-      cursor: pointer; background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
-      transition: all .3s; box-shadow: 0 4px 20px rgba(239,68,68,0.3); margin-top: 1rem;
-    }
-    .mod-save-all:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(239,68,68,0.5); }
-
-    .mod-logs-list { max-height: 400px; overflow-y: auto; }
-    .mod-log-item {
-      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-      border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px;
-      transition: all .2s; background: rgba(8,5,16,0.4);
-    }
-    .mod-log-item:hover { border-color: rgba(239,68,68,0.2); background: rgba(8,5,16,0.7); }
-    .mod-log-badge {
-      padding: 3px 10px; border-radius: 8px; font-size: .7rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .5px; flex-shrink: 0;
-    }
-    .mod-log-badge.ban { background: rgba(239,68,68,0.15); color: #ef4444; }
-    .mod-log-badge.kick { background: rgba(249,115,22,0.15); color: #f97316; }
-    .mod-log-badge.mute { background: rgba(234,179,8,0.15); color: #eab308; }
-    .mod-log-badge.warn { background: rgba(59,130,246,0.15); color: #3b82f6; }
-    .mod-log-info { flex: 1; }
-    .mod-log-user { font-size: .85rem; font-weight: 600; color: var(--text); }
-    .mod-log-reason { font-size: .78rem; color: var(--text3); margin-top: 2px; }
-    .mod-log-time { font-size: .72rem; color: var(--text3); flex-shrink: 0; }
-
-    @media (max-width: 768px) {
-      .mod-grid { grid-template-columns: 1fr; }
-      .mod-header h1 { font-size: 1.5rem; }
-    }
+    .mod-lock-overlay{position:fixed;inset:0;background:rgba(5,3,11,.95);backdrop-filter:blur(30px);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .mod-lock-box{background:linear-gradient(145deg,rgba(20,14,40,.95),rgba(10,7,20,.98));border:1px solid rgba(239,68,68,.2);border-radius:24px;padding:3rem 2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 0 120px rgba(239,68,68,.08),0 30px 80px rgba(0,0,0,.5)}
+    .mod-lock-box h2{font-size:1.8rem;font-weight:800;margin-bottom:.5rem;background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .mod-lock-box p{color:#a89ec8;font-size:.9rem;margin-bottom:1.5rem}
+    .mod-lock-input{width:100%;padding:14px 18px;border-radius:14px;border:1px solid rgba(239,68,68,.2);background:rgba(8,5,16,.8);color:#f1f0f5;font-size:1rem;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;margin-bottom:1rem;transition:all .3s}
+    .mod-lock-input:focus{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+    .mod-lock-btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:1rem;cursor:pointer;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;transition:all .3s;box-shadow:0 4px 20px rgba(239,68,68,.3)}
+    .mod-lock-btn:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(239,68,68,.5)}
+    .mod-lock-error{color:#ef4444;font-size:.82rem;margin-top:.5rem;display:none}
+    .mod-page{display:none}.mod-page.active{display:block}
+    .mod-header{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(249,115,22,.05));border:1px solid rgba(239,68,68,.12);border-radius:20px;padding:2rem;margin-bottom:2rem;text-align:center}
+    .mod-header h1{font-size:2rem;font-weight:800;margin-bottom:.5rem;background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .mod-header p{color:#a89ec8;font-size:.95rem}
+    .mod-tabs{display:flex;gap:.5rem;margin-bottom:2rem;overflow-x:auto;padding-bottom:.5rem}
+    .mod-tab{padding:.7rem 1.5rem;border-radius:12px;border:1px solid var(--border2);background:rgba(10,7,20,.6);color:var(--text3);font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit}
+    .mod-tab:hover{border-color:rgba(239,68,68,.3);color:var(--text2)}
+    .mod-tab.active{background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border-color:transparent;box-shadow:0 4px 20px rgba(239,68,68,.3)}
+    .mod-tab-content{display:none}.mod-tab-content.active{display:block}
+    .mod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1.5rem;margin-bottom:2rem}
+    .mod-card{background:var(--card);backdrop-filter:blur(40px);border-radius:20px;border:1px solid var(--card-border);padding:1.8rem;transition:all .3s}
+    .mod-card:hover{border-color:rgba(239,68,68,.2);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .mod-card h3{font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+    .mod-card h3 svg{width:20px;height:20px;fill:none;stroke:#ef4444;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .mod-section{margin-bottom:1.5rem}.mod-section:last-child{margin-bottom:0}
+    .mod-section-title{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#ef4444;margin-bottom:.8rem;opacity:.8}
+    .mod-channel-select{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--border2);background:rgba(8,5,16,.8);color:var(--text);font-family:inherit;font-size:.85rem;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a89ec8'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+    .mod-channel-select:focus{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+    .mod-save-all{width:100%;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:1rem;cursor:pointer;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;transition:all .3s;box-shadow:0 4px 20px rgba(239,68,68,.3);margin-top:1rem}
+    .mod-save-all:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(239,68,68,.5)}
+    .mod-logs-list{max-height:400px;overflow-y:auto}
+    .mod-log-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);margin-bottom:8px;transition:all .2s;background:rgba(8,5,16,.4)}
+    .mod-log-item:hover{border-color:rgba(239,68,68,.2);background:rgba(8,5,16,.7)}
+    .mod-log-badge{padding:3px 10px;border-radius:8px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+    .mod-log-badge.ban{background:rgba(239,68,68,.15);color:#ef4444}
+    .mod-log-badge.kick{background:rgba(249,115,22,.15);color:#f97316}
+    .mod-log-badge.mute{background:rgba(234,179,8,.15);color:#eab308}
+    .mod-log-badge.warn{background:rgba(59,130,246,.15);color:#3b82f6}
+    .mod-log-info{flex:1}.mod-log-user{font-size:.85rem;font-weight:600;color:var(--text)}.mod-log-reason{font-size:.78rem;color:var(--text3);margin-top:2px}.mod-log-time{font-size:.72rem;color:var(--text3);flex-shrink:0}
+    .mod-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+    .mod-stat-card{background:linear-gradient(135deg,rgba(15,10,30,.8),rgba(20,15,35,.8));border:1px solid rgba(244,63,94,.15);border-radius:14px;padding:1.2rem;text-align:center}
+    .mod-stat-val{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#f43f5e,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .mod-stat-lbl{font-size:.75rem;color:var(--text3);margin-top:.3rem}
+    .mod-btn{padding:.65rem 1.2rem;border-radius:10px;border:none;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap}
+    .mod-btn:hover{transform:translateY(-1px)}
+    .mod-btn-primary{background:linear-gradient(135deg,#f43f5e,#ec4899);color:white}
+    .mod-btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:white}
+    .mod-btn-yellow{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
+    .mod-btn-purple{background:linear-gradient(135deg,#8b5cf6,#d946ef);color:white}
+    .mod-btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:white}
+    .mod-btn-orange{background:linear-gradient(135deg,#f97316,#ea580c);color:white}
+    .mod-btn-ghost{background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border2)}
+    .mod-user-row{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;background:rgba(10,7,20,.4);border-radius:10px;margin-bottom:.5rem;border:1px solid rgba(255,255,255,.04);transition:all .2s}
+    .mod-user-row:hover{border-color:rgba(244,63,94,.2);background:rgba(10,7,20,.6)}
+    .mod-user-avatar{width:36px;height:36px;border-radius:50%}
+    .mod-user-info{flex:1}.mod-user-name{font-weight:700;font-size:.85rem;color:white}.mod-user-id{font-size:.7rem;color:var(--text3)}
+    .mod-user-koins{font-weight:700;color:#ffd700;font-size:.85rem}
+    .mod-input{padding:.7rem 1rem;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,.6);color:white;font-size:.85rem;font-family:inherit;outline:none}
+    .mod-input:focus{border-color:rgba(239,68,68,.3)}
+    .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity .3s}
+    .confirm-overlay.open{opacity:1}
+    .confirm-modal{background:linear-gradient(135deg,#13101f,#1a1030);border:1px solid rgba(139,92,246,.3);border-radius:20px;padding:2.5rem 2rem;text-align:center;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(139,92,246,.15);transform:scale(.8);transition:transform .3s var(--spring)}
+    .confirm-overlay.open .confirm-modal{transform:scale(1)}
+    .confirm-emoji{font-size:3.5rem;margin-bottom:.8rem;filter:drop-shadow(0 4px 12px rgba(139,92,246,.3))}
+    .confirm-title{font-size:1.3rem;font-weight:800;color:white;margin-bottom:.5rem}
+    .confirm-msg{font-size:.85rem;color:var(--text3);line-height:1.5;margin-bottom:1.8rem}
+    .confirm-msg b{color:var(--primary-light)}
+    .confirm-actions{display:flex;gap:.8rem}
+    .confirm-btn{flex:1;padding:.7rem 0;border-radius:10px;border:none;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+    .confirm-cancel{background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border2)}
+    .confirm-cancel:hover{background:rgba(255,255,255,.1);color:white}
+    .confirm-ok{background:linear-gradient(135deg,var(--primary),var(--pink));color:white;box-shadow:0 4px 20px rgba(139,92,246,.3)}
+    .confirm-ok:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(139,92,246,.4)}
+    .danger-zone{border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.03)}
+    .danger-zone h3{color:#ef4444}
+    .danger-zone h3 svg{stroke:#ef4444}
+    @media(max-width:768px){.mod-grid{grid-template-columns:1fr}.mod-header h1{font-size:1.5rem}.mod-tabs{gap:.3rem}.mod-tab{padding:.5rem 1rem;font-size:.78rem}.mod-card{padding:1.2rem}.mod-btn{padding:.5rem .8rem;font-size:.75rem}.mod-input{padding:.6rem .8rem;font-size:.8rem}.mod-stat-card{padding:.8rem}.mod-stat-val{font-size:1.2rem}}
   </style>
 </head>
 <body>
@@ -139,8 +97,7 @@
     <div class="mod-lock-box">
       <h2>Acesso Restrito</h2>
       <p>Este painel é acessível apenas para moderadores autorizados.</p>
-      <input type="password" class="mod-lock-input" id="modPassword" placeholder="••••••••" maxlength="30"
-             onkeydown="if(event.key==='Enter')checkModPassword()">
+      <input type="password" class="mod-lock-input" id="modPassword" placeholder="••••••••" maxlength="30" onkeydown="if(event.key==='Enter')checkModPassword()">
       <button class="mod-lock-btn" onclick="checkModPassword()">Entrar</button>
       <div class="mod-lock-error" id="lockError">Senha incorreta. Tente novamente.</div>
     </div>
@@ -154,113 +111,331 @@
         <a href="/" class="nav-link">Home</a>
         <a href="/status" class="nav-link">Status</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
+        <a href="/profile" class="nav-link">Perfil</a>
         <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
       </div>
     </nav>
 
-    <main class="container" style="padding-top: 7rem; padding-bottom: 4rem;">
+    <main class="container" style="padding-top:7rem;padding-bottom:4rem;">
       <div class="mod-header">
         <h1>Painel de Moderação</h1>
-        <p>Configure todas as opções de moderação do bot. Protegido por senha.</p>
+        <p>Configure moderação, gerencie usuários e ações globais. Protegido por senha.</p>
       </div>
 
-      <!-- SERVER SELECT -->
-      <div style="margin-bottom: 2rem;">
-        <div class="form-group">
-          <label>Selecionar Servidor</label>
-          <select id="modGuildSelect" class="mod-channel-select" onchange="loadModGuild()">
-            <option value="">Carregando servidores...</option>
-          </select>
-        </div>
+      <!-- TABS -->
+      <div class="mod-tabs">
+        <button class="mod-tab active" onclick="switchModTab('server',this)">⚙️ Servidor</button>
+        <button class="mod-tab" onclick="switchModTab('users',this)">👤 Usuários</button>
+        <button class="mod-tab" onclick="switchModTab('global',this)">🌍 Global</button>
       </div>
 
-      <!-- MAIN GRID -->
-      <div class="mod-grid" id="modGrid" style="display:none">
-
-        <!-- AUTO-BAN / WARN THRESHOLDS -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Avisos Automáticos</h3>
-          <div class="mod-section">
-            <div class="form-group"><label>Mute duration (minutos)</label><input type="number" id="mod_mute_duration" value="5" min="1" max="43200"></div>
-            <div class="form-group"><label>Warns para kick automático</label><input type="number" id="mod_warn_kick" value="0" min="0" max="50"><div class="hint">0 = desativado</div></div>
-            <div class="form-group"><label>Warns para ban automático</label><input type="number" id="mod_warn_ban" value="0" min="0" max="100"><div class="hint">0 = desativado. Deve ser maior que kick.</div></div>
-          </div>
-        </div>
-
-        <!-- MOD LOG CHANNEL -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Log de Moderação</h3>
-          <div class="mod-section">
-            <div class="form-group"><label>Canal de logs</label><select id="mod_log_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-            <div class="toggle-row"><div class="toggle-info"><h4>Logar bans</h4><p>Registrar ações de ban</p></div><label class="toggle"><input type="checkbox" id="logging_mod" checked><span class="toggle-slider"></span></label></div>
-          </div>
-        </div>
-
-        <!-- AUTOMOD -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AutoMod</h3>
-          <div class="mod-section">
-            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Spam</h4><p>Proteção contra floods</p></div><label class="toggle"><input type="checkbox" id="automod_anti_spam"><span class="toggle-slider"></span></label></div>
-            <div class="form-group"><label>Max msgs no spam</label><input type="number" id="automod_spam_count" value="5" min="2" max="20"></div>
-            <div class="form-group"><label>Janela de tempo (seg)</label><input type="number" id="automod_spam_window" value="5" min="2" max="30"></div>
-            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Links</h4><p>Bloquear URLs</p></div><label class="toggle"><input type="checkbox" id="automod_anti_links"><span class="toggle-slider"></span></label></div>
-            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Mentions</h4><p>Limitar menções</p></div><label class="toggle"><input type="checkbox" id="automod_anti_mentions"><span class="toggle-slider"></span></label></div>
-            <div class="form-group"><label>Max menções</label><input type="number" id="automod_max_mentions" value="5" min="1" max="50"></div>
-            <div class="toggle-row"><div class="toggle-info"><h4>Palavras proibidas</h4><p>Filtro de palavras</p></div><label class="toggle"><input type="checkbox" id="automod_bad_words_toggle"><span class="toggle-slider"></span></label></div>
-            <div class="form-group"><label>Lista proibida (uma por linha)</label><textarea id="automod_bad_words" rows="3" placeholder="palavra1&#10;palavra2"></textarea></div>
-          </div>
-        </div>
-
-        <!-- RAID PROTECTION -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Proteção Anti-Raid</h3>
-          <div class="mod-section">
-            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Raid Ativado</h4><p>Detectar joins em massa</p></div><label class="toggle"><input type="checkbox" id="automod_raid_enabled"><span class="toggle-slider"></span></label></div>
-            <div class="form-group"><label>Limite de joins para acionar</label><input type="number" id="automod_raid_threshold" value="5" min="2" max="50"></div>
-            <div class="form-group"><label>Ação (kick/ban/timeout)</label><select id="automod_raid_action" class="mod-channel-select"><option value="kick">Expulsar</option><option value="ban">Banir</option><option value="timeout">Silenciar</option></select></div>
-          </div>
-        </div>
-
-        <!-- MUTE / PUNISHMENT -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Castigos</h3>
-          <div class="mod-section">
-            <div class="form-group"><label>Canal de castigo (mute)</label><select id="mod_punishment_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-            <div class="form-group"><label>Mute role (cargo de mute)</label><select id="mod_mute_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-            <div class="toggle-row"><div class="toggle-info"><h4>Auto-Mute em spam</h4><p>Mute automático no spam</p></div><label class="toggle"><input type="checkbox" id="automod_auto_mute"><span class="toggle-slider"></span></label></div>
-          </div>
-        </div>
-
-        <!-- QUICK ACTIONS -->
-        <div class="mod-card">
-          <h3><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Ações Rápidas</h3>
-          <div class="mod-section">
-            <button class="mod-save-all" onclick="testModLog()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px rgba(59,130,246,0.3)">Testar Log</button>
-            <button class="mod-save-all" onclick="clearAllWarnings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,0.3)">Limpar Todos Warnings</button>
-          </div>
-        </div>
-
-        <!-- MOD LOGS VIEWER -->
-        <div class="mod-card" style="grid-column: 1 / -1">
-          <h3><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Histórico de Moderação</h3>
-          <div style="margin-bottom: 1rem;">
-            <select id="modLogFilter" class="mod-channel-select" style="max-width:200px" onchange="loadModLogs()">
-              <option value="all">Todos</option>
-              <option value="ban">Bans</option>
-              <option value="kick">Kicks</option>
-              <option value="mute">Mutes</option>
-              <option value="warn">Warnings</option>
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB 1: SERVER CONFIG -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="mod-tab-content active" id="tab-server">
+        <div style="margin-bottom:2rem;">
+          <div class="form-group">
+            <label>Selecionar Servidor</label>
+            <select id="modGuildSelect" class="mod-channel-select" onchange="loadModGuild()">
+              <option value="">Carregando servidores...</option>
             </select>
           </div>
-          <div class="mod-logs-list" id="modLogsList">
-            <p style="color:var(--text3);text-align:center;padding:2rem">Selecione um servidor para ver os logs</p>
+        </div>
+
+        <div class="mod-grid" id="modGrid" style="display:none">
+          <!-- AUTO-BAN / WARN THRESHOLDS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Avisos Automáticos</h3>
+            <div class="mod-section">
+              <div class="form-group"><label>Mute duration (minutos)</label><input type="number" id="mod_mute_duration" value="5" min="1" max="43200"></div>
+              <div class="form-group"><label>Warns para kick automático</label><input type="number" id="mod_warn_kick" value="0" min="0" max="50"><div class="hint">0 = desativado</div></div>
+              <div class="form-group"><label>Warns para ban automático</label><input type="number" id="mod_warn_ban" value="0" min="0" max="100"><div class="hint">0 = desativado. Deve ser maior que kick.</div></div>
+            </div>
+          </div>
+
+          <!-- MOD LOG CHANNEL -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Log de Moderação</h3>
+            <div class="mod-section">
+              <div class="form-group"><label>Canal de logs</label><select id="mod_log_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Logar bans</h4><p>Registrar ações de ban</p></div><label class="toggle"><input type="checkbox" id="logging_mod" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- AUTOMOD -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AutoMod</h3>
+            <div class="mod-section">
+              <div class="toggle-row"><div class="toggle-info"><h4>Anti-Spam</h4><p>Proteção contra floods</p></div><label class="toggle"><input type="checkbox" id="automod_anti_spam"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Max msgs no spam</label><input type="number" id="automod_spam_count" value="5" min="2" max="20"></div>
+              <div class="form-group"><label>Janela de tempo (seg)</label><input type="number" id="automod_spam_window" value="5" min="2" max="30"></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Anti-Links</h4><p>Bloquear URLs</p></div><label class="toggle"><input type="checkbox" id="automod_anti_links"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Anti-Mentions</h4><p>Limitar menções</p></div><label class="toggle"><input type="checkbox" id="automod_anti_mentions"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Max menções</label><input type="number" id="automod_max_mentions" value="5" min="1" max="50"></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Palavras proibidas</h4><p>Filtro de palavras</p></div><label class="toggle"><input type="checkbox" id="automod_bad_words_toggle"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Lista proibida (uma por linha)</label><textarea id="automod_bad_words" rows="3" placeholder="palavra1&#10;palavra2"></textarea></div>
+            </div>
+          </div>
+
+          <!-- RAID PROTECTION -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Proteção Anti-Raid</h3>
+            <div class="mod-section">
+              <div class="toggle-row"><div class="toggle-info"><h4>Anti-Raid Ativado</h4><p>Detectar joins em massa</p></div><label class="toggle"><input type="checkbox" id="automod_raid_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Limite de joins para acionar</label><input type="number" id="automod_raid_threshold" value="5" min="2" max="50"></div>
+              <div class="form-group"><label>Ação (kick/ban/timeout)</label><select id="automod_raid_action" class="mod-channel-select"><option value="kick">Expulsar</option><option value="ban">Banir</option><option value="timeout">Silenciar</option></select></div>
+            </div>
+          </div>
+
+          <!-- MUTE / PUNISHMENT -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Castigos</h3>
+            <div class="mod-section">
+              <div class="form-group"><label>Canal de castigo (mute)</label><select id="mod_punishment_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="form-group"><label>Mute role (cargo de mute)</label><select id="mod_mute_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Auto-Mute em spam</h4><p>Mute automático no spam</p></div><label class="toggle"><input type="checkbox" id="automod_auto_mute"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- QUICK ACTIONS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Ações Rápidas</h3>
+            <div class="mod-section">
+              <button class="mod-save-all" onclick="testModLog()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px rgba(59,130,246,.3)">Testar Log</button>
+              <button class="mod-save-all" onclick="clearAllWarnings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,.3)">Limpar Todos Warnings</button>
+            </div>
+          </div>
+
+          <!-- MOD LOGS VIEWER -->
+          <div class="mod-card" style="grid-column:1/-1">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Histórico de Moderação</h3>
+            <div style="margin-bottom:1rem;">
+              <select id="modLogFilter" class="mod-channel-select" style="max-width:200px" onchange="loadModLogs()">
+                <option value="all">Todos</option>
+                <option value="ban">Bans</option>
+                <option value="kick">Kicks</option>
+                <option value="mute">Mutes</option>
+                <option value="warn">Warnings</option>
+              </select>
+            </div>
+            <div class="mod-logs-list" id="modLogsList">
+              <p style="color:var(--text3);text-align:center;padding:2rem">Selecione um servidor para ver os logs</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="max-width:500px;margin:0 auto" id="modSaveWrap" style="display:none">
+          <button class="mod-save-all" onclick="saveModConfig()">Salvar Todas as Configurações</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB 2: USER MANAGEMENT -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="mod-tab-content" id="tab-users">
+        <div class="mod-stats">
+          <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-users">-</div><div class="mod-stat-lbl">Usuários</div></div>
+          <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-koins">-</div><div class="mod-stat-lbl">Koins Total</div></div>
+          <div class="mod-stat-card"><div class="mod-stat-val" id="mod-total-commands">-</div><div class="mod-stat-lbl">Comandos</div></div>
+        </div>
+
+        <div class="mod-grid">
+          <!-- SEARCH USER -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Buscar Usuário</h3>
+            <div style="display:flex;gap:.5rem">
+              <input type="text" id="mod-search" class="mod-input" style="flex:1" placeholder="ID do Discord ou username...">
+              <button class="mod-btn mod-btn-primary" onclick="modSearchUser()">Buscar</button>
+            </div>
+            <div id="mod-search-result" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- EDIT KOINS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 0 1 0 4H8"/><path d="M12 18V6"/></svg> Editar Koins</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-edit-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
+              <input type="number" id="mod-edit-koins" class="mod-input" style="width:150px" placeholder="Novos koins">
+              <button class="mod-btn mod-btn-green" onclick="modSetKoins()">Definir</button>
+              <button class="mod-btn mod-btn-yellow" onclick="modAddKoins()">Adicionar</button>
+            </div>
+          </div>
+
+          <!-- GIVE ITEMS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Dar Itens</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-give-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
+              <select id="mod-give-type" class="mod-input"><option value="backgrounds">Fundo</option><option value="borders">Borda</option></select>
+              <select id="mod-give-key" class="mod-input" style="flex:1;min-width:180px"></select>
+              <button class="mod-btn mod-btn-purple" onclick="modGiveItem()">Dar Item</button>
+            </div>
+          </div>
+
+          <!-- BAN / UNBAN -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Banir / Desbanir</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-ban-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-red" onclick="modBan()">Banir</button>
+              <button class="mod-btn mod-btn-green" onclick="modUnban()">Desbanir</button>
+            </div>
+          </div>
+
+          <!-- RESET USER / VIEW PROFILE -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Resetar / Ver Perfil</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-reset-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-orange" onclick="modResetUser()">Resetar Tudo</button>
+              <button class="mod-btn mod-btn-purple" onclick="modViewProfile()">Ver Perfil</button>
+            </div>
+            <div id="mod-profile-result" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- PREMIUM -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Premium</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-premium-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-purple" onclick="modSetPremium(true)">Ativar Premium</button>
+              <button class="mod-btn mod-btn-ghost" onclick="modSetPremium(false)">Remover Premium</button>
+            </div>
+          </div>
+
+          <!-- CLEAR WARNS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Limpar Warns</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-warns-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-yellow" onclick="modClearWarns()">Limpar Warns</button>
+            </div>
+          </div>
+
+          <!-- VIEW WARNS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ver Warns</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-warns-view-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-yellow" onclick="modViewWarns()">Ver Warns</button>
+            </div>
+            <div id="mod-warns-result" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- EDIT XP -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Editar XP / Level</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+              <input type="text" id="mod-xp-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
+              <input type="text" id="mod-xp-guild" class="mod-input" style="width:180px" placeholder="Guild ID">
+              <input type="number" id="mod-xp-value" class="mod-input" style="width:120px" placeholder="XP">
+            </div>
+            <button class="mod-btn mod-btn-purple" onclick="modSetXP()">Definir XP</button>
+          </div>
+
+          <!-- INVESTMENTS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Investimentos</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-inv-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-primary" onclick="modViewInvestments()">Ver Investimentos</button>
+            </div>
+            <div id="mod-inv-result" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- ACHIEVEMENTS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Conquistas</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+              <input type="text" id="mod-ach-id" class="mod-input" style="width:180px" placeholder="ID do Discord">
+              <input type="text" id="mod-ach-key" class="mod-input" style="width:180px" placeholder="Chave da conquista">
+            </div>
+            <div style="display:flex;gap:.5rem">
+              <button class="mod-btn mod-btn-green" onclick="modAddAchievement()">Adicionar</button>
+              <button class="mod-btn mod-btn-red" onclick="modRemoveAchievement()">Remover</button>
+            </div>
+          </div>
+
+          <!-- RESET PROFILE -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Reset Profile</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-reset-prof-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-orange" onclick="modResetProfile()">Resetar Profile</button>
+            </div>
+          </div>
+
+          <!-- VIEW PET -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5"/><path d="M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5"/><path d="M8 14v.5"/><path d="M16 14v.5"/><path d="M11.25 16.25h1.5L12 17l-.75-.75z"/><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306"/></svg> Ver Pet</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-pet-id" class="mod-input" style="width:200px" placeholder="ID do Discord">
+              <button class="mod-btn mod-btn-purple" onclick="modViewPet()">Ver Pet</button>
+            </div>
+            <div id="mod-pet-result" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- ALL USERS -->
+          <div class="mod-card" style="grid-column:1/-1">
+            <h3><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Todos os Usuários</h3>
+            <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+              <button class="mod-btn mod-btn-primary" onclick="modLoadUsers(1)">Carregar</button>
+            </div>
+            <div id="mod-users-list"></div>
+            <div id="mod-users-pagination" style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem"></div>
           </div>
         </div>
       </div>
 
-      <!-- SAVE BUTTON -->
-      <div style="max-width:500px;margin:0 auto" id="modSaveWrap" style="display:none">
-        <button class="mod-save-all" onclick="saveModConfig()">Salvar Todas as Configurações</button>
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB 3: GLOBAL ACTIONS -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="mod-tab-content" id="tab-global">
+        <div class="mod-grid">
+          <!-- BROADCAST -->
+          <div class="mod-card" style="grid-column:1/-1">
+            <h3><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Broadcast</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem">
+              <textarea id="mod-broadcast-msg" class="mod-input" rows="3" style="flex:1;min-width:250px;resize:vertical" placeholder="Mensagem para todos os servidores..."></textarea>
+            </div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem">
+              <input type="text" id="mod-broadcast-channel" class="mod-input" style="flex:1;min-width:250px" placeholder="ID do canal (opcional - vazio = todos)">
+            </div>
+            <div style="display:flex;gap:.5rem;align-items:center">
+              <button class="mod-btn mod-btn-primary" onclick="modBroadcast()">Enviar Broadcast</button>
+              <button class="mod-btn mod-btn-ghost" onclick="modLoadBroadcasts()">Ver Histórico</button>
+            </div>
+            <div id="mod-broadcasts-list" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- SERVERS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> Servidores</h3>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem">
+              <button class="mod-btn mod-btn-primary" onclick="modLoadServers()">Carregar Servidores</button>
+            </div>
+            <div id="mod-servers-list"></div>
+          </div>
+
+          <!-- LEADERBOARD -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Leaderboard Snapshot</h3>
+            <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+              <button class="mod-btn mod-btn-primary" onclick="modLeaderboard()">Ver Top 10</button>
+            </div>
+            <div id="mod-lb-result"></div>
+          </div>
+
+          <!-- DANGER ZONE -->
+          <div class="mod-card danger-zone" style="grid-column:1/-1">
+            <h3><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Zona de Perigo</h3>
+            <p style="font-size:.8rem;color:var(--text3);margin-bottom:1rem">Estas ações são irreversíveis</p>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <input type="text" id="mod-reset-econ-confirm" class="mod-input" style="width:250px;border-color:rgba(239,68,68,.3)" placeholder="Digite RESETAR_ECONOMIA">
+              <button class="mod-btn mod-btn-red" onclick="modResetEconomy()">Resetar Economia Global</button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -273,10 +448,14 @@
     </footer>
   </div>
 
+  <div id="mod-alert-box" style="position:fixed;top:1rem;right:1rem;z-index:10000"></div>
+
   <script>
+    /* ═══════════════════════════════════════════
+       PASSWORD LOCK
+       ═══════════════════════════════════════════ */
     const MOD_PASSWORD = 'pamelabut';
     let modAuth = false;
-    let currentGuildId = null;
 
     function checkModPassword() {
       const input = document.getElementById('modPassword').value;
@@ -285,6 +464,8 @@
         document.getElementById('lockOverlay').style.display = 'none';
         document.getElementById('modPage').classList.add('active');
         loadModGuilds();
+        loadModStats();
+        modLoadGiveOptions();
       } else {
         document.getElementById('lockError').style.display = 'block';
         document.getElementById('modPassword').value = '';
@@ -292,18 +473,66 @@
       }
     }
 
+    /* ═══════════════════════════════════════════
+       TAB SWITCHING
+       ═══════════════════════════════════════════ */
+    function switchModTab(tab, btn) {
+      document.querySelectorAll('.mod-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.mod-tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    /* ═══════════════════════════════════════════
+       UTILITIES
+       ═══════════════════════════════════════════ */
+    function fmt(n) {
+      if (n >= 1e18) return (n/1e18).toFixed(1)+'Qi';
+      if (n >= 1e15) return (n/1e15).toFixed(1)+'Q';
+      if (n >= 1e12) return (n/1e12).toFixed(1)+'T';
+      if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+      if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+      if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+      return n.toLocaleString('pt-BR');
+    }
+
+    function showConfirmMod(title, msg, emoji) {
+      return new Promise(resolve => {
+        const o = document.createElement('div');
+        o.className = 'confirm-overlay';
+        o.innerHTML = '<div class="confirm-modal"><div class="confirm-emoji">' + (emoji||'💜') + '</div><div class="confirm-title">' + title + '</div><div class="confirm-msg">' + msg + '</div><div class="confirm-actions"><button class="confirm-btn confirm-cancel">Cancelar</button><button class="confirm-btn confirm-ok">Confirmar</button></div></div>';
+        document.body.appendChild(o);
+        requestAnimationFrame(() => o.classList.add('open'));
+        o.querySelector('.confirm-cancel').onclick = () => { o.classList.remove('open'); setTimeout(() => o.remove(), 300); resolve(false); };
+        o.querySelector('.confirm-ok').onclick = () => { o.classList.remove('open'); setTimeout(() => o.remove(), 300); resolve(true); };
+        o.onclick = (e) => { if (e.target === o) { o.classList.remove('open'); setTimeout(() => o.remove(), 300); resolve(false); } };
+      });
+    }
+
+    function showAlertMod(msg, type) {
+      const box = document.getElementById('mod-alert-box');
+      const d = document.createElement('div');
+      d.style.cssText = 'padding:12px 20px;border-radius:12px;font-weight:600;font-size:.85rem;margin-bottom:.5rem;backdrop-filter:blur(20px);animation:fadeIn .3s;';
+      d.style.background = type === 'success' ? 'rgba(34,197,94,.9)' : 'rgba(239,68,68,.9)';
+      d.style.color = 'white';
+      d.textContent = msg;
+      box.appendChild(d);
+      setTimeout(() => { d.style.opacity = '0'; d.style.transition = 'opacity .3s'; setTimeout(() => d.remove(), 300); }, 3000);
+    }
+
+    /* ═══════════════════════════════════════════
+       TAB 1: SERVER CONFIG
+       ═══════════════════════════════════════════ */
+    let currentGuildId = null;
+
     async function loadModGuilds() {
       try {
         const r = await fetch('/api/user/guilds');
         const guilds = await r.json();
         const sel = document.getElementById('modGuildSelect');
         sel.innerHTML = '<option value="">Selecione um servidor...</option>';
-        guilds.forEach(g => {
-          sel.innerHTML += `<option value="${g.id}">${g.name}</option>`;
-        });
-      } catch(e) {
-        console.error('Failed to load guilds:', e);
-      }
+        guilds.forEach(g => { sel.innerHTML += '<option value="' + g.id + '">' + g.name + '</option>'; });
+      } catch(e) { console.error('Failed to load guilds:', e); }
     }
 
     async function loadModGuild() {
@@ -318,15 +547,13 @@
     async function loadModConfig() {
       if (!currentGuildId) return;
       try {
-        const r = await fetch(`/api/${currentGuildId}/config`);
+        const r = await fetch('/api/' + currentGuildId + '/config');
         const cfg = await r.json();
-
         document.getElementById('mod_mute_duration').value = cfg.mod_mute_duration || 5;
         document.getElementById('mod_warn_kick').value = cfg.mod_warn_kick || 0;
         document.getElementById('mod_warn_ban').value = cfg.mod_warn_ban || 0;
         document.getElementById('mod_log_channel').value = cfg.mod_log_channel || '';
         document.getElementById('logging_mod').checked = cfg.logging_mod !== false;
-
         document.getElementById('automod_anti_spam').checked = cfg.automod_anti_spam === true;
         document.getElementById('automod_spam_count').value = cfg.automod_spam_count || 5;
         document.getElementById('automod_spam_window').value = cfg.automod_spam_window || 5;
@@ -335,11 +562,9 @@
         document.getElementById('automod_max_mentions').value = cfg.automod_max_mentions || 5;
         document.getElementById('automod_bad_words_toggle').checked = cfg.automod_bad_words_toggle === true;
         document.getElementById('automod_bad_words').value = (cfg.automod_bad_words || []).join('\n');
-
         document.getElementById('automod_raid_enabled').checked = cfg.automod_raid_enabled === true;
         document.getElementById('automod_raid_threshold').value = cfg.automod_raid_threshold || 5;
         document.getElementById('automod_raid_action').value = cfg.automod_raid_action || 'kick';
-
         document.getElementById('mod_punishment_channel').value = cfg.mod_punishment_channel || '';
         document.getElementById('mod_mute_role').value = cfg.mod_mute_role || '';
         document.getElementById('automod_auto_mute').checked = cfg.automod_auto_mute === true;
@@ -349,16 +574,13 @@
     async function loadModChannels() {
       if (!currentGuildId) return;
       try {
-        const r = await fetch(`/api/${currentGuildId}/channels`);
+        const r = await fetch('/api/' + currentGuildId + '/channels');
         const channels = await r.json();
-        const selects = ['mod_log_channel', 'mod_punishment_channel'];
-        selects.forEach(id => {
+        ['mod_log_channel', 'mod_punishment_channel'].forEach(id => {
           const sel = document.getElementById(id);
           const current = sel.value;
           sel.innerHTML = '<option value="">Nenhum</option>';
-          channels.filter(c => c.type === 0).forEach(c => {
-            sel.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
-          });
+          channels.filter(c => c.type === 0).forEach(c => { sel.innerHTML += '<option value="' + c.id + '">#' + c.name + '</option>'; });
           sel.value = current;
         });
       } catch(e) { console.error('Failed to load channels:', e); }
@@ -367,14 +589,12 @@
     async function loadModRoles() {
       if (!currentGuildId) return;
       try {
-        const r = await fetch(`/api/${currentGuildId}/roles`);
+        const r = await fetch('/api/' + currentGuildId + '/roles');
         const roles = await r.json();
         const sel = document.getElementById('mod_mute_role');
         const current = sel.value;
         sel.innerHTML = '<option value="">Nenhum</option>';
-        roles.forEach(role => {
-          sel.innerHTML += `<option value="${role.id}">${role.name}</option>`;
-        });
+        roles.forEach(role => { sel.innerHTML += '<option value="' + role.id + '">' + role.name + '</option>'; });
         sel.value = current;
       } catch(e) { console.error('Failed to load roles:', e); }
     }
@@ -383,24 +603,14 @@
       if (!currentGuildId) return;
       const filter = document.getElementById('modLogFilter').value;
       try {
-        const r = await fetch(`/api/${currentGuildId}/logs/mod?action=${filter}`);
+        const r = await fetch('/api/' + currentGuildId + '/logs/mod?action=' + filter);
         const logs = await r.json();
         const container = document.getElementById('modLogsList');
-        if (!logs.length) {
-          container.innerHTML = '<p style="color:var(--text3);text-align:center;padding:2rem">Nenhum log encontrado</p>';
-          return;
-        }
+        if (!logs.length) { container.innerHTML = '<p style="color:var(--text3);text-align:center;padding:2rem">Nenhum log encontrado</p>'; return; }
         container.innerHTML = logs.map(log => {
           const action = log.action || 'unknown';
           const time = log.created_at ? new Date(log.created_at).toLocaleString('pt-BR') : '—';
-          return `<div class="mod-log-item">
-            <span class="mod-log-badge ${action}">${action}</span>
-            <div class="mod-log-info">
-              <div class="mod-log-user">User: ${log.target_id}</div>
-              <div class="mod-log-reason">${log.reason || 'Sem motivo'}</div>
-            </div>
-            <span class="mod-log-time">${time}</span>
-          </div>`;
+          return '<div class="mod-log-item"><span class="mod-log-badge ' + action + '">' + action + '</span><div class="mod-log-info"><div class="mod-log-user">User: ' + log.target_id + '</div><div class="mod-log-reason">' + (log.reason || 'Sem motivo') + '</div></div><span class="mod-log-time">' + time + '</span></div>';
         }).join('');
       } catch(e) { console.error('Failed to load logs:', e); }
     }
@@ -429,39 +639,435 @@
         automod_auto_mute: document.getElementById('automod_auto_mute').checked,
       };
       try {
-        const r = await fetch(`/api/${currentGuildId}/config`, {
-          method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
-        });
-        if (r.ok) showToast('Configurações salvas!', 'success');
-        else showToast('Erro ao salvar', 'error');
-      } catch(e) { showToast('Erro de conexão', 'error'); }
+        const r = await fetch('/api/' + currentGuildId + '/config', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        if (r.ok) showAlertMod('Configurações salvas!', 'success');
+        else showAlertMod('Erro ao salvar', 'error');
+      } catch(e) { showAlertMod('Erro de conexão', 'error'); }
     }
 
     function testModLog() {
       if (!currentGuildId) return;
-      fetch(`/api/${currentGuildId}/test_modlog`, {method:'POST'})
-        .then(r => r.json())
-        .then(d => showToast(d.message || 'Teste enviado!', 'success'))
-        .catch(() => showToast('Erro ao testar log', 'error'));
+      fetch('/api/' + currentGuildId + '/test_modlog', {method:'POST'}).then(r => r.json()).then(d => showAlertMod(d.message || 'Teste enviado!', 'success')).catch(() => showAlertMod('Erro ao testar log', 'error'));
     }
 
     function clearAllWarnings() {
       if (!currentGuildId) return;
-      if (!confirm('Tem certeza que deseja limpar TODOS os warnings deste servidor?')) return;
-      fetch(`/api/${currentGuildId}/clear_all_warnings`, {method:'POST'})
-        .then(r => r.json())
-        .then(d => showToast(d.message || 'Warnings limpos!', 'success'))
-        .catch(() => showToast('Erro ao limpar warnings', 'error'));
+      showConfirmMod('Limpar Warnings', 'Limpar <b>TODOS</b> os warnings deste servidor?', '🧹').then(c => {
+        if (!c) return;
+        fetch('/api/' + currentGuildId + '/clear_all_warnings', {method:'POST'}).then(r => r.json()).then(d => showAlertMod(d.message || 'Warnings limpos!', 'success')).catch(() => showAlertMod('Erro ao limpar warnings', 'error'));
+      });
     }
 
-    function showToast(msg, type) {
-      let t = document.createElement('div');
-      t.style.cssText = `position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:14px;font-weight:600;font-size:.9rem;z-index:99999;animation:fadeIn .3s;backdrop-filter:blur(20px);`;
-      t.style.background = type === 'success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)';
-      t.style.color = 'white';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3000);
+    /* ═══════════════════════════════════════════
+       TAB 2: USER MANAGEMENT
+       ═══════════════════════════════════════════ */
+    function loadModStats() {
+      fetch('/api/mod/stats').then(function(r){return r.json()}).then(function(d){
+        document.getElementById('mod-total-users').textContent = fmt(d.total_users||0);
+        document.getElementById('mod-total-koins').textContent = fmt(d.total_koins||0);
+        document.getElementById('mod-total-commands').textContent = fmt(d.total_commands||0);
+      }).catch(function(){});
+    }
+
+    function modLoadGiveOptions() {
+      var sel = document.getElementById('mod-give-key');
+      sel.innerHTML = '';
+      var _modBgs = {}, _modBdrs = {};
+      fetch('/api/mod/items').then(function(r){return r.json()}).then(function(d){
+        _modBgs = d.backgrounds || {};
+        _modBdrs = d.borders || {};
+        populateGiveItems();
+      }).catch(function(){});
+      function populateGiveItems() {
+        var type = document.getElementById('mod-give-type').value;
+        sel.innerHTML = '';
+        var src = type === 'backgrounds' ? _modBgs : _modBdrs;
+        for (var k in src) {
+          var o = document.createElement('option');
+          o.value = k; o.textContent = (src[k].emoji||'') + ' ' + (src[k].name||k);
+          sel.appendChild(o);
+        }
+      }
+      document.getElementById('mod-give-type').onchange = function(){ populateGiveItems(); };
+    }
+
+    async function modSearchUser() {
+      var q = document.getElementById('mod-search').value.trim();
+      if (!q) return;
+      var el = document.getElementById('mod-search-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Buscando...</div>';
+      try {
+        var r = await fetch('/api/mod/search?q=' + encodeURIComponent(q));
+        var data = await r.json();
+        if (data.error) { el.innerHTML = '<div style="color:#f43f5e;font-size:.85rem">' + data.error + '</div>'; return; }
+        el.innerHTML = '<div class="mod-user-row"><img class="mod-user-avatar" src="' + (data.avatar_url||'') + '" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'" alt=""><div class="mod-user-info"><div class="mod-user-name">' + (data.username||'Unknown') + ' <span style="color:var(--text3);font-weight:400">#' + (data.discord_id||'').slice(-4) + '</span></div><div class="mod-user-id">' + data.discord_id + '</div></div><div class="mod-user-koins">' + fmt(data.koins) + ' K</div></div><div style="margin-top:.8rem;display:flex;gap:.5rem;flex-wrap:wrap"><span style="font-size:.78rem;color:var(--text3)">BG: <b style="color:var(--text1)">' + (data.background||'padrao') + '</b></span><span style="font-size:.78rem;color:var(--text3)">Border: <b style="color:var(--text1)">' + (data.border||'default') + '</b></span><span style="font-size:.78rem;color:var(--text3)">Streak: <b style="color:var(--text1)">' + (data.daily_streak||0) + '</b></span><span style="font-size:.78rem;color:var(--text3)">Cmds: <b style="color:var(--text1)">' + (data.commands_used||0) + '</b></span><span style="font-size:.78rem;color:var(--text3)">W/L: <b style="color:#22c55e">' + (data.wins||0) + '</b>/<b style="color:#f43f5e">' + (data.losses||0) + '</b></span></div><div style="margin-top:.8rem;display:flex;gap:.5rem"><button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="document.getElementById(\'mod-edit-id\').value=\'' + data.discord_id + '\'">Editar Koins</button><button class="mod-btn mod-btn-purple" style="font-size:.75rem;padding:.4rem .8rem" onclick="document.getElementById(\'mod-give-id\').value=\'' + data.discord_id + '\'">Dar Item</button></div>';
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e;font-size:.85rem">Erro de conexão</div>'; }
+    }
+
+    async function modSetKoins() {
+      var id = document.getElementById('mod-edit-id').value.trim();
+      var koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlertMod('Preencha ID e koins', 'error'); return; }
+      var c = await showConfirmMod('Alterar Koins', 'Definir <b>' + fmt(koins) + ' koins</b> para <b>' + id + '</b>?', '💰');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_koins', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,koins:koins})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Koins atualizados!', 'success');
+        else showAlertMod(d.error||'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexão', 'error'); }
+    }
+
+    async function modAddKoins() {
+      var id = document.getElementById('mod-edit-id').value.trim();
+      var koins = parseInt(document.getElementById('mod-edit-koins').value);
+      if (!id || isNaN(koins)) { showAlertMod('Preencha ID e koins', 'error'); return; }
+      var c = await showConfirmMod('Adicionar Koins', 'Adicionar <b>' + fmt(koins) + ' koins</b> para <b>' + id + '</b>?', '💰');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/add_koins', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,koins:koins})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Koins adicionados!', 'success');
+        else showAlertMod(d.error||'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexão', 'error'); }
+    }
+
+    async function modGiveItem() {
+      var id = document.getElementById('mod-give-id').value.trim();
+      var type = document.getElementById('mod-give-type').value;
+      var key = document.getElementById('mod-give-key').value;
+      if (!id || !key) { showAlertMod('Preencha ID e selecione item', 'error'); return; }
+      var c = await showConfirmMod('Dar Item', 'Dar <b>' + key + '</b> para <b>' + id + '</b>?', '🎁');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/give_item', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,type:type,key:key})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Item dado!', 'success');
+        else showAlertMod(d.error||'Erro', 'error');
+      } catch(e) { showAlertMod('Erro de conexão', 'error'); }
+    }
+
+    var modUsersPage = 1;
+    async function modLoadUsers(page) {
+      modUsersPage = page || 1;
+      var el = document.getElementById('mod-users-list');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/users?page=' + modUsersPage);
+        var data = await r.json();
+        if (data.error) { el.innerHTML = '<div style="color:#f43f5e">' + data.error + '</div>'; return; }
+        el.innerHTML = '';
+        for (var u of (data.users || [])) {
+          var row = document.createElement('div');
+          row.className = 'mod-user-row';
+          row.innerHTML = '<img class="mod-user-avatar" src="' + (u.avatar_url||'') + '" onerror="this.src=\'https://cdn.discordapp.com/embed/avatars/0.png\'" alt=""><div class="mod-user-info"><div class="mod-user-name">' + (u.username||'Unknown') + '</div><div class="mod-user-id">' + u.discord_id + '</div></div><div class="mod-user-koins">' + fmt(u.koins) + ' K</div>';
+          el.appendChild(row);
+        }
+        var pag = document.getElementById('mod-users-pagination');
+        pag.innerHTML = '';
+        if (data.pages > 1) {
+          if (modUsersPage > 1) pag.innerHTML += '<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(' + (modUsersPage-1) + ')">Anterior</button>';
+          pag.innerHTML += '<span style="color:var(--text3);font-size:.8rem;padding:.4rem">Página ' + modUsersPage + '/' + data.pages + '</span>';
+          if (modUsersPage < data.pages) pag.innerHTML += '<button class="mod-btn mod-btn-primary" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLoadUsers(' + (modUsersPage+1) + ')">Próxima</button>';
+        }
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modBan() {
+      var id = document.getElementById('mod-ban-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var c = await showConfirmMod('Banir Usuário', 'Bloquear <b>' + id + '</b> de usar o bot?', '🚫');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/ban_user', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Usuário banido!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modUnban() {
+      var id = document.getElementById('mod-ban-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var c = await showConfirmMod('Desbanir Usuário', 'Permitir <b>' + id + '</b> usar o bot novamente?', '✅');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/unban_user', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Usuário desbanido!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modResetUser() {
+      var id = document.getElementById('mod-reset-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var c = await showConfirmMod('Resetar Usuário', 'Resetar <b>TODOS</b> os dados de <b>' + id + '</b>?<br><br>Isso apaga: koins, wins, losses, streak, items, tudo!', '⚠️');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/reset_user', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Usuário resetado!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modViewProfile() {
+      var id = document.getElementById('mod-reset-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var el = document.getElementById('mod-profile-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/user_profile/' + id);
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        var html = '<div class="mod-user-row" style="flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:.9rem;margin-bottom:.5rem">' + (d.username||'Unknown') + ' <span style="color:var(--text3)">#' + id.slice(-4) + '</span></div><div style="display:flex;flex-wrap:wrap;gap:.5rem">';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Koins: <b style="color:#ffd700">' + fmt(d.koins) + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">W/L: <b style="color:#22c55e">' + d.wins + '</b>/<b style="color:#f43f5e">' + d.losses + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Streak: <b style="color:var(--text1)">' + d.daily_streak + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Cmds: <b style="color:var(--text1)">' + d.commands_used + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">BG: <b style="color:var(--text1)">' + d.background + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Border: <b style="color:var(--text1)">' + d.border + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Premium: <b style="color:' + (d.premium?'#ffd700':'var(--text3)') + '">' + (d.premium?'Sim':'Não') + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Banido: <b style="color:' + (d.banned?'#ef4444':'var(--text3)') + '">' + (d.banned?'Sim':'Não') + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Img: <b style="color:' + (d.has_image?'#22c55e':'var(--text3)') + '">' + (d.has_image?fmt(d.image_size)+' bytes':'Não') + '</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Items: <b style="color:var(--text1)">' + d.purchased_backgrounds.length + ' bg / ' + d.purchased_borders.length + ' bd</b></span>';
+        html += '<span style="font-size:.78rem;color:var(--text3)">Achievements: <b style="color:var(--text1)">' + d.achievements.length + '</b></span>';
+        html += '</div></div></div>';
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modSetPremium(val) {
+      var id = document.getElementById('mod-premium-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var action = val ? 'Ativar' : 'Remover';
+      var c = await showConfirmMod(action + ' Premium', action + ' premium para <b>' + id + '</b>?', val?'👑':'🚫');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_premium', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,premium:val})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Premium ' + (val?'ativado':'removido') + '!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modClearWarns() {
+      var id = document.getElementById('mod-warns-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var c = await showConfirmMod('Limpar Warns', 'Limpar <b>TODOS</b> os warns de <b>' + id + '</b> em todos os servidores?', '🧹');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/clear_warns', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id})});
+        var d = await r.json();
+        if (d.ok) showAlertMod(d.deleted + ' warns removidos!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modViewWarns() {
+      var id = document.getElementById('mod-warns-view-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var el = document.getElementById('mod-warns-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/user_warns/' + id);
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        if (!d.warns || d.warns.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Nenhum warn</div>'; return; }
+        var html = '<div style="font-size:.8rem;color:var(--text3);margin-bottom:.5rem">Total: <b style="color:#f59e0b">' + d.total + '</b> warns</div>';
+        for (var w of d.warns) {
+          html += '<div class="mod-user-row"><div class="mod-user-info"><div class="mod-user-name">Servidor: ' + w.guild_id + '</div><div class="mod-user-id">Mod: ' + w.moderator + ' | ' + w.reason + '</div></div></div>';
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modSetXP() {
+      var id = document.getElementById('mod-xp-id').value.trim();
+      var guild = document.getElementById('mod-xp-guild').value.trim();
+      var xp = document.getElementById('mod-xp-value').value.trim();
+      if (!id || !guild || !xp) { showAlertMod('Preencha todos os campos', 'error'); return; }
+      var c = await showConfirmMod('Definir XP', 'Definir <b>' + xp + ' XP</b> para <b>' + id + '</b> no servidor <b>' + guild + '</b>?', '✨');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/set_xp', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,guild_id:guild,xp:parseInt(xp)})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('XP definido! Level: ' + d.level, 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modViewInvestments() {
+      var id = document.getElementById('mod-inv-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var el = document.getElementById('mod-inv-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/user_investments/' + id);
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        if (!d.investments || d.investments.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Nenhum investimento</div>'; return; }
+        var html = '<div style="font-size:.8rem;color:var(--text3);margin-bottom:.5rem">Total: <b style="color:#22c55e">' + d.total + '</b> investimentos</div>';
+        for (var i of d.investments) {
+          var sc = i.status === 'active' ? '#22c55e' : '#f43f5e';
+          html += '<div class="mod-user-row"><div class="mod-user-info"><div class="mod-user-name">' + i.type + ' — ' + fmt(i.amount) + ' koins</div><div class="mod-user-id">Status: <span style="color:' + sc + '">' + i.status + '</span></div></div></div>';
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modAddAchievement() {
+      var id = document.getElementById('mod-ach-id').value.trim();
+      var key = document.getElementById('mod-ach-key').value.trim();
+      if (!id || !key) { showAlertMod('Preencha ID e chave', 'error'); return; }
+      try {
+        var r = await fetch('/api/mod/add_achievement', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,achievement:key,remove:false})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Conquista adicionada!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modRemoveAchievement() {
+      var id = document.getElementById('mod-ach-id').value.trim();
+      var key = document.getElementById('mod-ach-key').value.trim();
+      if (!id || !key) { showAlertMod('Preencha ID e chave', 'error'); return; }
+      var c = await showConfirmMod('Remover Conquista', 'Remover <b>' + key + '</b> de <b>' + id + '</b>?', '🚫');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/add_achievement', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,achievement:key,remove:true})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Conquista removida!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modResetProfile() {
+      var id = document.getElementById('mod-reset-prof-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var c = await showConfirmMod('Reset Profile', 'Resetar fundo, borda e imagem de <b>' + id + '</b>?', '🔄');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/reset_profile', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Profile resetado!', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modViewPet() {
+      var id = document.getElementById('mod-pet-id').value.trim();
+      if (!id) { showAlertMod('Preencha o ID', 'error'); return; }
+      var el = document.getElementById('mod-pet-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/user_pet/' + id);
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        if (!d.pet) { el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Nenhum pet</div>'; return; }
+        var p = d.pet;
+        var html = '<div class="mod-user-row" style="flex-wrap:wrap"><div class="mod-user-info"><div class="mod-user-name">' + p.name + ' (' + p.type + ')</div><div class="mod-user-id" style="display:flex;gap:1rem;flex-wrap:wrap"><span>Level: <b style="color:#8b5cf6">' + p.level + '</b></span><span>Fome: <b style="color:#22c55e">' + p.hunger + '%</b></span><span>Felicidade: <b style="color:#f59e0b">' + p.happiness + '%</b></span><span>XP: <b style="color:var(--text1)">' + p.xp + '</b></span></div></div></div>';
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    /* ═══════════════════════════════════════════
+       TAB 3: GLOBAL ACTIONS
+       ═══════════════════════════════════════════ */
+    async function modBroadcast() {
+      var msg = document.getElementById('mod-broadcast-msg').value.trim();
+      var ch = document.getElementById('mod-broadcast-channel').value.trim();
+      if (!msg) { showAlertMod('Escreva uma mensagem', 'error'); return; }
+      var target = ch ? 'canal <b>' + ch + '</b>' : '<b>TODOS</b> os canais de TODOS os servidores';
+      var c = await showConfirmMod('Enviar Broadcast', 'Enviar mensagem para ' + target + '?', '📢');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/broadcast', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,broadcast_channel:ch})});
+        var d = await r.json();
+        if (d.ok) { showAlertMod('Broadcast enviado!', 'success'); document.getElementById('mod-broadcast-msg').value = ''; document.getElementById('mod-broadcast-channel').value = ''; }
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modLoadBroadcasts() {
+      var el = document.getElementById('mod-broadcasts-list');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/get_broadcasts');
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        if (!d.broadcasts || d.broadcasts.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Nenhum broadcast enviado</div>'; return; }
+        var html = '';
+        for (var b of d.broadcasts) {
+          var sc = b.pending ? '#f59e0b' : '#22c55e';
+          var st = b.pending ? 'Pendente' : 'Enviado';
+          var tgt = b.broadcast_channel ? 'Canal: ' + b.broadcast_channel : 'Todos os canais';
+          html += '<div class="mod-user-row"><div class="mod-user-info"><div class="mod-user-name" style="white-space:normal">' + b.message + '</div><div class="mod-user-id" style="display:flex;gap:1rem;flex-wrap:wrap"><span style="color:' + sc + '">' + st + '</span><span>' + tgt + '</span><span>ID: ' + b.sent_by + '</span></div></div></div>';
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modLoadServers() {
+      var el = document.getElementById('mod-servers-list');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/servers');
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        if (!d.guilds || d.guilds.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Nenhum servidor</div>'; return; }
+        var html = '';
+        for (var g of d.guilds) {
+          var iconUrl = g.icon ? 'https://cdn.discordapp.com/icons/' + g.guild_id + '/' + g.icon + '.png' : '';
+          var iconHtml = iconUrl ? '<img src="' + iconUrl + '" style="width:32px;height:32px;border-radius:50%;" onerror="this.style.display=\'none\'">' : '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#d946ef);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:white">' + (g.name||'?')[0] + '</div>';
+          html += '<div class="mod-user-row"><div style="flex-shrink:0">' + iconHtml + '</div><div class="mod-user-info"><div class="mod-user-name">' + g.name + '</div><div class="mod-user-id" style="display:flex;gap:1rem;flex-wrap:wrap"><span>ID: ' + g.guild_id + '</span><span>' + (g.member_count||0) + ' membros</span><span>XP: <span style="color:' + (g.xp_enabled?'#22c55e':'#f43f5e') + '">' + (g.xp_enabled?'On':'Off') + '</span></span><span>Welcome: <span style="color:' + (g.welcome_enabled?'#22c55e':'#f43f5e') + '">' + (g.welcome_enabled?'On':'Off') + '</span></span></div></div><button class="mod-btn mod-btn-red" style="font-size:.75rem;padding:.4rem .8rem" onclick="modLeaveServer(\'' + g.guild_id + '\',\'' + g.name.replace(/'/g,"\\'") + '\')">Sair</button></div>';
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modLeaveServer(guildId, name) {
+      var c = await showConfirmMod('Sair do Servidor', 'Sair de <b>' + name + '</b> (' + guildId + ')?', '🚪');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/leave_server', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({guild_id:guildId})});
+        var d = await r.json();
+        if (d.ok) { showAlertMod('Saiu do servidor!', 'success'); modLoadServers(); }
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
+    }
+
+    async function modLeaderboard() {
+      var el = document.getElementById('mod-lb-result');
+      el.innerHTML = '<div style="color:var(--text3);font-size:.85rem">Carregando...</div>';
+      try {
+        var r = await fetch('/api/mod/leaderboard_snapshot');
+        var d = await r.json();
+        if (d.error) { el.innerHTML = '<div style="color:#f43f5e">' + d.error + '</div>'; return; }
+        var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">';
+        html += '<div><div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#ffd700">Mais Ricos</div>';
+        for (var i = 0; i < d.rich.length; i++) { html += '<div style="font-size:.8rem;color:var(--text3);padding:.3rem 0">#' + (i+1) + ' ' + d.rich[i].username + ' — <b style="color:#ffd700">' + fmt(d.rich[i].koins) + '</b></div>'; }
+        html += '</div><div><div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#8b5cf6">Mais Ativos</div>';
+        for (var i = 0; i < d.active.length; i++) { html += '<div style="font-size:.8rem;color:var(--text3);padding:.3rem 0">#' + (i+1) + ' ' + d.active[i].username + ' — <b style="color:#8b5cf6">' + fmt(d.active[i].commands) + '</b></div>'; }
+        html += '</div><div><div style="font-weight:700;font-size:.85rem;margin-bottom:.5rem;color:#f97316">Maior Streak</div>';
+        for (var i = 0; i < d.streak.length; i++) { html += '<div style="font-size:.8rem;color:var(--text3);padding:.3rem 0">#' + (i+1) + ' ' + d.streak[i].username + ' — <b style="color:#f97316">' + d.streak[i].streak + ' dias</b></div>'; }
+        html += '</div></div>';
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:#f43f5e">Erro de conexão</div>'; }
+    }
+
+    async function modResetEconomy() {
+      var confirm = document.getElementById('mod-reset-econ-confirm').value.trim();
+      if (confirm !== 'RESETAR_ECONOMIA') { showAlertMod('Digite RESETAR_ECONOMIA para confirmar', 'error'); return; }
+      var c = await showConfirmMod('RESETAR ECONOMIA GLOBAL', 'Isso vai zerar os koins de <b>TODOS</b> os usuários! Essa ação é <b>IRREVERSÍVEL</b>!', '⚠️');
+      if (!c) return;
+      try {
+        var r = await fetch('/api/mod/reset_economy', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirm:confirm})});
+        var d = await r.json();
+        if (d.ok) showAlertMod('Economia resetada! ' + d.affected + ' usuários afetados.', 'success');
+        else showAlertMod(d.error||'Erro','error');
+      } catch(e) { showAlertMod('Erro de conexão','error'); }
     }
   </script>
 </body>

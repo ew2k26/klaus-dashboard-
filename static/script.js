@@ -195,16 +195,17 @@ function setupPreview() {
     pick.addEventListener('input', () => { text.value = pick.value; updateColor(id); });
   });
 
-  ['welcome_image', 'farewell_image'].forEach(id => {
+  const imgMap = { 'welcome_image': 'w-image', 'farewell_image': 'f-image' };
+  Object.keys(imgMap).forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', () => {
-      const prefix = id.split('_')[0];
-      const img = document.getElementById(prefix + '-image');
+      const img = document.getElementById(imgMap[id]);
       if (img) {
         if (el.value) {
           img.src = el.value;
           img.style.display = 'block';
+          img.onerror = () => { img.style.display = 'none'; };
         } else {
           img.style.display = 'none';
           img.src = '';
@@ -213,12 +214,12 @@ function setupPreview() {
     });
   });
 
-  ['welcome_footer', 'farewell_footer'].forEach(id => {
+  const footerMap = { 'welcome_footer': 'w-footer', 'farewell_footer': 'f-footer' };
+  Object.keys(footerMap).forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', () => {
-      const prefix = id.split('_')[0];
-      const footer = document.getElementById(prefix + '-footer');
+      const footer = document.getElementById(footerMap[id]);
       if (footer) footer.textContent = el.value || 'Klaus Bot';
     });
   });
@@ -234,8 +235,8 @@ function setupPreview() {
 
 function updateColor(id) {
   const text = document.getElementById(id);
-  const prefix = id.split('_')[0];
-  const preview = document.getElementById(prefix + '-preview');
+  const previewMap = { 'welcome_color': 'welcome-preview', 'farewell_color': 'farewell-preview' };
+  const preview = document.getElementById(previewMap[id]);
   if (preview && text) preview.style.borderLeftColor = text.value;
 }
 

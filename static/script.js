@@ -61,8 +61,8 @@ function init(id) {
 }
 
 function tab(name, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
 }
@@ -242,10 +242,19 @@ function updateColor(id) {
 function updateEmbedPreview(id) {
   const text = document.getElementById(id);
   if (!text) return;
+  const map = {
+    'embed_color_primary': 'embed-preview',
+    'embed_color_success': null,
+    'embed_color_error': null,
+    'embed_color_warning': null,
+  };
   if (id === 'embed_color_primary') {
-    const preview = document.getElementById('embed-preview');
+    const preview = document.getElementById(map[id]);
     if (preview) preview.style.borderLeftColor = text.value;
   }
+  const previews = document.querySelectorAll('#tab-embeds .preview-embed');
+  const idx = ['embed_color_primary', 'embed_color_success', 'embed_color_error', 'embed_color_warning'].indexOf(id);
+  if (idx >= 0 && previews[idx]) previews[idx].style.borderLeftColor = text.value;
 }
 
 window.__config = window.__config || {};

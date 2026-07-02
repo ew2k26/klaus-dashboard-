@@ -14,13 +14,14 @@
     .server-info h1{font-size:1.6rem;font-weight:800;margin-bottom:.15rem}
     .server-info p{color:var(--text3);font-size:.85rem}
     .server-back{margin-left:auto;text-decoration:none}
-    .tabs-scroll{display:flex;gap:.5rem;overflow-x:auto;padding:.5rem 0 1rem;scrollbar-width:none;-ms-overflow-style:none}
-    .tabs-scroll::-webkit-scrollbar{display:none}
-    .tab-btn{display:flex;align-items:center;gap:.45rem;padding:.6rem 1rem;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .25s;font-family:inherit}
-    .tab-btn:hover{border-color:var(--primary);color:var(--text)}
+    .cfg-layout{display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start}
+    .tabs-sidebar{display:flex;flex-direction:column;gap:.35rem;position:sticky;top:5rem}
+    .tab-btn{display:flex;align-items:center;gap:.55rem;padding:.7rem 1rem;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .25s;font-family:inherit;text-align:left;width:100%}
+    .tab-btn:hover{border-color:var(--primary);color:var(--text);background:rgba(139,92,246,.06)}
     .tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--pink));color:#fff;border-color:transparent;box-shadow:0 4px 20px rgba(139,92,246,.3)}
-    .tab-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .tab-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
     .tab-btn.active svg{stroke:#fff}
+    @media(max-width:768px){.cfg-layout{grid-template-columns:1fr}.tabs-sidebar{flex-direction:row;overflow-x:auto;position:static;scrollbar-width:none;-ms-overflow-style:none}.tabs-sidebar::-webkit-scrollbar{display:none}.tab-btn{white-space:nowrap;flex-shrink:0;padding:.55rem .8rem;font-size:.78rem}}
     .tab-panel{display:none;animation:fadeIn .3s ease}
     .tab-panel.active{display:block}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -110,40 +111,43 @@
 
     <div id="alert-box"></div>
 
-    <div class="tabs-scroll">
-      <button class="tab-btn active" onclick="tab('welcome',this)">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Boas-vindas
-      </button>
-      <button class="tab-btn" onclick="tab('autorole',this)">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Auto Cargo
-      </button>
-      <button class="tab-btn" onclick="tab('logs',this)">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Logs
-      </button>
-      <button class="tab-btn" onclick="tab('farewell',this)">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
-        Adeus
-      </button>
-      <button class="tab-btn" onclick="tab('xp',this)">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        XP System
-      </button>
-      <button class="tab-btn" onclick="tab('automod',this)">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        AutoMod
-      </button>
-      <button class="tab-btn" onclick="tab('economy',this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
-        Economia
-      </button>
-      <button class="tab-btn" onclick="tab('embeds',this)">
-        <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.75 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.17-4.49-8.94-10-8.94z"/></svg>
-        Cores
-      </button>
-    </div>
+    <div class="cfg-layout">
+      <div class="tabs-sidebar">
+        <button class="tab-btn active" onclick="tab('welcome',this)">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Boas-vindas
+        </button>
+        <button class="tab-btn" onclick="tab('autorole',this)">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Auto Cargo
+        </button>
+        <button class="tab-btn" onclick="tab('logs',this)">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Logs
+        </button>
+        <button class="tab-btn" onclick="tab('farewell',this)">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+          Adeus
+        </button>
+        <button class="tab-btn" onclick="tab('xp',this)">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          XP System
+        </button>
+        <button class="tab-btn" onclick="tab('automod',this)">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          AutoMod
+        </button>
+        <button class="tab-btn" onclick="tab('economy',this)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+          Economia
+        </button>
+        <button class="tab-btn" onclick="tab('embeds',this)">
+          <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.75 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.17-4.49-8.94-10-8.94z"/></svg>
+          Cores
+        </button>
+      </div>
+
+      <div class="tab-panels">
 
     <!-- BOAS-VINDAS -->
     <div id="tab-welcome" class="tab-panel active">
@@ -326,6 +330,8 @@
           <div class="preview-embed" style="border-left-color:{{ config.embed_color_error }}"><h4>Cor de Erro</h4><p>Erros, cooldowns</p></div>
           <div class="preview-embed" style="border-left-color:{{ config.embed_color_warning }}"><h4>Cor de Aviso</h4><p>Avisos, confirmacoes</p></div>
         </div>
+      </div>
+    </div>
       </div>
     </div>
   </div>

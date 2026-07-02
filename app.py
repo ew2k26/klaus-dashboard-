@@ -58,6 +58,9 @@ ALLOWED_GUILD_FIELDS = {
     "economy_lottery_price", "economy_cofre_interest",
     "embed_color_primary", "embed_color_success", "embed_color_error", "embed_color_warning",
     "mod_mute_duration", "mod_warn_kick", "mod_warn_ban", "mod_slowmode_default",
+    "mod_log_channel", "mod_punishment_channel", "mod_mute_role",
+    "automod_auto_mute", "automod_raid_enabled", "automod_raid_threshold", "automod_raid_action",
+    "automod_anti_mentions",
     "fun_quiz_reward", "fun_quiz_time", "fun_adventure_min", "fun_adventure_max",
     "fun_social_actions", "fun_8ball_enabled", "fun_trivia_enabled",
     "auto_response", "premium_multiplier",
@@ -247,6 +250,95 @@ def server(user: dict, guild_id: str) -> str:
         pass
 
     return render_template("server.html", user=user, guild=guild, config=config)
+
+
+@app.route("/moderacao")
+def moderacao() -> str:
+    return render_template("moderacao.html")
+
+
+@app.route("/api/user/guilds")
+def api_user_guilds() -> Any:
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    if not user:
+        return jsonify({"error": "not logged in"}), 401
+    bot_guilds = set()
+    if BOT_TOKEN:
+        try:
+            r = requests.get(f"{API}/users/@me/guilds", headers={"Authorization": f"Bot {BOT_TOKEN}"}, timeout=10)
+            if r.status_code == 200:
+                bot_guilds = {g["id"] for g in r.json()}
+        except Exception:
+            pass
+    guilds = []
+    for g in user.get("guilds", []):
+        perm = int(g.get("permissions", 0))
+        if perm & 0x20 and g["id"] in bot_guilds:
+            guilds.append({"id": g["id"], "name": g.get("name", ""), "icon": g.get("icon", "")})
+    return jsonify(guilds)
+
+
+@app.route("/api/<guild_id>/config", methods=["POST"])
+def api_save_config(guild_id: str) -> Any:
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    if not user:
+        return jsonify({"error": "not logged in"}), 401
+    guild = next((g for g in user.get("guilds", []) if g["id"] == guild_id), None)
+    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
+        return jsonify({"error": "no permission"}), 403
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "no data"}), 400
+    try:
+        db = get_db()
+        safe_data = {k: v for k, v in data.items() if k in ALLOWED_GUILD_FIELDS}
+        if safe_data:
+            db["guilds"].update_one(
+                {"guild_id": int(guild_id)},
+                {"$set": safe_data},
+                upsert=True,
+            )
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/<guild_id>/test_modlog", methods=["POST"])
+def api_test_modlog(guild_id: str) -> Any:
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    if not user:
+        return jsonify({"error": "not logged in"}), 401
+    try:
+        db = get_db()
+        cfg = db["guilds"].find_one({"guild_id": int(guild_id)}) or {}
+        log_channel = cfg.get("mod_log_channel")
+        if not log_channel:
+            return jsonify({"message": "Canal de log não configurado"}), 400
+        headers = {"Authorization": f"Bot {BOT_TOKEN}", "Content-Type": "application/json"}
+        payload = {"content": "🧪 **Teste de log de moderação** — O sistema de logs está funcionando!"}
+        r = requests.post(f"{API}/channels/{log_channel}/messages", headers=headers, json=payload, timeout=10)
+        if r.status_code in (200, 201):
+            return jsonify({"message": "Mensagem de teste enviada!"})
+        return jsonify({"message": f"Erro Discord API: {r.status_code}"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/<guild_id>/clear_all_warnings", methods=["POST"])
+def api_clear_all_warnings(guild_id: str) -> Any:
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    if not user:
+        return jsonify({"error": "not logged in"}), 401
+    try:
+        db = get_db()
+        result = db["warnings"].delete_many({"guild_id": int(guild_id)})
+        return jsonify({"message": f"{result.deleted_count} warnings limpos!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/<guild_id>", methods=["POST"])

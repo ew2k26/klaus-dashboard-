@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaus - Painel de Moderação</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=37">
+  <style>
+    .mod-lock-overlay {
+      position: fixed; inset: 0; background: rgba(5,3,11,0.95); backdrop-filter: blur(30px);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .mod-lock-box {
+      background: linear-gradient(145deg, rgba(20,14,40,0.95), rgba(10,7,20,0.98));
+      border: 1px solid rgba(239,68,68,0.2); border-radius: 24px; padding: 3rem 2.5rem;
+      max-width: 420px; width: 90%; text-align: center;
+      box-shadow: 0 0 120px rgba(239,68,68,0.08), 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .mod-lock-box h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: .5rem;
+      background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .mod-lock-box p { color: #a89ec8; font-size: .9rem; margin-bottom: 1.5rem; }
+    .mod-lock-input {
+      width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(239,68,68,0.2);
+      background: rgba(8,5,16,0.8); color: #f1f0f5; font-size: 1rem; font-family: inherit;
+      outline: none; text-align: center; letter-spacing: 4px; margin-bottom: 1rem; transition: all .3s;
+    }
+    .mod-lock-input:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+    .mod-lock-btn {
+      width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; font-size: 1rem;
+      cursor: pointer; background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
+      transition: all .3s; box-shadow: 0 4px 20px rgba(239,68,68,0.3);
+    }
+    .mod-lock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(239,68,68,0.5); }
+    .mod-lock-error { color: #ef4444; font-size: .82rem; margin-top: .5rem; display: none; }
+
+    .mod-page { display: none; }
+    .mod-page.active { display: block; }
+
+    .mod-header {
+      background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(249,115,22,0.05));
+      border: 1px solid rgba(239,68,68,0.12); border-radius: 20px; padding: 2rem;
+      margin-bottom: 2rem; text-align: center;
+    }
+    .mod-header h1 {
+      font-size: 2rem; font-weight: 800; margin-bottom: .5rem;
+      background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .mod-header p { color: #a89ec8; font-size: .95rem; }
+
+    .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .mod-card {
+      background: var(--card); backdrop-filter: blur(40px); border-radius: 20px;
+      border: 1px solid var(--card-border); padding: 1.8rem; transition: all .3s;
+    }
+    .mod-card:hover { border-color: rgba(239,68,68,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .mod-card h3 {
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; padding-bottom: .8rem;
+      border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .6rem;
+    }
+    .mod-card h3 svg { width: 20px; height: 20px; fill: none; stroke: #ef4444; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .mod-section { margin-bottom: 1.5rem; }
+    .mod-section:last-child { margin-bottom: 0; }
+    .mod-section-title {
+      font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      color: #ef4444; margin-bottom: .8rem; opacity: .8;
+    }
+
+    .mod-channel-select {
+      width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border2);
+      background: rgba(8,5,16,0.8); color: var(--text); font-family: inherit; font-size: .85rem;
+      outline: none; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a89ec8'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+    }
+    .mod-channel-select:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+
+    .mod-role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .5rem; }
+    .mod-role-chip {
+      display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+      border-radius: 8px; font-size: .75rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--border2); background: rgba(8,5,16,0.6); color: var(--text2);
+      transition: all .2s;
+    }
+    .mod-role-chip.active { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #ef4444; }
+    .mod-role-chip:hover { border-color: rgba(239,68,68,0.3); }
+
+    .mod-stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .mod-stat-row:last-child { border-bottom: none; }
+    .mod-stat-label { font-size: .85rem; color: var(--text2); }
+    .mod-stat-value { font-size: .9rem; font-weight: 700; color: var(--text); }
+
+    .mod-save-all {
+      width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; font-size: 1rem;
+      cursor: pointer; background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
+      transition: all .3s; box-shadow: 0 4px 20px rgba(239,68,68,0.3); margin-top: 1rem;
+    }
+    .mod-save-all:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(239,68,68,0.5); }
+
+    .mod-logs-list { max-height: 400px; overflow-y: auto; }
+    .mod-log-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px;
+      transition: all .2s; background: rgba(8,5,16,0.4);
+    }
+    .mod-log-item:hover { border-color: rgba(239,68,68,0.2); background: rgba(8,5,16,0.7); }
+    .mod-log-badge {
+      padding: 3px 10px; border-radius: 8px; font-size: .7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px; flex-shrink: 0;
+    }
+    .mod-log-badge.ban { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .mod-log-badge.kick { background: rgba(249,115,22,0.15); color: #f97316; }
+    .mod-log-badge.mute { background: rgba(234,179,8,0.15); color: #eab308; }
+    .mod-log-badge.warn { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .mod-log-info { flex: 1; }
+    .mod-log-user { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .mod-log-reason { font-size: .78rem; color: var(--text3); margin-top: 2px; }
+    .mod-log-time { font-size: .72rem; color: var(--text3); flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .mod-grid { grid-template-columns: 1fr; }
+      .mod-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="aurora-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="cursor-glow"></div>
+  <canvas id="particles"></canvas>
+
+  <!-- PASSWORD LOCK -->
+  <div class="mod-lock-overlay" id="lockOverlay">
+    <div class="mod-lock-box">
+      <h2>Acesso Restrito</h2>
+      <p>Este painel é acessível apenas para moderadores autorizados.</p>
+      <input type="password" class="mod-lock-input" id="modPassword" placeholder="••••••••" maxlength="30"
+             onkeydown="if(event.key==='Enter')checkModPassword()">
+      <button class="mod-lock-btn" onclick="checkModPassword()">Entrar</button>
+      <div class="mod-lock-error" id="lockError">Senha incorreta. Tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- MODERATION PAGE -->
+  <div class="mod-page" id="modPage">
+    <nav class="glass-nav">
+      <a href="/" class="nav-logo"><span class="logo-k">K</span><span class="logo-text">Klaus</span></a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/status" class="nav-link">Status</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
+        <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+      </div>
+    </nav>
+
+    <main class="container" style="padding-top: 7rem; padding-bottom: 4rem;">
+      <div class="mod-header">
+        <h1>Painel de Moderação</h1>
+        <p>Configure todas as opções de moderação do bot. Protegido por senha.</p>
+      </div>
+
+      <!-- SERVER SELECT -->
+      <div style="margin-bottom: 2rem;">
+        <div class="form-group">
+          <label>Selecionar Servidor</label>
+          <select id="modGuildSelect" class="mod-channel-select" onchange="loadModGuild()">
+            <option value="">Carregando servidores...</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="mod-grid" id="modGrid" style="display:none">
+
+        <!-- AUTO-BAN / WARN THRESHOLDS -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Avisos Automáticos</h3>
+          <div class="mod-section">
+            <div class="form-group"><label>Mute duration (minutos)</label><input type="number" id="mod_mute_duration" value="5" min="1" max="43200"></div>
+            <div class="form-group"><label>Warns para kick automático</label><input type="number" id="mod_warn_kick" value="0" min="0" max="50"><div class="hint">0 = desativado</div></div>
+            <div class="form-group"><label>Warns para ban automático</label><input type="number" id="mod_warn_ban" value="0" min="0" max="100"><div class="hint">0 = desativado. Deve ser maior que kick.</div></div>
+          </div>
+        </div>
+
+        <!-- MOD LOG CHANNEL -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Log de Moderação</h3>
+          <div class="mod-section">
+            <div class="form-group"><label>Canal de logs</label><select id="mod_log_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+            <div class="toggle-row"><div class="toggle-info"><h4>Logar bans</h4><p>Registrar ações de ban</p></div><label class="toggle"><input type="checkbox" id="logging_mod" checked><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+
+        <!-- AUTOMOD -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AutoMod</h3>
+          <div class="mod-section">
+            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Spam</h4><p>Proteção contra floods</p></div><label class="toggle"><input type="checkbox" id="automod_anti_spam"><span class="toggle-slider"></span></label></div>
+            <div class="form-group"><label>Max msgs no spam</label><input type="number" id="automod_spam_count" value="5" min="2" max="20"></div>
+            <div class="form-group"><label>Janela de tempo (seg)</label><input type="number" id="automod_spam_window" value="5" min="2" max="30"></div>
+            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Links</h4><p>Bloquear URLs</p></div><label class="toggle"><input type="checkbox" id="automod_anti_links"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Mentions</h4><p>Limitar menções</p></div><label class="toggle"><input type="checkbox" id="automod_anti_mentions"><span class="toggle-slider"></span></label></div>
+            <div class="form-group"><label>Max menções</label><input type="number" id="automod_max_mentions" value="5" min="1" max="50"></div>
+            <div class="toggle-row"><div class="toggle-info"><h4>Palavras proibidas</h4><p>Filtro de palavras</p></div><label class="toggle"><input type="checkbox" id="automod_bad_words_toggle"><span class="toggle-slider"></span></label></div>
+            <div class="form-group"><label>Lista proibida (uma por linha)</label><textarea id="automod_bad_words" rows="3" placeholder="palavra1&#10;palavra2"></textarea></div>
+          </div>
+        </div>
+
+        <!-- RAID PROTECTION -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Proteção Anti-Raid</h3>
+          <div class="mod-section">
+            <div class="toggle-row"><div class="toggle-info"><h4>Anti-Raid Ativado</h4><p>Detectar joins em massa</p></div><label class="toggle"><input type="checkbox" id="automod_raid_enabled"><span class="toggle-slider"></span></label></div>
+            <div class="form-group"><label>Limite de joins para acionar</label><input type="number" id="automod_raid_threshold" value="5" min="2" max="50"></div>
+            <div class="form-group"><label>Ação (kick/ban/timeout)</label><select id="automod_raid_action" class="mod-channel-select"><option value="kick">Expulsar</option><option value="ban">Banir</option><option value="timeout">Silenciar</option></select></div>
+          </div>
+        </div>
+
+        <!-- MUTE / PUNISHMENT -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Castigos</h3>
+          <div class="mod-section">
+            <div class="form-group"><label>Canal de castigo (mute)</label><select id="mod_punishment_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+            <div class="form-group"><label>Mute role (cargo de mute)</label><select id="mod_mute_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+            <div class="toggle-row"><div class="toggle-info"><h4>Auto-Mute em spam</h4><p>Mute automático no spam</p></div><label class="toggle"><input type="checkbox" id="automod_auto_mute"><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="mod-card">
+          <h3><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Ações Rápidas</h3>
+          <div class="mod-section">
+            <button class="mod-save-all" onclick="testModLog()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px rgba(59,130,246,0.3)">Testar Log</button>
+            <button class="mod-save-all" onclick="clearAllWarnings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,0.3)">Limpar Todos Warnings</button>
+          </div>
+        </div>
+
+        <!-- MOD LOGS VIEWER -->
+        <div class="mod-card" style="grid-column: 1 / -1">
+          <h3><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Histórico de Moderação</h3>
+          <div style="margin-bottom: 1rem;">
+            <select id="modLogFilter" class="mod-channel-select" style="max-width:200px" onchange="loadModLogs()">
+              <option value="all">Todos</option>
+              <option value="ban">Bans</option>
+              <option value="kick">Kicks</option>
+              <option value="mute">Mutes</option>
+              <option value="warn">Warnings</option>
+            </select>
+          </div>
+          <div class="mod-logs-list" id="modLogsList">
+            <p style="color:var(--text3);text-align:center;padding:2rem">Selecione um servidor para ver os logs</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <div style="max-width:500px;margin:0 auto" id="modSaveWrap" style="display:none">
+        <button class="mod-save-all" onclick="saveModConfig()">Salvar Todas as Configurações</button>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-copy">Feito com 💜 por kadu</div>
+      <div class="footer-links">
+        <a href="/terms">Termos de Serviço</a>
+        <a href="/privacy">Privacidade</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const MOD_PASSWORD = 'pamelabut';
+    let modAuth = false;
+    let currentGuildId = null;
+
+    function checkModPassword() {
+      const input = document.getElementById('modPassword').value;
+      if (input === MOD_PASSWORD) {
+        modAuth = true;
+        document.getElementById('lockOverlay').style.display = 'none';
+        document.getElementById('modPage').classList.add('active');
+        loadModGuilds();
+      } else {
+        document.getElementById('lockError').style.display = 'block';
+        document.getElementById('modPassword').value = '';
+        document.getElementById('modPassword').focus();
+      }
+    }
+
+    async function loadModGuilds() {
+      try {
+        const r = await fetch('/api/user/guilds');
+        const guilds = await r.json();
+        const sel = document.getElementById('modGuildSelect');
+        sel.innerHTML = '<option value="">Selecione um servidor...</option>';
+        guilds.forEach(g => {
+          sel.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+        });
+      } catch(e) {
+        console.error('Failed to load guilds:', e);
+      }
+    }
+
+    async function loadModGuild() {
+      const guildId = document.getElementById('modGuildSelect').value;
+      if (!guildId) { document.getElementById('modGrid').style.display = 'none'; return; }
+      currentGuildId = guildId;
+      document.getElementById('modGrid').style.display = 'grid';
+      document.getElementById('modSaveWrap').style.display = 'block';
+      await Promise.all([loadModConfig(), loadModChannels(), loadModRoles(), loadModLogs()]);
+    }
+
+    async function loadModConfig() {
+      if (!currentGuildId) return;
+      try {
+        const r = await fetch(`/api/${currentGuildId}/config`);
+        const cfg = await r.json();
+
+        document.getElementById('mod_mute_duration').value = cfg.mod_mute_duration || 5;
+        document.getElementById('mod_warn_kick').value = cfg.mod_warn_kick || 0;
+        document.getElementById('mod_warn_ban').value = cfg.mod_warn_ban || 0;
+        document.getElementById('mod_log_channel').value = cfg.mod_log_channel || '';
+        document.getElementById('logging_mod').checked = cfg.logging_mod !== false;
+
+        document.getElementById('automod_anti_spam').checked = cfg.automod_anti_spam === true;
+        document.getElementById('automod_spam_count').value = cfg.automod_spam_count || 5;
+        document.getElementById('automod_spam_window').value = cfg.automod_spam_window || 5;
+        document.getElementById('automod_anti_links').checked = cfg.automod_anti_links === true;
+        document.getElementById('automod_anti_mentions').checked = cfg.automod_anti_mentions === true;
+        document.getElementById('automod_max_mentions').value = cfg.automod_max_mentions || 5;
+        document.getElementById('automod_bad_words_toggle').checked = cfg.automod_bad_words_toggle === true;
+        document.getElementById('automod_bad_words').value = (cfg.automod_bad_words || []).join('\n');
+
+        document.getElementById('automod_raid_enabled').checked = cfg.automod_raid_enabled === true;
+        document.getElementById('automod_raid_threshold').value = cfg.automod_raid_threshold || 5;
+        document.getElementById('automod_raid_action').value = cfg.automod_raid_action || 'kick';
+
+        document.getElementById('mod_punishment_channel').value = cfg.mod_punishment_channel || '';
+        document.getElementById('mod_mute_role').value = cfg.mod_mute_role || '';
+        document.getElementById('automod_auto_mute').checked = cfg.automod_auto_mute === true;
+      } catch(e) { console.error('Failed to load config:', e); }
+    }
+
+    async function loadModChannels() {
+      if (!currentGuildId) return;
+      try {
+        const r = await fetch(`/api/${currentGuildId}/channels`);
+        const channels = await r.json();
+        const selects = ['mod_log_channel', 'mod_punishment_channel'];
+        selects.forEach(id => {
+          const sel = document.getElementById(id);
+          const current = sel.value;
+          sel.innerHTML = '<option value="">Nenhum</option>';
+          channels.filter(c => c.type === 0).forEach(c => {
+            sel.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
+          });
+          sel.value = current;
+        });
+      } catch(e) { console.error('Failed to load channels:', e); }
+    }
+
+    async function loadModRoles() {
+      if (!currentGuildId) return;
+      try {
+        const r = await fetch(`/api/${currentGuildId}/roles`);
+        const roles = await r.json();
+        const sel = document.getElementById('mod_mute_role');
+        const current = sel.value;
+        sel.innerHTML = '<option value="">Nenhum</option>';
+        roles.forEach(role => {
+          sel.innerHTML += `<option value="${role.id}">${role.name}</option>`;
+        });
+        sel.value = current;
+      } catch(e) { console.error('Failed to load roles:', e); }
+    }
+
+    async function loadModLogs() {
+      if (!currentGuildId) return;
+      const filter = document.getElementById('modLogFilter').value;
+      try {
+        const r = await fetch(`/api/${currentGuildId}/logs/mod?action=${filter}`);
+        const logs = await r.json();
+        const container = document.getElementById('modLogsList');
+        if (!logs.length) {
+          container.innerHTML = '<p style="color:var(--text3);text-align:center;padding:2rem">Nenhum log encontrado</p>';
+          return;
+        }
+        container.innerHTML = logs.map(log => {
+          const action = log.action || 'unknown';
+          const time = log.created_at ? new Date(log.created_at).toLocaleString('pt-BR') : '—';
+          return `<div class="mod-log-item">
+            <span class="mod-log-badge ${action}">${action}</span>
+            <div class="mod-log-info">
+              <div class="mod-log-user">User: ${log.target_id}</div>
+              <div class="mod-log-reason">${log.reason || 'Sem motivo'}</div>
+            </div>
+            <span class="mod-log-time">${time}</span>
+          </div>`;
+        }).join('');
+      } catch(e) { console.error('Failed to load logs:', e); }
+    }
+
+    async function saveModConfig() {
+      if (!currentGuildId) return;
+      const data = {
+        mod_mute_duration: parseInt(document.getElementById('mod_mute_duration').value),
+        mod_warn_kick: parseInt(document.getElementById('mod_warn_kick').value),
+        mod_warn_ban: parseInt(document.getElementById('mod_warn_ban').value),
+        mod_log_channel: document.getElementById('mod_log_channel').value,
+        logging_mod: document.getElementById('logging_mod').checked,
+        automod_anti_spam: document.getElementById('automod_anti_spam').checked,
+        automod_spam_count: parseInt(document.getElementById('automod_spam_count').value),
+        automod_spam_window: parseInt(document.getElementById('automod_spam_window').value),
+        automod_anti_links: document.getElementById('automod_anti_links').checked,
+        automod_anti_mentions: document.getElementById('automod_anti_mentions').checked,
+        automod_max_mentions: parseInt(document.getElementById('automod_max_mentions').value),
+        automod_bad_words_toggle: document.getElementById('automod_bad_words_toggle').checked,
+        automod_bad_words: document.getElementById('automod_bad_words').value.split('\n').filter(w => w.trim()),
+        automod_raid_enabled: document.getElementById('automod_raid_enabled').checked,
+        automod_raid_threshold: parseInt(document.getElementById('automod_raid_threshold').value),
+        automod_raid_action: document.getElementById('automod_raid_action').value,
+        mod_punishment_channel: document.getElementById('mod_punishment_channel').value,
+        mod_mute_role: document.getElementById('mod_mute_role').value,
+        automod_auto_mute: document.getElementById('automod_auto_mute').checked,
+      };
+      try {
+        const r = await fetch(`/api/${currentGuildId}/config`, {
+          method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+        });
+        if (r.ok) showToast('Configurações salvas!', 'success');
+        else showToast('Erro ao salvar', 'error');
+      } catch(e) { showToast('Erro de conexão', 'error'); }
+    }
+
+    function testModLog() {
+      if (!currentGuildId) return;
+      fetch(`/api/${currentGuildId}/test_modlog`, {method:'POST'})
+        .then(r => r.json())
+        .then(d => showToast(d.message || 'Teste enviado!', 'success'))
+        .catch(() => showToast('Erro ao testar log', 'error'));
+    }
+
+    function clearAllWarnings() {
+      if (!currentGuildId) return;
+      if (!confirm('Tem certeza que deseja limpar TODOS os warnings deste servidor?')) return;
+      fetch(`/api/${currentGuildId}/clear_all_warnings`, {method:'POST'})
+        .then(r => r.json())
+        .then(d => showToast(d.message || 'Warnings limpos!', 'success'))
+        .catch(() => showToast('Erro ao limpar warnings', 'error'));
+    }
+
+    function showToast(msg, type) {
+      let t = document.createElement('div');
+      t.style.cssText = `position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:14px;font-weight:600;font-size:.9rem;z-index:99999;animation:fadeIn .3s;backdrop-filter:blur(20px);`;
+      t.style.background = type === 'success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)';
+      t.style.color = 'white';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+  </script>
+</body>
+</html>

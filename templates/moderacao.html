@@ -112,11 +112,13 @@
         <a href="/status" class="nav-link">Status</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
         <a href="/profile" class="nav-link">Perfil</a>
-        <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
-        <div class="lang-toggle" onclick="toggleLang()" style="cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:10px;border:1px solid var(--border2);background:rgba(10,7,20,.6);font-size:.8rem;font-weight:700;color:var(--text2);transition:all .2s">
-          <span id="lang-flag">🇧🇷</span><span id="lang-code">PT</span>
+        <a href="/moderacao" class="nav-link" style="color:#ef4444">Moderação</a>
+        <div class="lang-toggle" onclick="toggleLang()" title="Mudar idioma">
+          <span id="lang-flag">🇧🇷</span>
+          <span id="lang-code">PT</span>
         </div>
-        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="background:rgba(10,7,20,.6);border:1px solid var(--border2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:1rem;transition:all .2s">🌙</button>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+        <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard</a>
       </div>
     </nav>
 

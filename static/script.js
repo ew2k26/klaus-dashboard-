@@ -37,6 +37,7 @@ function init(id) {
     .then(data => {
       const roles = data.roles || data;
       const el = document.getElementById('autorole_role');
+      const xpEl = document.getElementById('xprole_role');
       if (!el) return;
       if (!roles || roles.length === 0) {
         const opt = document.createElement('option');
@@ -44,6 +45,7 @@ function init(id) {
         opt.textContent = data.error ? `Erro: ${data.error}` : 'Nenhum cargo encontrado';
         opt.disabled = true;
         el.appendChild(opt);
+        if (xpEl) { const o = opt.cloneNode(true); xpEl.appendChild(o); }
         return;
       }
       roles.forEach(r => {
@@ -51,9 +53,11 @@ function init(id) {
         opt.value = r.id;
         opt.textContent = r.name;
         el.appendChild(opt);
+        if (xpEl) { const o = opt.cloneNode(true); xpEl.appendChild(o); }
       });
       const cfg = window.__config || {};
       if (cfg.autorole_role) el.value = cfg.autorole_role;
+      loadXpRoles();
     })
     .catch(e => console.log('Erro ao carregar cargos:', e));
 
@@ -147,6 +151,30 @@ function save(section) {
       embed_color_success: document.getElementById('embed_color_success').value,
       embed_color_error: document.getElementById('embed_color_error').value,
       embed_color_warning: document.getElementById('embed_color_warning').value,
+    };
+  } else if (section === 'automodadv') {
+    data = {
+      automod_spam_count: parseInt(document.getElementById('automod_spam_count').value) || 5,
+      automod_spam_window: parseInt(document.getElementById('automod_spam_window').value) || 5,
+      automod_punishment: document.getElementById('automod_punishment').value,
+      automod_link_whitelist: document.getElementById('automod_link_whitelist').value,
+    };
+  } else if (section === 'moderation') {
+    data = {
+      mod_mute_duration: parseInt(document.getElementById('mod_mute_duration').value) || 5,
+      mod_warn_kick: parseInt(document.getElementById('mod_warn_kick').value) || 0,
+      mod_warn_ban: parseInt(document.getElementById('mod_warn_ban').value) || 0,
+      mod_slowmode_default: parseInt(document.getElementById('mod_slowmode_default').value) || 0,
+    };
+  } else if (section === 'fun') {
+    data = {
+      fun_8ball_enabled: document.getElementById('fun_8ball_enabled').checked,
+      fun_trivia_enabled: document.getElementById('fun_trivia_enabled').checked,
+      fun_quiz_reward: parseInt(document.getElementById('fun_quiz_reward').value) || 500,
+      fun_quiz_time: parseInt(document.getElementById('fun_quiz_time').value) || 15,
+      fun_adventure_min: parseInt(document.getElementById('fun_adventure_min').value) || 100,
+      fun_adventure_max: parseInt(document.getElementById('fun_adventure_max').value) || 5000,
+      fun_social_actions: document.getElementById('fun_social_actions').value,
     };
   }
 
@@ -259,3 +287,57 @@ function updateEmbedPreview(id) {
 }
 
 window.__config = window.__config || {};
+
+let xpRoleRewards = {};
+
+function loadXpRoles() {
+  const cfg = window.__config || {};
+  xpRoleRewards = cfg.xp_role_rewards || {};
+  renderXpRoles();
+}
+
+function renderXpRoles() {
+  const list = document.getElementById('xprole-list');
+  if (!list) return;
+  const entries = Object.entries(xpRoleRewards).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+  if (entries.length === 0) {
+    list.innerHTML = '<p style="color:var(--text3);font-size:.82rem">Nenhuma recompensa configurada.</p>';
+    return;
+  }
+  list.innerHTML = entries.map(([lvl, roleId]) => {
+    const sel = document.getElementById('xprole_role');
+    const opt = sel ? sel.querySelector(`option[value="${roleId}"]` : null);
+    const roleName = opt ? opt.textContent : `Cargo ${roleId}`;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .7rem;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:.35rem;font-size:.85rem">
+      <span>Level <strong>${lvl}</strong> → ${roleName}</span>
+      <button onclick="removeXpRole(${lvl})" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function addXpRole() {
+  const lvl = document.getElementById('xprole_level').value;
+  const role = document.getElementById('xprole_role').value;
+  if (!lvl || !role) { showAlert('Selecione level e cargo', 'error'); return; }
+  xpRoleRewards[lvl] = role;
+  fetch(`/api/${GUILD}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ xp_role_rewards: xpRoleRewards }),
+  }).then(r => r.json()).then(res => {
+    if (res.ok) { showAlert('Recompensa adicionada!', 'success'); renderXpRoles(); }
+    else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
+  }).catch(() => showAlert('Erro de conexao', 'error'));
+}
+
+function removeXpRole(lvl) {
+  delete xpRoleRewards[lvl];
+  fetch(`/api/${GUILD}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ xp_role_rewards: xpRoleRewards }),
+  }).then(r => r.json()).then(res => {
+    if (res.ok) { showAlert('Recompensa removida!', 'success'); renderXpRoles(); }
+    else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
+  }).catch(() => showAlert('Erro de conexao', 'error'));
+}

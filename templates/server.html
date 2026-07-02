@@ -145,6 +145,22 @@
           <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.75 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.17-4.49-8.94-10-8.94z"/></svg>
           Cores
         </button>
+        <button class="tab-btn" onclick="tab('xproles',this)">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          XP Recompensas
+        </button>
+        <button class="tab-btn" onclick="tab('automodadv',this)">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          AutoMod++
+        </button>
+        <button class="tab-btn" onclick="tab('moderation',this)">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          Moderação
+        </button>
+        <button class="tab-btn" onclick="tab('fun',this)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          Diversão
+        </button>
       </div>
 
       <div class="tab-panels">
@@ -332,6 +348,93 @@
         </div>
       </div>
     </div>
+
+    <!-- XP RECOMPENSAS -->
+    <div id="tab-xproles" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Recompensas por Level</h3>
+          <p style="color:var(--text3);font-size:.82rem;margin-bottom:1rem">Configure cargos automaticos ao alcancar niveis especificos.</p>
+          <div class="form-group"><label>Level</label><input type="number" id="xprole_level" min="1" max="100" placeholder="Ex: 10"></div>
+          <div class="form-group"><label>Cargo</label><select id="xprole_role"><option value="">Selecione...</option></select></div>
+          <button class="save-btn" onclick="addXpRole()">Adicionar</button>
+          <div id="xprole-list" style="margin-top:1rem"></div>
+        </div>
+        <div class="info-card">
+          <h3>Como funciona</h3>
+          <p>Quando um membro atingir o level configurado, recebera automaticamente o cargo escolhido.<br><br>
+          <strong>Exemplo:</strong> Level 10 → Cargo "Veterano"<br><br>
+          Os cargos sao acumulativos — o membro recebe todos os cargos dos levels que alcancou.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTOMOD AVANCADO -->
+    <div id="tab-automodadv" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> AutoMod Avancado</h3>
+          <div class="form-group"><label>Spam: max. mensagens</label><input type="number" id="automod_spam_count" value="{{ config.automod_spam_count or 5 }}" min="2" max="20"><div class="hint">Numero de mensagens iguais para considerar spam</div></div>
+          <div class="form-group"><label>Spam: janela de tempo (seg)</label><input type="number" id="automod_spam_window" value="{{ config.automod_spam_window or 5 }}" min="2" max="30"><div class="hint">Tempo em segundos para contar as mensagens</div></div>
+          <div class="form-group"><label>Punicao por spam</label><select id="automod_punishment"><option value="delete" {% if config.automod_punishment == 'delete' %}selected{% endif %}>Apenas deletar</option><option value="warn" {% if config.automod_punishment == 'warn' %}selected{% endif %}>Deletar + Aviso</option><option value="mute" {% if config.automod_punishment == 'mute' %}selected{% endif %}>Deletar + Mutar</option></select></div>
+          <div class="form-group"><label>Links permitidos (separados por virgula)</label><textarea id="automod_link_whitelist" placeholder="exemplo.com, youtube.com">{{ config.automod_link_whitelist }}</textarea><div class="hint">Links desses dominios nao serao bloqueados</div></div>
+          <button class="save-btn" onclick="save('automodadv')">Salvar</button>
+        </div>
+        <div class="info-card">
+          <h3>Regras do AutoMod</h3>
+          <p><strong>Anti-Spam:</strong> Se um membro enviar a mesma mensagem mais de N vezes em X segundos, a mensagem e deletada.<br><br>
+          <strong>Anti-Links:</strong> Bloqueia links de dominios nao whitelistados.<br><br>
+          <strong>Palavras Proibidas:</strong> Filtra palavras da lista configurada na aba AutoMod.<br><br>
+          <strong>Anti-Mencoes:</strong> Limita mencoes por mensagem.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODERACAO -->
+    <div id="tab-moderation" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Configurar Moderação</h3>
+          <div class="form-group"><label>Duracao do mute (minutos)</label><input type="number" id="mod_mute_duration" value="{{ config.mod_mute_duration or 5 }}" min="1" max="1440"></div>
+          <div class="form-group"><label>Avisos para kick automatico</label><input type="number" id="mod_warn_kick" value="{{ config.mod_warn_kick or 0 }}" min="0" max="20"><div class="hint">0 = desativado</div></div>
+          <div class="form-group"><label>Avisos para ban automatico</label><input type="number" id="mod_warn_ban" value="{{ config.mod_warn_ban or 0 }}" min="0" max="50"><div class="hint">0 = desativado. Deve ser maior que kick.</div></div>
+          <div class="form-group"><label>Slowmode padrao (segundos)</label><input type="number" id="mod_slowmode_default" value="{{ config.mod_slowmode_default or 0 }}" min="0" max="21600"><div class="hint">0 = sem slowmode padrao</div></div>
+          <button class="save-btn" onclick="save('moderation')">Salvar</button>
+        </div>
+        <div class="info-card">
+          <h3>Como funciona</h3>
+          <p><strong>Mute:</strong> Quando usar <code>/mutar</code>, o membro sera silenciado pelo tempo configurado.<br><br>
+          <strong>Warn Thresholds:</strong> Ao atingir o numero de avisos configurado, o membro sera automaticamente kickado ou banado.<br><br>
+          <strong>Slowmode:</strong> Define um slowmode padrao para canais de texto quando usado o comando.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVERSAO -->
+    <div id="tab-fun" class="tab-panel">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg> Configurar Diversão</h3>
+          <div class="toggle-row"><div class="toggle-info"><h4>8ball Ativado</h4><p>Comando de bola 8magica</p></div><label class="toggle"><input type="checkbox" id="fun_8ball_enabled" {% if config.fun_8ball_enabled != false %}checked{% endif %}><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>Trivia Ativado</h4><p>Comando de perguntas</p></div><label class="toggle"><input type="checkbox" id="fun_trivia_enabled" {% if config.fun_trivia_enabled != false %}checked{% endif %}><span class="toggle-slider"></span></label></div>
+          <div class="form-group"><label>Recompensa Quiz (koins)</label><input type="number" id="fun_quiz_reward" value="{{ config.fun_quiz_reward or 500 }}" min="50" max="5000"></div>
+          <div class="form-group"><label>Tempo Quiz (segundos)</label><input type="number" id="fun_quiz_time" value="{{ config.fun_quiz_time or 15 }}" min="5" max="60"></div>
+          <div class="form-group"><label>Aventura min. (koins)</label><input type="number" id="fun_adventure_min" value="{{ config.fun_adventure_min or 100 }}" min="10" max="10000"></div>
+          <div class="form-group"><label>Aventura max. (koins)</label><input type="number" id="fun_adventure_max" value="{{ config.fun_adventure_max or 5000 }}" min="100" max="50000"></div>
+          <div class="form-group"><label>Ações sociais (separadas por virgula)</label><input type="text" id="fun_social_actions" value="{{ config.fun_social_actions or 'hug, kiss, slap, pat' }}" placeholder="hug, kiss, slap, pat"></div>
+          <button class="save-btn" onclick="save('fun')">Salvar</button>
+        </div>
+        <div class="info-card">
+          <h3>Comandos de Diversão</h3>
+          <p><strong>/8ball</strong> — Pergunte algo e receba uma resposta aleatoria<br><br>
+          <strong>/quiz</strong> — Quiz de conhecimento geral com recompensa em koins<br><br>
+          <strong>/aventura</strong> — Aventure-se e ganhe koins aleatorios<br><br>
+          <strong>/social</strong> — Acoes sociais (abraçar, beijar, etc)<br><br>
+          Configure recompensas, tempo e acoes disponiveis.</p>
+        </div>
+      </div>
+    </div>
+
       </div>
     </div>
   </div>

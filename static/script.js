@@ -402,18 +402,18 @@ function loadBotStatus() {
       const dot = document.getElementById('bot-status-dot');
       const text = document.getElementById('bot-status-text');
       if (data.total_guilds > 0) {
-        if (dot) dot.style.background = '#22c55e';
-        if (text) text.textContent = `Online • ${data.total_guilds || '?'} servidores • ${data.total_users || 0} usuarios`;
+        if (dot) { dot.className = 'status-dot online'; }
+        if (text) { text.textContent = `Online • ${data.total_guilds} servidores`; text.style.cssText = ''; }
       } else {
-        if (dot) dot.style.background = '#ef4444';
-        if (text) text.textContent = 'Offline';
+        if (dot) { dot.className = 'status-dot offline'; }
+        if (text) { text.textContent = 'Offline'; text.style.cssText = ''; }
       }
     })
     .catch(() => {
       const dot = document.getElementById('bot-status-dot');
       const text = document.getElementById('bot-status-text');
-      if (dot) dot.style.background = '#f59e0b';
-      if (text) text.textContent = 'Verificando...';
+      if (dot) { dot.className = 'status-dot offline'; }
+      if (text) { text.textContent = 'Erro ao conectar'; text.style.cssText = ''; }
     });
 }
 

@@ -61,6 +61,7 @@ function init(id) {
       loadXpRoles();
       loadCmdStats();
       loadPremium();
+      loadBotStatus();
     })
     .catch(e => console.log('Erro ao carregar cargos:', e));
 
@@ -392,4 +393,43 @@ function loadPremium() {
   setIcon('prem-rob', isPremium);
   setIcon('prem-xp', isPremium);
   setIcon('prem-invest', isPremium);
+}
+
+function loadBotStatus() {
+  fetch('/api/bot_status')
+    .then(r => r.json())
+    .then(data => {
+      const dot = document.getElementById('bot-status-dot');
+      const text = document.getElementById('bot-status-text');
+      if (data.total_guilds > 0) {
+        if (dot) dot.style.background = '#22c55e';
+        if (text) text.textContent = `Online • ${data.total_guilds || '?'} servidores • ${data.total_users || 0} usuarios`;
+      } else {
+        if (dot) dot.style.background = '#ef4444';
+        if (text) text.textContent = 'Offline';
+      }
+    })
+    .catch(() => {
+      const dot = document.getElementById('bot-status-dot');
+      const text = document.getElementById('bot-status-text');
+      if (dot) dot.style.background = '#f59e0b';
+      if (text) text.textContent = 'Verificando...';
+    });
+}
+
+function quickAction(action) {
+  if (action === 'broadcast') {
+    const msg = prompt('Digite a mensagem para broadcast:');
+    if (!msg) return;
+    fetch(`/api/mod/broadcast`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg }),
+    }).then(r => r.json()).then(res => {
+      if (res.ok) showAlert('Broadcast enviado!', 'success');
+      else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
+    }).catch(() => showAlert('Erro de conexao', 'error'));
+  } else if (action === 'test_welcome') {
+    showAlert('Use /testwelcome no Discord para testar!', 'success');
+  }
 }

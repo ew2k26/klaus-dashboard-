@@ -111,6 +111,27 @@
 
     <div id="alert-box"></div>
 
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <div class="cfg-card" style="padding:1rem 1.2rem">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <span id="bot-status-dot" style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+          <span style="font-size:.82rem;font-weight:600;color:var(--text2)">Bot Status</span>
+        </div>
+        <div id="bot-status-text" style="font-size:.78rem;color:var(--text3)">Verificando...</div>
+      </div>
+      <div class="cfg-card" style="padding:1rem 1.2rem">
+        <div style="font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.4rem">Membros</div>
+        <div id="guild-members" style="font-size:1.3rem;font-weight:800;color:var(--primary)">{{ guild.member_count or '?' }}</div>
+      </div>
+      <div class="cfg-card" style="padding:1rem 1.2rem">
+        <div style="font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.4rem">Acoes Rapidas</div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="save-btn" style="margin:0;padding:.4rem .8rem;font-size:.75rem;width:auto" onclick="quickAction('broadcast')">📢 Broadcast</button>
+          <button class="save-btn" style="margin:0;padding:.4rem .8rem;font-size:.75rem;width:auto" onclick="quickAction('test_welcome')">👋 Testar Welcome</button>
+        </div>
+      </div>
+    </div>
+
     <div class="cfg-layout">
       <div class="tabs-sidebar">
         <button class="tab-btn active" onclick="tab('welcome',this)">
@@ -498,7 +519,7 @@
     document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='light'?'☀️':'🌙';
   </script>
   <script>window.__config={{ config|tojson }}</script>
-  <script src="{{ url_for('static', filename='script.js') }}?v=8"></script>
+  <script src="{{ url_for('static', filename='script.js') }}?v=9"></script>
   <script>init("{{ guild.id }}")</script>
 </body>
 </html>

@@ -430,6 +430,20 @@ function quickAction(action) {
       else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
     }).catch(() => showAlert('Erro de conexao', 'error'));
   } else if (action === 'test_welcome') {
-    showAlert('Use /testwelcome no Discord para testar!', 'success');
+    fetch(`/api/${GUILD}/test_welcome`, { method: 'POST' })
+      .then(r => r.json())
+      .then(res => {
+        if (res.ok) showAlert('Welcome enviado! Verifique o canal.', 'success');
+        else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
+      })
+      .catch(() => showAlert('Erro de conexao', 'error'));
+  } else if (action === 'test_farewell') {
+    fetch(`/api/${GUILD}/test_farewell`, { method: 'POST' })
+      .then(r => r.json())
+      .then(res => {
+        if (res.ok) showAlert('Adeus enviado! Verifique o canal.', 'success');
+        else showAlert('Erro: ' + (res.error || 'desconhecido'), 'error');
+      })
+      .catch(() => showAlert('Erro de conexao', 'error'));
   }
 }

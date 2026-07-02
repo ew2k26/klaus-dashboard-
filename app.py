@@ -293,6 +293,124 @@ def api_guild_stats(guild_id: str) -> Any:
         return jsonify({"commands": []})
 
 
+@app.route("/api/<guild_id>/test_welcome", methods=["POST"])
+def api_test_welcome(guild_id: str) -> Any:
+    user_token = request.cookies.get("token")
+    if not user_token:
+        return jsonify({"error": "no token"}), 401
+    guilds = fetch_user_guilds(user_token)
+    guild = next((g for g in guilds if g["id"] == guild_id), None)
+    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
+        return jsonify({"error": "no permission"}), 403
+
+    if not BOT_TOKEN:
+        return jsonify({"error": "bot token not configured"}), 500
+
+    db = get_db()
+    cfg = db["guilds"].find_one({"guild_id": int(guild_id)}) or {}
+
+    ch_id = cfg.get("welcome_channel")
+    if not ch_id:
+        return jsonify({"error": "nenhum canal de boas-vindas configurado"}), 400
+
+    title = cfg.get("welcome_title", "Bem-vindo!")
+    msg = cfg.get("welcome_message", "Bem-vindo(a) ao servidor, {user}!")
+    msg = msg.replace("{user}", "@Usuario Teste")
+    msg = msg.replace("{server}", guild.get("name", "Servidor"))
+    msg = msg.replace("{count}", str(guild.get("member_count", "?")))
+    msg = msg.replace("{mention}", "@Usuario Teste")
+
+    w_color_str = cfg.get("welcome_color")
+    color = int(w_color_str.lstrip("#"), 16) if w_color_str else 0x8B5CF6
+
+    embed = {
+        "title": title,
+        "description": msg,
+        "color": color,
+        "fields": [
+            {"name": "📅 Membro #", "value": str(guild.get("member_count", "?")), "inline": True},
+            {"name": "⏱️ Conta criada", "value": "Agora", "inline": True},
+            {"name": "🛡️ Risco", "value": "🟢 Segura", "inline": True},
+        ],
+        "footer": {"text": cfg.get("welcome_footer", f"{guild.get('name', '')} • Teste")},
+    }
+    w_image = cfg.get("welcome_image", "")
+    if w_image:
+        embed["image"] = {"url": w_image}
+
+    try:
+        r = requests.post(
+            f"{API}/channels/{ch_id}/messages",
+            headers={"Authorization": f"Bot {BOT_TOKEN}", "Content-Type": "application/json"},
+            json={"content": "@Usuario Teste", "embeds": [embed]},
+            timeout=10,
+        )
+        if r.status_code in (200, 201):
+            return jsonify({"ok": True, "channel_id": ch_id})
+        else:
+            return jsonify({"error": r.json().get("message", str(r.status_code))}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/<guild_id>/test_farewell", methods=["POST"])
+def api_test_farewell(guild_id: str) -> Any:
+    user_token = request.cookies.get("token")
+    if not user_token:
+        return jsonify({"error": "no token"}), 401
+    guilds = fetch_user_guilds(user_token)
+    guild = next((g for g in guilds if g["id"] == guild_id), None)
+    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
+        return jsonify({"error": "no permission"}), 403
+
+    if not BOT_TOKEN:
+        return jsonify({"error": "bot token not configured"}), 500
+
+    db = get_db()
+    cfg = db["guilds"].find_one({"guild_id": int(guild_id)}) or {}
+
+    ch_id = cfg.get("farewell_channel")
+    if not ch_id:
+        return jsonify({"error": "nenhum canal de adeus configurado"}), 400
+
+    title = cfg.get("farewell_title", "Adeus!")
+    msg = cfg.get("farewell_message", "Tchau, {user}!")
+    msg = msg.replace("{user}", "Usuario Teste")
+    msg = msg.replace("{server}", guild.get("name", "Servidor"))
+    msg = msg.replace("{count}", str(max(0, guild.get("member_count", 1) - 1)))
+
+    f_color_str = cfg.get("farewell_color")
+    color = int(f_color_str.lstrip("#"), 16) if f_color_str else 0xFF6B6B
+
+    embed = {
+        "title": title,
+        "description": msg,
+        "color": color,
+        "fields": [
+            {"name": "📅 Membro desde", "value": "Ha 30 dias", "inline": True},
+            {"name": "⏱️ Tempo no servidor", "value": "30 dias", "inline": True},
+        ],
+        "footer": {"text": cfg.get("farewell_footer", f"{guild.get('name', '')} • Teste")},
+    }
+    f_image = cfg.get("farewell_image", "")
+    if f_image:
+        embed["image"] = {"url": f_image}
+
+    try:
+        r = requests.post(
+            f"{API}/channels/{ch_id}/messages",
+            headers={"Authorization": f"Bot {BOT_TOKEN}", "Content-Type": "application/json"},
+            json={"content": "", "embeds": [embed]},
+            timeout=10,
+        )
+        if r.status_code in (200, 201):
+            return jsonify({"ok": True, "channel_id": ch_id})
+        else:
+            return jsonify({"error": r.json().get("message", str(r.status_code))}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/<guild_id>/roles")
 def api_roles(guild_id: str) -> Any:
     user_token = request.cookies.get("token")

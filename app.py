@@ -282,12 +282,15 @@ def api_user_guilds() -> Any:
 @app.route("/api/<guild_id>/config", methods=["POST"])
 def api_save_config(guild_id: str) -> Any:
     token = request.cookies.get("token")
+    mod_session = request.cookies.get("mod_session")
     user = fetch_user(token) if token else None
-    if not user:
+    is_mod = mod_session == MOD_PASSWORD
+    if not user and not is_mod:
         return jsonify({"error": "not logged in"}), 401
-    guild = next((g for g in user.get("guilds", []) if g["id"] == guild_id), None)
-    if not guild or not (int(guild.get("permissions", 0)) & 0x20):
-        return jsonify({"error": "no permission"}), 403
+    if user and not is_mod:
+        guild = next((g for g in user.get("guilds", []) if g["id"] == guild_id), None)
+        if not guild or not (int(guild.get("permissions", 0)) & 0x20):
+            return jsonify({"error": "no permission"}), 403
     data = request.get_json()
     if not data:
         return jsonify({"error": "no data"}), 400
@@ -308,8 +311,10 @@ def api_save_config(guild_id: str) -> Any:
 @app.route("/api/<guild_id>/test_modlog", methods=["POST"])
 def api_test_modlog(guild_id: str) -> Any:
     token = request.cookies.get("token")
+    mod_session = request.cookies.get("mod_session")
     user = fetch_user(token) if token else None
-    if not user:
+    is_mod = mod_session == MOD_PASSWORD
+    if not user and not is_mod:
         return jsonify({"error": "not logged in"}), 401
     try:
         db = get_db()
@@ -330,8 +335,10 @@ def api_test_modlog(guild_id: str) -> Any:
 @app.route("/api/<guild_id>/clear_all_warnings", methods=["POST"])
 def api_clear_all_warnings(guild_id: str) -> Any:
     token = request.cookies.get("token")
+    mod_session = request.cookies.get("mod_session")
     user = fetch_user(token) if token else None
-    if not user:
+    is_mod = mod_session == MOD_PASSWORD
+    if not user and not is_mod:
         return jsonify({"error": "not logged in"}), 401
     try:
         db = get_db()
@@ -339,6 +346,30 @@ def api_clear_all_warnings(guild_id: str) -> Any:
         return jsonify({"message": f"{result.deleted_count} warnings limpos!"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/<guild_id>/logs/mod")
+def api_mod_logs(guild_id: str) -> Any:
+    mod_session = request.cookies.get("mod_session")
+    token = request.cookies.get("token")
+    user = fetch_user(token) if token else None
+    is_mod = mod_session == MOD_PASSWORD
+    if not user and not is_mod:
+        return jsonify([])
+    action = request.args.get("action", "all")
+    try:
+        db = get_db()
+        query = {"guild_id": int(guild_id)}
+        if action != "all":
+            query["action"] = action
+        logs = list(db["mod_logs"].find(query).sort("created_at", -1).limit(50))
+        for log in logs:
+            log["_id"] = str(log.get("_id", ""))
+            if "created_at" in log and hasattr(log["created_at"], "isoformat"):
+                log["created_at"] = log["created_at"].isoformat()
+        return jsonify(logs)
+    except Exception as e:
+        return jsonify([])
 
 
 @app.route("/api/<guild_id>", methods=["POST"])
@@ -1234,18 +1265,21 @@ PROFILE_BACKGROUNDS = {
 
 
 OWNER_ID = "1230185414808047666"
+MOD_PASSWORD = "pamelabut"
 
 
 def mod_required(f: Any) -> Any:
     @wraps(f)
     def decorated(*args: Any, **kwargs: Any) -> Any:
         token = request.cookies.get("token")
-        if not token:
-            return jsonify({"error": "unauthorized"}), 401
-        user = fetch_user(token)
-        if not user or str(user.get("id", "")) != OWNER_ID:
-            return jsonify({"error": "forbidden"}), 403
-        return f(*args, **kwargs)
+        mod_session = request.cookies.get("mod_session")
+        if token:
+            user = fetch_user(token)
+            if user and str(user.get("id", "")) == OWNER_ID:
+                return f(*args, **kwargs)
+        if mod_session == MOD_PASSWORD:
+            return f(*args, **kwargs)
+        return jsonify({"error": "forbidden"}), 403
     return decorated
 
 
@@ -1270,6 +1304,17 @@ def broadcast_allowed(f: Any) -> Any:
             return jsonify({"error": "precisa de permissão Manage Server"}), 403
         return f(*args, **kwargs)
     return decorated
+
+
+@app.route("/api/mod/auth", methods=["POST"])
+def mod_auth() -> Any:
+    data = request.get_json(silent=True) or {}
+    password = data.get("password", "")
+    if password == MOD_PASSWORD:
+        resp = jsonify({"ok": True})
+        resp.set_cookie("mod_session", MOD_PASSWORD, max_age=86400 * 7, httponly=True, samesite="Lax")
+        return resp
+    return jsonify({"error": "senha incorreta"}), 401
 
 
 @app.route("/api/mod/items")

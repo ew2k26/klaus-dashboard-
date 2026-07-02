@@ -4,39 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Status - Klaus Bot</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=34">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=35">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
   <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('klaus_theme')||'dark')</script>
   <style>
-    .status-hero{text-align:center;padding:3.5rem 0 2rem}
-    .status-hero-icon{position:relative;width:110px;height:110px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center}
+    .status-hero{text-align:center;padding:5rem 0 2.5rem;position:relative}
+    .status-hero-icon{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center}
     .pulse-ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--green);animation:pulse-expand 2.2s ease-out infinite;opacity:0}
     .pulse-ring.delay{animation-delay:.9s}
     @keyframes pulse-expand{0%{transform:scale(.7);opacity:.7}100%{transform:scale(1.7);opacity:0}}
-    #hero-emoji{font-size:3.2rem;position:relative;z-index:2;filter:drop-shadow(0 0 15px rgba(34,197,94,.3))}
-    .status-hero-title{font-size:2.2rem;font-weight:900;margin-bottom:.3rem;letter-spacing:-1px}
-    .status-hero-sub{color:var(--text3);font-size:.95rem}
-    .status-top-user{margin-bottom:2rem;overflow:hidden;transition:all .3s}
-    .status-top-user:hover{border-color:rgba(255,215,0,.2);box-shadow:0 0 30px rgba(255,215,0,.05)}
-    .top-user-inner{display:flex;align-items:center;gap:1.2rem;padding:1rem 1.5rem}
-    .top-user-avatar{width:68px;height:68px;border-radius:50%;border:3px solid #ffd700;flex-shrink:0;box-shadow:0 0 20px rgba(255,215,0,.2)}
+    #hero-emoji{font-size:3.5rem;position:relative;z-index:2;filter:drop-shadow(0 0 20px rgba(34,197,94,.4))}
+    .status-hero-title{font-size:2.4rem;font-weight:900;margin-bottom:.3rem;letter-spacing:-1.5px}
+    .status-hero-sub{color:var(--text3);font-size:1rem}
+    .status-top-user{margin-bottom:2.5rem;overflow:hidden;transition:all .4s;border-radius:20px}
+    .status-top-user:hover{border-color:rgba(255,215,0,.25);box-shadow:0 0 40px rgba(255,215,0,.08)}
+    .top-user-inner{display:flex;align-items:center;gap:1.2rem;padding:1.2rem 1.8rem}
+    .top-user-avatar{width:72px;height:72px;border-radius:50%;border:3px solid #ffd700;flex-shrink:0;box-shadow:0 0 25px rgba(255,215,0,.25);transition:transform .3s}
+    .top-user-avatar:hover{transform:scale(1.08)}
     .top-user-info{flex:1}
-    .top-user-label{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-    .top-user-info h3{font-size:1.15rem;font-weight:800;margin:.15rem 0}
-    .top-user-koins{color:#ffd700;font-weight:700;font-size:.9rem;text-shadow:0 0 10px rgba(255,215,0,.2)}
-    .status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem}
-    .stat-card{background:rgba(10,7,20,.6);border:1px solid var(--card-border);border-radius:18px;padding:1.5rem 1rem;text-align:center;position:relative;overflow:hidden;transition:all .4s var(--transition);opacity:0;transform:translateY(20px);backdrop-filter:blur(30px)}
+    .top-user-label{font-size:.7rem;color:#ffd700;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+    .top-user-info h3{font-size:1.2rem;font-weight:800;margin:.2rem 0}
+    .top-user-koins{color:#ffd700;font-weight:700;font-size:.95rem;text-shadow:0 0 12px rgba(255,215,0,.25)}
+    .status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:3rem}
+    .stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:1.5rem 1rem;text-align:center;position:relative;overflow:hidden;transition:all .4s var(--transition);opacity:0;transform:translateY(24px);backdrop-filter:blur(30px)}
     .stat-card.visible{opacity:1;transform:translateY(0)}
-    .stat-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s}
     .stat-card:hover::before{opacity:1}
-    .stat-card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 15px 50px rgba(0,0,0,.3),0 0 30px color-mix(in srgb,var(--accent) 10%,transparent)}
-    .stat-icon{font-size:2.2rem;margin-bottom:.5rem;transition:transform .3s}
-    .stat-card:hover .stat-icon{transform:scale(1.15) rotate(-5deg)}
-    .stat-value{font-size:2.2rem;font-weight:900;color:white;line-height:1;margin-bottom:.3rem;font-variant-numeric:tabular-nums}
-    .stat-label{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;font-weight:600}
+    .stat-card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.25),0 0 40px color-mix(in srgb,var(--accent) 12%,transparent)}
+    .stat-icon{width:48px;height:48px;margin:0 auto .6rem;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:all .3s}
+    .stat-card:hover .stat-icon{transform:scale(1.12) rotate(-5deg)}
+    .stat-icon svg{width:26px;height:26px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .stat-value{font-size:2.2rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:.25rem;font-variant-numeric:tabular-nums}
+    .stat-label{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.7rem;font-weight:600}
     .stat-bar{width:100%;height:4px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-    .stat-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 60%,white));border-radius:4px;width:0%;transition:width 1.8s cubic-bezier(.22,1,.36,1)}
-    .services-section{margin-bottom:2.5rem}
+    .stat-bar-fill{height:100%;border-radius:4px;width:0%;transition:width 1.8s cubic-bezier(.22,1,.36,1);background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 50%,white))}
+    .services-section{margin-bottom:3rem}
     .services-card{padding:0;overflow:hidden}
     .service-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border);transition:all .25s}
     .service-row:last-child{border-bottom:none}
@@ -49,23 +51,25 @@
     .service-info p{color:var(--text3);font-size:.78rem;margin:0}
     .leader-section{margin-bottom:2rem}
     .leader-section h2{font-size:1.3rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-    .leader-card{background:rgba(10,7,20,.6);border:1px solid var(--card-border);border-radius:18px;padding:0;overflow:hidden;backdrop-filter:blur(30px)}
+    .leader-card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:0;overflow:hidden;backdrop-filter:blur(30px)}
     .leader-row{display:flex;align-items:center;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);transition:all .25s}
     .leader-row:last-child{border-bottom:none}
     .leader-row:hover{background:rgba(139,92,246,.04)}
-    .leader-rank{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+    .leader-rank{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;transition:transform .3s}
+    .leader-row:hover .leader-rank{transform:scale(1.1)}
     .leader-rank.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
     .leader-rank.silver{background:linear-gradient(135deg,#d1d5db,#9ca3af);color:#000}
     .leader-rank.bronze{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff}
-    .leader-rank.normal{background:rgba(255,255,255,.08);color:var(--text3)}
+    .leader-rank.normal{background:rgba(255,255,255,.06);color:var(--text3)}
     .leader-name{flex:1;margin-left:.75rem;font-weight:600;color:var(--text)}
     .leader-value{font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums;font-size:.9rem}
-    .leader-bar{height:4px;background:rgba(255,255,255,.04);margin:0 1.5rem .5rem;border-radius:2px;overflow:hidden}
+    .leader-bar{height:3px;background:rgba(255,255,255,.03);margin:0 1.5rem;border-radius:2px;overflow:hidden}
     .leader-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--primary),var(--pink));transition:width 1.5s ease}
     .leader-empty{text-align:center;padding:2rem;color:var(--text3);font-size:.9rem}
     .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:900px){.status-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
-    @media(max-width:480px){.status-grid{grid-template-columns:1fr 1fr;gap:.8rem}.stat-card{padding:1rem .8rem}.stat-value{font-size:1.6rem}.status-hero-title{font-size:1.6rem}.top-user-inner{padding:.8rem 1rem}.top-user-avatar{width:52px;height:52px}}
+    @media(max-width:480px){.status-grid{grid-template-columns:1fr 1fr;gap:.75rem}.stat-card{padding:1rem .7rem}.stat-value{font-size:1.5rem}.stat-icon{width:40px;height:40px}.stat-icon svg{width:22px;height:22px}.status-hero-title{font-size:1.6rem}.top-user-inner{padding:.8rem 1rem}.top-user-avatar{width:52px;height:52px}}
   </style>
 </head>
 <body>
@@ -118,37 +122,92 @@
     </div>
 
     <div class="status-grid">
-      <div class="stat-card" style="--accent:#8b5cf6"><div class="stat-icon">👥</div><div class="stat-value" id="stat-users">--</div><div class="stat-label" data-i18n="status_users">Usuarios</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-users"></div></div></div>
-      <div class="stat-card" style="--accent:#3b82f6"><div class="stat-icon">🏠</div><div class="stat-value" id="stat-guilds">--</div><div class="stat-label" data-i18n="status_guilds">Servidores</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-guilds"></div></div></div>
-      <div class="stat-card" style="--accent:#f59e0b"><div class="stat-icon">💰</div><div class="stat-value" id="stat-koins">--</div><div class="stat-label" data-i18n="status_koins">Koins Totais</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-koins"></div></div></div>
-      <div class="stat-card" style="--accent:#22c55e"><div class="stat-icon">⚡</div><div class="stat-value" id="stat-commands">--</div><div class="stat-label" data-i18n="status_commands">Comandos Usados</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-commands"></div></div></div>
-      <div class="stat-card" style="--accent:#d946ef"><div class="stat-icon">🏆</div><div class="stat-value" id="stat-achievements">--</div><div class="stat-label" data-i18n="status_achievements">Conquistas</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-achievements"></div></div></div>
-      <div class="stat-card" style="--accent:#06b6d4"><div class="stat-icon">👑</div><div class="stat-value" id="stat-premium">--</div><div class="stat-label" data-i18n="status_premium">Premium</div><div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div></div>
-      <div class="stat-card" style="--accent:#f97316"><div class="stat-icon">⛏️</div><div class="stat-value" id="stat-mines">--</div><div class="stat-label" data-i18n="status_mines">Mineracoes</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-mines"></div></div></div>
-      <div class="stat-card" style="--accent:#06b6d4"><div class="stat-icon">🎰</div><div class="stat-value" id="stat-casino">--</div><div class="stat-label" data-i18n="status_casino">Apostas</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-casino"></div></div></div>
-      <div class="stat-card" style="--accent:#ef4444"><div class="stat-icon">🕵️</div><div class="stat-value" id="stat-crimes">--</div><div class="stat-label" data-i18n="status_crimes">Crimes</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-crimes"></div></div></div>
-      <div class="stat-card" style="--accent:#22c55e"><div class="stat-icon">💼</div><div class="stat-value" id="stat-works">--</div><div class="stat-label" data-i18n="status_works">Trabalhos</div><div class="stat-bar"><div class="stat-bar-fill" id="bar-works"></div></div></div>
-      <div class="stat-card" style="--accent:#06b6d4"><div class="stat-icon">🤖</div><div class="stat-value" id="stat-version">2.0</div><div class="stat-label" data-i18n="status_version">Versao</div><div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div></div>
+      <div class="stat-card" style="--accent:#8b5cf6">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="stat-value" id="stat-users">--</div>
+        <div class="stat-label" data-i18n="status_users">Usuarios</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-users"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#3b82f6">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="stat-value" id="stat-guilds">--</div>
+        <div class="stat-label" data-i18n="status_guilds">Servidores</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-guilds"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#f59e0b">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></div>
+        <div class="stat-value" id="stat-koins">--</div>
+        <div class="stat-label" data-i18n="status_koins">Koins Totais</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-koins"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#22c55e">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+        <div class="stat-value" id="stat-commands">--</div>
+        <div class="stat-label" data-i18n="status_commands">Comandos Usados</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-commands"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#d946ef">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 6 9 6 9z"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 18 9 18 9z"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+        <div class="stat-value" id="stat-achievements">--</div>
+        <div class="stat-label" data-i18n="status_achievements">Conquistas</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-achievements"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#f59e0b">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M20.66 7A10 10 0 0 0 14 2v6h6.66z" fill="currentColor" opacity=".3"/></svg></div>
+        <div class="stat-value" id="stat-premium">--</div>
+        <div class="stat-label" data-i18n="status_premium">Premium</div>
+        <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#f97316">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M14 12l-2 2-2-2"/><path d="M12 6v6"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
+        <div class="stat-value" id="stat-mines">--</div>
+        <div class="stat-label" data-i18n="status_mines">Mineracoes</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-mines"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#8b5cf6">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M2 11h20"/><circle cx="8" cy="16" r="1"/><circle cx="12" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg></div>
+        <div class="stat-value" id="stat-casino">--</div>
+        <div class="stat-label" data-i18n="status_casino">Apostas</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-casino"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#ef4444">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="stat-value" id="stat-crimes">--</div>
+        <div class="stat-label" data-i18n="status_crimes">Crimes</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-crimes"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#22c55e">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <div class="stat-value" id="stat-works">--</div>
+        <div class="stat-label" data-i18n="status_works">Trabalhos</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-works"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:#06b6d4">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="stat-value" id="stat-version">2.0</div>
+        <div class="stat-label" data-i18n="status_version">Versao</div>
+        <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+      </div>
     </div>
 
     <div class="two-col">
       <div class="leader-section">
-        <h2 data-i18n="status_top_rich">Top 5 Mais Ricos</h2>
+        <h2>🏆 <span data-i18n="status_top_rich">Top 5 Mais Ricos</span></h2>
         <div class="leader-card" id="topRich"><div class="leader-empty" data-i18n="status_loading">Carregando...</div></div>
       </div>
       <div class="leader-section">
-        <h2 data-i18n="status_top_streaks">Maiores Sequencias</h2>
+        <h2>🔥 <span data-i18n="status_top_streaks">Maiores Sequencias</span></h2>
         <div class="leader-card" id="topStreaks"><div class="leader-empty" data-i18n="status_loading">Carregando...</div></div>
       </div>
     </div>
 
     <div class="leader-section">
-      <h2 data-i18n="status_top_achievements">Mais Conquistas</h2>
+      <h2>⭐ <span data-i18n="status_top_achievements">Mais Conquistas</span></h2>
       <div class="leader-card" id="topAchievements"><div class="leader-empty" data-i18n="status_loading">Carregando...</div></div>
     </div>
 
     <div class="services-section">
-      <h2 class="section-title" data-i18n="status_services">Servicos</h2>
+      <h2 class="section-title">⚡ <span data-i18n="status_services">Servicos</span></h2>
       <div class="services-card card">
         <div class="service-row"><div class="service-info"><span class="service-dot service-online"></span><div><h4 data-i18n="svc_bot">Bot Discord</h4><p>Slash commands · 94 comandos</p></div></div><span class="badge badge-green" data-i18n="svc_operational">Operacional</span></div>
         <div class="service-row"><div class="service-info"><span class="service-dot service-online"></span><div><h4 data-i18n="svc_dashboard">Dashboard</h4><p data-i18n="svc_dashboard_desc">Painel de configuracao web</p></div></div><span class="badge badge-green" data-i18n="svc_operational">Operacional</span></div>
@@ -179,11 +238,11 @@
     (function(){const c=document.getElementById('particles-canvas'),x=c.getContext('2d');let p=[],s=[],w,h;function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight}resize();window.addEventListener('resize',resize);const cols=[[139,92,246],[217,70,239],[59,130,246],[244,63,94],[167,139,250]];class P{constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.r=Math.random()*2.5+.3;this.a=Math.random()*.35+.04;this.p=Math.random()*Math.PI*2;this.ps=Math.random()*.018+.005;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=this.vx;this.y+=this.vy;this.p+=this.ps;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1}draw(){const a=this.a+Math.sin(this.p)*.12;x.beginPath();x.arc(this.x,this.y,this.r,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a})`;x.fill();x.beginPath();x.arc(this.x,this.y,this.r*3.5,0,Math.PI*2);x.fillStyle=`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${a*.06})`;x.fill()}}class S{constructor(){this.reset()}reset(){this.x=Math.random()*w;this.y=Math.random()*h*.5;this.l=Math.random()*100+50;this.sp=Math.random()*7+4;this.ang=Math.PI/4+(Math.random()-.5)*.3;this.a=1;this.d=Math.random()*.02+.01;this.c=cols[~~(Math.random()*cols.length)]}update(){this.x+=Math.cos(this.ang)*this.sp;this.y+=Math.sin(this.ang)*this.sp;this.a-=this.d;if(this.a<=0)this.reset()}draw(){const tx=this.x-Math.cos(this.ang)*this.l,ty=this.y-Math.sin(this.ang)*this.l,g=x.createLinearGradient(tx,ty,this.x,this.y);g.addColorStop(0,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},0)`);g.addColorStop(1,`rgba(${this.c[0]},${this.c[1]},${this.c[2]},${this.a*.7})`);x.beginPath();x.moveTo(tx,ty);x.lineTo(this.x,this.y);x.strokeStyle=g;x.lineWidth=1.8;x.stroke();x.beginPath();x.arc(this.x,this.y,2.5,0,Math.PI*2);x.fillStyle=`rgba(255,255,255,${this.a*.9})`;x.fill()}}const mob=window.innerWidth<768;for(let i=0;i<(mob?25:100);i++)p.push(new P);for(let i=0;i<(mob?1:4);i++)s.push(new S);function loop(){x.clearRect(0,0,w,h);for(const pp of p){pp.update();pp.draw()}for(const ss of s){ss.update();ss.draw()}requestAnimationFrame(loop)}loop()})();
 
     window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50)});
-    document.querySelectorAll('.stat-card').forEach((c,i)=>{setTimeout(()=>c.classList.add('visible'),200+i*80)});
+    document.querySelectorAll('.stat-card').forEach((c,i)=>{setTimeout(()=>c.classList.add('visible'),150+i*80)});
 
     function formatKoins(n){if(n>=1e18)return(n/1e18).toFixed(1)+'Qi';if(n>=1e15)return(n/1e15).toFixed(1)+'Q';if(n>=1e12)return(n/1e12).toFixed(1)+'T';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toLocaleString('pt-BR')}
     function fmt(n){if(n==null||isNaN(n))return'0';return formatKoins(n)}
-    function animateValue(el,target){if(!target){el.textContent='0';return}let c=0;const step=Math.max(1,Math.ceil(target/50)),iv=setInterval(()=>{c+=step;if(c>=target){c=target;clearInterval(iv)}el.textContent=fmt(c)},25)}
+    function animateValue(el,target){if(!target){el.textContent='0';return}let c=0;const step=Math.max(1,Math.ceil(target/40)),iv=setInterval(()=>{c+=step;if(c>=target){c=target;clearInterval(iv)}el.textContent=fmt(c)},20)}
 
     fetch('/api/bot_status').then(r=>r.json()).then(d=>{
       const he=document.getElementById('hero-emoji'),ht=document.getElementById('hero-title'),hs=document.getElementById('hero-sub'),hi=document.getElementById('hero-icon');
@@ -205,7 +264,6 @@
     }
 
     fetch('/api/stats/detailed').then(r=>r.json()).then(d=>{
-      console.log('Stats:',d);
       animateValue(document.getElementById('stat-premium'),d.premium_users||0);
       animateValue(document.getElementById('stat-mines'),d.total_mines||0);
       animateValue(document.getElementById('stat-casino'),d.total_casino||0);

@@ -45,8 +45,8 @@ ALLOWED_GUILD_FIELDS = {
     "autorole_enabled", "autorole_role",
     "logs_enabled", "logs_channel", "logging_messages", "logging_members",
     "logging_mod", "logging_voice",
-    "xp_enabled", "xp_min", "xp_max", "xp_cooldown", "xp_announce_channel",
-    "xp_role_rewards",
+    "xp_enabled", "xp_min", "xp_max", "xp_cooldown", "xp_cooldown_enabled", "xp_announce_channel",
+    "xp_channel", "xprole_role", "xp_role_rewards",
     "automod_enabled", "automod_anti_spam", "automod_anti_links",
     "automod_max_links", "automod_max_mentions",
     "automod_bad_words_toggle", "automod_bad_words",
@@ -63,7 +63,7 @@ ALLOWED_GUILD_FIELDS = {
     "automod_anti_mentions",
     "fun_quiz_reward", "fun_quiz_time", "fun_adventure_min", "fun_adventure_max",
     "fun_social_actions", "fun_8ball_enabled", "fun_trivia_enabled",
-    "auto_response", "premium_multiplier",
+    "auto_response", "premium_multiplier", "premium_guild", "premium_guild_perks",
 }
 
 
@@ -1829,6 +1829,7 @@ def mod_servers() -> Any:
                 "member_count": g.get("member_count", 0),
                 "welcome_enabled": cfg.get("welcome_enabled", False),
                 "xp_enabled": cfg.get("xp_enabled", False),
+                "premium": cfg.get("premium_guild", False),
             })
         return jsonify({"guilds": result})
     except Exception as e:

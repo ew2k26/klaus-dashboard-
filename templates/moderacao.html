@@ -148,23 +148,97 @@
           </div>
         </div>
 
+        <!-- SERVER INFO BANNER -->
+        <div id="modServerBanner" style="display:none;margin-bottom:2rem;padding:1.5rem 2rem;border-radius:20px;background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(236,72,153,.06));border:1px solid rgba(139,92,246,.15);display:none;align-items:center;gap:1.5rem;flex-wrap:wrap">
+          <img id="modServerIcon" src="" style="width:64px;height:64px;border-radius:16px;border:2px solid rgba(139,92,246,.3)" onerror="this.style.display='none'">
+          <div style="flex:1;min-width:200px">
+            <h2 id="modServerName" style="font-size:1.3rem;font-weight:800;margin-bottom:.3rem;background:linear-gradient(135deg,var(--primary-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent"></h2>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:.8rem;color:var(--text3)">
+              <span id="modServerMembers">👥 — membros</span>
+              <span id="modServerId" style="opacity:.5">ID: —</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:.5rem">
+            <span id="modServerStatusBadge" style="padding:.4rem .8rem;border-radius:8px;font-size:.72rem;font-weight:700;background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)">Configurado</span>
+            <span id="modServerPremiumBadge" style="padding:.4rem .8rem;border-radius:8px;font-size:.72rem;font-weight:700;background:rgba(255,215,0,.1);color:#ffd700;border:1px solid rgba(255,215,0,.2);display:none">👑 Premium</span>
+          </div>
+        </div>
+
         <div class="mod-grid" id="modGrid" style="display:none">
-          <!-- AUTO-BAN / WARN THRESHOLDS -->
+
+          <!-- WELCOME -->
           <div class="mod-card">
-            <h3><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Avisos Automáticos</h3>
+            <h3><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Boas-vindas</h3>
             <div class="mod-section">
-              <div class="form-group"><label>Mute duration (minutos)</label><input type="number" id="mod_mute_duration" value="5" min="1" max="43200"></div>
-              <div class="form-group"><label>Warns para kick automático</label><input type="number" id="mod_warn_kick" value="0" min="0" max="50"><div class="hint">0 = desativado</div></div>
-              <div class="form-group"><label>Warns para ban automático</label><input type="number" id="mod_warn_ban" value="0" min="0" max="100"><div class="hint">0 = desativado. Deve ser maior que kick.</div></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Ativar boas-vindas</h4><p>Mensagem ao entrar</p></div><label class="toggle"><input type="checkbox" id="welcome_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Canal</label><select id="welcome_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="form-group"><label>Mensagem</label><textarea id="welcome_message" rows="2" placeholder="Bem-vindo {user} ao {server}!"></textarea><div class="hint">{user} = menção, {server} = nome do servidor</div></div>
+              <div class="form-group"><label>Cor do embed</label><div style="display:flex;gap:.5rem;align-items:center"><input type="color" id="welcome_color" value="#8b5cf6" style="width:40px;height:36px;border:none;background:none;cursor:pointer"><span id="welcome_color_val" style="font-size:.8rem;color:var(--text3)">#8b5cf6</span></div></div>
+              <div class="form-group"><label>Imagem do embed (URL)</label><input type="url" id="welcome_image" class="mod-input" placeholder="https://..."></div>
+              <div class="form-group"><label>Footer do embed</label><input type="text" id="welcome_footer" class="mod-input" placeholder="Texto do rodapé"></div>
             </div>
           </div>
 
-          <!-- MOD LOG CHANNEL -->
+          <!-- FAREWELL -->
           <div class="mod-card">
-            <h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Log de Moderação</h3>
+            <h3><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg> Adeus</h3>
             <div class="mod-section">
+              <div class="toggle-row"><div class="toggle-info"><h4>Ativar adeus</h4><p>Mensagem ao sair</p></div><label class="toggle"><input type="checkbox" id="farewell_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Canal</label><select id="farewell_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="form-group"><label>Mensagem</label><textarea id="farewell_message" rows="2" placeholder="Tchau {user}! Sentiremos sua falta."></textarea></div>
+              <div class="form-group"><label>Cor do embed</label><div style="display:flex;gap:.5rem;align-items:center"><input type="color" id="farewell_color" value="#ef4444" style="width:40px;height:36px;border:none;background:none;cursor:pointer"><span id="farewell_color_val" style="font-size:.8rem;color:var(--text3)">#ef4444</span></div></div>
+              <div class="form-group"><label>Imagem do embed (URL)</label><input type="url" id="farewell_image" class="mod-input" placeholder="https://..."></div>
+              <div class="form-group"><label>Footer do embed</label><input type="text" id="farewell_footer" class="mod-input" placeholder="Texto do rodapé"></div>
+            </div>
+          </div>
+
+          <!-- AUTO-ROLE -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Auto-Cargo</h3>
+            <div class="mod-section">
+              <div class="toggle-row"><div class="toggle-info"><h4>Ativar auto-cargo</h4><p>Cargo automático ao entrar</p></div><label class="toggle"><input type="checkbox" id="autorole_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Cargo</label><select id="autorole_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+            </div>
+          </div>
+
+          <!-- XP SYSTEM -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Sistema de XP</h3>
+            <div class="mod-section">
+              <div class="toggle-row"><div class="toggle-info"><h4>Ativar XP</h4><p>Sistema de nível por mensagens</p></div><label class="toggle"><input type="checkbox" id="xp_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Canal de XP</label><select id="xp_channel" class="mod-channel-select"><option value="">Todos os canais</option></select></div>
+              <div class="form-group"><label>XP mínimo por msg</label><input type="number" id="xp_min" value="15" min="1" max="100"></div>
+              <div class="form-group"><label>XP máximo por msg</label><input type="number" id="xp_max" value="35" min="1" max="200"></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Cooldown de XP</h4><p>Cooldown entre msgs que ganham XP</p></div><label class="toggle"><input type="checkbox" id="xp_cooldown_enabled" checked><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Cargo de nível (XProle)</label><select id="xprole_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+            </div>
+          </div>
+
+          <!-- ECONOMY -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 0 1 0 4H8"/><path d="M12 18V6"/></svg> Economia</h3>
+            <div class="mod-section">
+              <div class="form-group"><label>Koins iniciais</label><input type="number" id="economy_starting_koins" value="500" min="0" max="100000"></div>
+              <div class="form-group"><label>Cooldown diário (h)</label><input type="number" id="economy_daily_min" value="18" min="1" max="48"><div class="hint">Horas para poder usar /daily novamente</div></div>
+              <div class="form-group"><label>Cooldown trabalho (min)</label><input type="number" id="economy_work_cooldown" value="30" min="5" max="120"></div>
+              <div class="form-group"><label>Cooldown roubar (min)</label><input type="number" id="economy_rob_cooldown" value="60" min="10" max="1440"></div>
+              <div class="form-group"><label>Chance de sucesso no crime (%)</label><input type="number" id="economy_crime_chance" value="50" min="10" max="90"></div>
+              <div class="form-group"><label>Chance no heist (%)</label><input type="number" id="economy_heist_chance" value="40" min="10" max="90"></div>
+              <div class="form-group"><label>Preço da loteria</label><input type="number" id="economy_lottery_price" value="1000" min="100" max="50000"></div>
+            </div>
+          </div>
+
+          <!-- MODERATION SETTINGS -->
+          <div class="mod-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Moderação</h3>
+            <div class="mod-section">
+              <div class="form-group"><label>Duração do mute (min)</label><input type="number" id="mod_mute_duration" value="5" min="1" max="43200"></div>
+              <div class="form-group"><label>Warns para kick</label><input type="number" id="mod_warn_kick" value="0" min="0" max="50"><div class="hint">0 = desativado</div></div>
+              <div class="form-group"><label>Warns para ban</label><input type="number" id="mod_warn_ban" value="0" min="0" max="100"><div class="hint">Deve ser > kick</div></div>
               <div class="form-group"><label>Canal de logs</label><select id="mod_log_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-              <div class="toggle-row"><div class="toggle-info"><h4>Logar bans</h4><p>Registrar ações de ban</p></div><label class="toggle"><input type="checkbox" id="logging_mod" checked><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Canal de castigo</label><select id="mod_punishment_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="form-group"><label>Mute role</label><select id="mod_mute_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Log de moderação</h4><p>Registrar ações de mod</p></div><label class="toggle"><input type="checkbox" id="logging_mod" checked><span class="toggle-slider"></span></label></div>
             </div>
           </div>
 
@@ -173,97 +247,65 @@
             <h3><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AutoMod</h3>
             <div class="mod-section">
               <div class="toggle-row"><div class="toggle-info"><h4>Anti-Spam</h4><p>Proteção contra floods</p></div><label class="toggle"><input type="checkbox" id="automod_anti_spam"><span class="toggle-slider"></span></label></div>
-              <div class="form-group"><label>Max msgs no spam</label><input type="number" id="automod_spam_count" value="5" min="2" max="20"></div>
-              <div class="form-group"><label>Janela de tempo (seg)</label><input type="number" id="automod_spam_window" value="5" min="2" max="30"></div>
+              <div class="form-group"><label>Max msgs</label><input type="number" id="automod_spam_count" value="5" min="2" max="20"></div>
+              <div class="form-group"><label>Janela (seg)</label><input type="number" id="automod_spam_window" value="5" min="2" max="30"></div>
               <div class="toggle-row"><div class="toggle-info"><h4>Anti-Links</h4><p>Bloquear URLs</p></div><label class="toggle"><input type="checkbox" id="automod_anti_links"><span class="toggle-slider"></span></label></div>
               <div class="toggle-row"><div class="toggle-info"><h4>Anti-Mentions</h4><p>Limitar menções</p></div><label class="toggle"><input type="checkbox" id="automod_anti_mentions"><span class="toggle-slider"></span></label></div>
               <div class="form-group"><label>Max menções</label><input type="number" id="automod_max_mentions" value="5" min="1" max="50"></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Auto-Mute no spam</h4><p>Mute automático</p></div><label class="toggle"><input type="checkbox" id="automod_auto_mute"><span class="toggle-slider"></span></label></div>
               <div class="toggle-row"><div class="toggle-info"><h4>Palavras proibidas</h4><p>Filtro de palavras</p></div><label class="toggle"><input type="checkbox" id="automod_bad_words_toggle"><span class="toggle-slider"></span></label></div>
-              <div class="form-group"><label>Lista proibida (uma por linha)</label><textarea id="automod_bad_words" rows="3" placeholder="palavra1&#10;palavra2"></textarea></div>
+              <div class="form-group"><label>Lista proibida (1 por linha)</label><textarea id="automod_bad_words" rows="3" placeholder="palavra1&#10;palavra2"></textarea></div>
             </div>
           </div>
 
           <!-- RAID PROTECTION -->
           <div class="mod-card">
-            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Proteção Anti-Raid</h3>
+            <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Anti-Raid</h3>
             <div class="mod-section">
-              <div class="toggle-row"><div class="toggle-info"><h4>Anti-Raid Ativado</h4><p>Detectar joins em massa</p></div><label class="toggle"><input type="checkbox" id="automod_raid_enabled"><span class="toggle-slider"></span></label></div>
-              <div class="form-group"><label>Limite de joins para acionar</label><input type="number" id="automod_raid_threshold" value="5" min="2" max="50"></div>
-              <div class="form-group"><label>Ação (kick/ban/timeout)</label><select id="automod_raid_action" class="mod-channel-select"><option value="kick">Expulsar</option><option value="ban">Banir</option><option value="timeout">Silenciar</option></select></div>
-            </div>
-          </div>
-
-          <!-- MUTE / PUNISHMENT -->
-          <div class="mod-card">
-            <h3><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Castigos</h3>
-            <div class="mod-section">
-              <div class="form-group"><label>Canal de castigo (mute)</label><select id="mod_punishment_channel" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-              <div class="form-group"><label>Mute role (cargo de mute)</label><select id="mod_mute_role" class="mod-channel-select"><option value="">Nenhum</option></select></div>
-              <div class="toggle-row"><div class="toggle-info"><h4>Auto-Mute em spam</h4><p>Mute automático no spam</p></div><label class="toggle"><input type="checkbox" id="automod_auto_mute"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><h4>Ativar Anti-Raid</h4><p>Detectar joins em massa</p></div><label class="toggle"><input type="checkbox" id="automod_raid_enabled"><span class="toggle-slider"></span></label></div>
+              <div class="form-group"><label>Limite de joins</label><input type="number" id="automod_raid_threshold" value="5" min="2" max="50"></div>
+              <div class="form-group"><label>Ação</label><select id="automod_raid_action" class="mod-channel-select"><option value="kick">Expulsar</option><option value="ban">Banir</option><option value="timeout">Silenciar</option></select></div>
             </div>
           </div>
 
           <!-- QUICK ACTIONS -->
-          <div class="mod-card">
+          <div class="mod-card" style="grid-column:1/-1">
             <h3><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Ações Rápidas</h3>
-            <div class="mod-section">
-              <button class="mod-save-all" onclick="testModLog()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px rgba(59,130,246,.3)">Testar Log</button>
-              <button class="mod-save-all" onclick="clearAllWarnings()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 20px rgba(245,158,11,.3)">Limpar Todos Warnings</button>
-              <button class="mod-save-all" onclick="modToggleGuildPremium()" style="margin-bottom:.8rem;background:linear-gradient(135deg,#ffd700,#f59e0b);box-shadow:0 4px 20px rgba(255,215,0,.3);color:#1a1030">👑 Ativar Premium no Servidor</button>
-              <button class="mod-save-all" onclick="modRemoveGuildPremium()" style="background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border2);box-shadow:none">🚫 Remover Premium do Servidor</button>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem">
+              <button class="mod-btn mod-btn-primary" onclick="testModLog()" style="padding:.8rem">📋 Testar Log</button>
+              <button class="mod-btn mod-btn-yellow" onclick="clearAllWarnings()" style="padding:.8rem">🗑️ Limpar Warnings</button>
+              <button class="mod-btn mod-btn-purple" onclick="modToggleGuildPremium()" style="padding:.8rem;background:linear-gradient(135deg,#ffd700,#f59e0b);color:#1a1030">👑 Ativar Premium SV</button>
+              <button class="mod-btn mod-btn-ghost" onclick="modRemoveGuildPremium()" style="padding:.8rem">🚫 Remover Premium</button>
             </div>
           </div>
 
           <!-- PREMIUM PERKS -->
-          <div class="mod-card">
+          <div class="mod-card" style="grid-column:1/-1">
             <h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Premium do Servidor</h3>
             <div id="mod-premium-status"></div>
-            <div class="mod-section">
-              <div class="form-group">
-                <label>Multiplicador de Koins</label>
-                <div style="display:flex;gap:.5rem;align-items:center">
-                  <input type="number" id="mod-premium-multiplier" class="mod-input" style="width:100px" value="2" min="1" max="10" step="0.5">
-                  <span style="color:var(--text3);font-size:.8rem">x</span>
-                  <button class="mod-btn mod-btn-purple" onclick="modSetGuildMultiplier()">Aplicar</button>
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;align-items:start">
+              <div>
+                <div class="form-group">
+                  <label>Multiplicador de Koins</label>
+                  <div style="display:flex;gap:.5rem;align-items:center">
+                    <input type="number" id="mod-premium-multiplier" class="mod-input" style="width:80px" value="2" min="1" max="10" step="0.5">
+                    <span style="color:var(--text3);font-size:.8rem">x</span>
+                    <button class="mod-btn mod-btn-purple" onclick="modSetGuildMultiplier()">Aplicar</button>
+                  </div>
                 </div>
-                <div class="hint">Multiplicador para daily, trabalho, roubar etc.</div>
               </div>
-            </div>
-            <div class="mod-section">
-              <div class="mod-section-title">Perks Ativos</div>
-              <div style="display:flex;flex-direction:column;gap:.6rem">
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>2x XP</h4><p>Dobro de XP em mensagens</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_2x_xp" onchange="modSetGuildPremiumPerk('2x_xp',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>3x Daily</h4><p>Três vezes o daily reward</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_3x_daily" onchange="modSetGuildPremiumPerk('3x_daily',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>Slots Extra</h4><p>10 slots de investimento</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_extra_slots" onchange="modSetGuildPremiumPerk('extra_slots',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>Rob Chance Boost</h4><p>Chance reduzida de ser pego roubando</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_rob_boost" onchange="modSetGuildPremiumPerk('rob_boost',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>Crime Boost</h4><p>Maior chance de sucesso no crime</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_crime_boost" onchange="modSetGuildPremiumPerk('crime_boost',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>Heist Boost</h4><p>Maior chance no heist</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_heist_boost" onchange="modSetGuildPremiumPerk('heist_boost',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0;border-bottom:1px solid var(--border)">
-                  <div class="toggle-info"><h4>Cooldown Reduced</h4><p>Metade do cooldown de trabalho</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_cooldown_half" onchange="modSetGuildPremiumPerk('cooldown_half',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
-                <label class="toggle-row" style="margin:0;padding:.6rem 0">
-                  <div class="toggle-info"><h4>Exclusive Commands</h4><p>Comandos exclusivos premium</p></div>
-                  <label class="toggle"><input type="checkbox" id="perk_exclusive_cmds" onchange="modSetGuildPremiumPerk('exclusive_cmds',this.checked)"><span class="toggle-slider"></span></label>
-                </label>
+              <div>
+                <div class="mod-section-title">Perks Ativos</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">2x XP</h4></div><label class="toggle"><input type="checkbox" id="perk_2x_xp" onchange="modSetGuildPremiumPerk('2x_xp',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">3x Daily</h4></div><label class="toggle"><input type="checkbox" id="perk_3x_daily" onchange="modSetGuildPremiumPerk('3x_daily',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Slots Extra</h4></div><label class="toggle"><input type="checkbox" id="perk_extra_slots" onchange="modSetGuildPremiumPerk('extra_slots',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Rob Boost</h4></div><label class="toggle"><input type="checkbox" id="perk_rob_boost" onchange="modSetGuildPremiumPerk('rob_boost',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Crime Boost</h4></div><label class="toggle"><input type="checkbox" id="perk_crime_boost" onchange="modSetGuildPremiumPerk('crime_boost',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Heist Boost</h4></div><label class="toggle"><input type="checkbox" id="perk_heist_boost" onchange="modSetGuildPremiumPerk('heist_boost',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Cooldown /2</h4></div><label class="toggle"><input type="checkbox" id="perk_cooldown_half" onchange="modSetGuildPremiumPerk('cooldown_half',this.checked)"><span class="toggle-slider"></span></label></label>
+                  <label class="toggle-row" style="margin:0;padding:.5rem .6rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)"><div class="toggle-info"><h4 style="font-size:.8rem">Cmds Exclusivos</h4></div><label class="toggle"><input type="checkbox" id="perk_exclusive_cmds" onchange="modSetGuildPremiumPerk('exclusive_cmds',this.checked)"><span class="toggle-slider"></span></label></label>
+                </div>
               </div>
             </div>
           </div>
@@ -286,7 +328,7 @@
           </div>
         </div>
 
-        <div style="max-width:500px;margin:0 auto" id="modSaveWrap" style="display:none">
+        <div id="modSaveWrap" style="display:none;max-width:500px;margin:0 auto">
           <button class="mod-save-all" onclick="saveModConfig()">Salvar Todas as Configurações</button>
         </div>
       </div>
@@ -588,6 +630,7 @@
        TAB 1: SERVER CONFIG
        ═══════════════════════════════════════════ */
     let currentGuildId = null;
+    let guildIcons = {};
 
     async function loadModGuilds() {
       try {
@@ -596,16 +639,34 @@
         const guilds = data.guilds || [];
         const sel = document.getElementById('modGuildSelect');
         sel.innerHTML = '<option value="">Selecione um servidor...</option>';
-        guilds.forEach(g => { sel.innerHTML += '<option value="' + g.guild_id + '">' + g.name + ' (' + (g.member_count||0) + ' membros)</option>'; });
+        guildIcons = {};
+        guilds.forEach(g => {
+          guildIcons[g.guild_id] = g.icon || '';
+          const premiumTag = g.premium ? ' 👑' : '';
+          sel.innerHTML += '<option value="' + g.guild_id + '">' + g.name + ' (' + (g.member_count||0) + ')' + premiumTag + '</option>';
+        });
       } catch(e) { console.error('Failed to load guilds:', e); }
     }
 
     async function loadModGuild() {
       const guildId = document.getElementById('modGuildSelect').value;
-      if (!guildId) { document.getElementById('modGrid').style.display = 'none'; return; }
+      if (!guildId) { document.getElementById('modGrid').style.display = 'none'; document.getElementById('modServerBanner').style.display = 'none'; return; }
       currentGuildId = guildId;
       document.getElementById('modGrid').style.display = 'grid';
       document.getElementById('modSaveWrap').style.display = 'block';
+      const sel = document.getElementById('modGuildSelect');
+      const opt = sel.options[sel.selectedIndex];
+      const banner = document.getElementById('modServerBanner');
+      banner.style.display = 'flex';
+      document.getElementById('modServerName').textContent = opt.text.split(' (')[0].replace(/ 👑$/,'');
+      document.getElementById('modServerId').textContent = 'ID: ' + guildId;
+      const members = opt.text.match(/\((\d+)/);
+      document.getElementById('modServerMembers').textContent = '👥 ' + (members ? members[1] : '0') + ' membros';
+      const iconEl = document.getElementById('modServerIcon');
+      const icon = guildIcons[guildId];
+      if (icon) { iconEl.src = 'https://cdn.discordapp.com/icons/' + guildId + '/' + icon + '.png'; iconEl.style.display = 'block'; }
+      else { iconEl.style.display = 'none'; }
+      document.getElementById('modServerPremiumBadge').style.display = 'none';
       await Promise.all([loadModConfig(), loadModChannels(), loadModRoles(), loadModLogs(), loadGuildPremiumStatus()]);
     }
 
@@ -614,25 +675,59 @@
       try {
         const r = await fetch('/api/' + currentGuildId + '/config');
         const cfg = await r.json();
-        document.getElementById('mod_mute_duration').value = cfg.mod_mute_duration || 5;
-        document.getElementById('mod_warn_kick').value = cfg.mod_warn_kick || 0;
-        document.getElementById('mod_warn_ban').value = cfg.mod_warn_ban || 0;
-        document.getElementById('mod_log_channel').value = cfg.mod_log_channel || '';
-        document.getElementById('logging_mod').checked = cfg.logging_mod !== false;
-        document.getElementById('automod_anti_spam').checked = cfg.automod_anti_spam === true;
-        document.getElementById('automod_spam_count').value = cfg.automod_spam_count || 5;
-        document.getElementById('automod_spam_window').value = cfg.automod_spam_window || 5;
-        document.getElementById('automod_anti_links').checked = cfg.automod_anti_links === true;
-        document.getElementById('automod_anti_mentions').checked = cfg.automod_anti_mentions === true;
-        document.getElementById('automod_max_mentions').value = cfg.automod_max_mentions || 5;
-        document.getElementById('automod_bad_words_toggle').checked = cfg.automod_bad_words_toggle === true;
-        document.getElementById('automod_bad_words').value = (cfg.automod_bad_words || []).join('\n');
-        document.getElementById('automod_raid_enabled').checked = cfg.automod_raid_enabled === true;
-        document.getElementById('automod_raid_threshold').value = cfg.automod_raid_threshold || 5;
-        document.getElementById('automod_raid_action').value = cfg.automod_raid_action || 'kick';
-        document.getElementById('mod_punishment_channel').value = cfg.mod_punishment_channel || '';
-        document.getElementById('mod_mute_role').value = cfg.mod_mute_role || '';
-        document.getElementById('automod_auto_mute').checked = cfg.automod_auto_mute === true;
+        const setV = (id,v,d) => { const el = document.getElementById(id); if(el) el.value = v||d; };
+        const setC = (id,v) => { const el = document.getElementById(id); if(el) el.checked = v===true; };
+        setV('mod_mute_duration',cfg.mod_mute_duration,5);
+        setV('mod_warn_kick',cfg.mod_warn_kick,0);
+        setV('mod_warn_ban',cfg.mod_warn_ban,0);
+        setV('mod_log_channel',cfg.mod_log_channel||cfg.logs_channel||'','');
+        setV('mod_punishment_channel',cfg.mod_punishment_channel||'','');
+        setV('mod_mute_role',cfg.mod_mute_role||'','');
+        setC('logging_mod',cfg.logging_mod!==false);
+        setC('automod_anti_spam',cfg.automod_anti_spam);
+        setV('automod_spam_count',cfg.automod_spam_count||cfg.spam_count,5);
+        setV('automod_spam_window',cfg.automod_spam_window||cfg.spam_window,5);
+        setC('automod_anti_links',cfg.automod_anti_links);
+        setC('automod_anti_mentions',cfg.automod_anti_mentions);
+        setV('automod_max_mentions',cfg.automod_max_mentions,5);
+        setC('automod_bad_words_toggle',cfg.automod_bad_words_toggle);
+        document.getElementById('automod_bad_words').value = (cfg.automod_bad_words||[]).join('\n');
+        setC('automod_raid_enabled',cfg.automod_raid_enabled);
+        setV('automod_raid_threshold',cfg.automod_raid_threshold,5);
+        setV('automod_raid_action',cfg.automod_raid_action||cfg.raid_action,'kick');
+        setC('automod_auto_mute',cfg.automod_auto_mute);
+        setC('welcome_enabled',cfg.welcome_enabled);
+        setV('welcome_channel',cfg.welcome_channel||cfg.welcome_channel_id||'','');
+        setV('welcome_message',cfg.welcome_message||cfg.welcome_msg||'','');
+        setV('welcome_image',cfg.welcome_image||'','');
+        setV('welcome_footer',cfg.welcome_footer||'','');
+        setC('farewell_enabled',cfg.farewell_enabled);
+        setV('farewell_channel',cfg.farewell_channel||cfg.farewell_channel_id||'','');
+        setV('farewell_message',cfg.farewell_message||cfg.farewell_msg||'','');
+        setV('farewell_image',cfg.farewell_image||'','');
+        setV('farewell_footer',cfg.farewell_footer||'','');
+        setC('autorole_enabled',cfg.autorole_enabled);
+        setV('autorole_role',cfg.autorole_role||'','');
+        setC('xp_enabled',cfg.xp_enabled);
+        setV('xp_channel',cfg.xp_channel||'','');
+        setV('xp_min',cfg.xp_min||15);
+        setV('xp_max',cfg.xp_max||35);
+        setC('xp_cooldown_enabled',cfg.xp_cooldown_enabled!==false);
+        setV('xprole_role',cfg.xprole_role||'','');
+        setV('economy_starting_koins',cfg.economy_starting_koins,500);
+        setV('economy_daily_min',cfg.economy_daily_min,18);
+        setV('economy_work_cooldown',cfg.economy_work_cooldown,30);
+        setV('economy_rob_cooldown',cfg.economy_rob_cooldown,60);
+        setV('economy_crime_chance',cfg.economy_crime_chance,50);
+        setV('economy_heist_chance',cfg.economy_heist_chance,40);
+        setV('economy_lottery_price',cfg.economy_lottery_price,1000);
+        const wc = cfg.welcome_color || '#8b5cf6';
+        document.getElementById('welcome_color').value = wc;
+        document.getElementById('welcome_color_val').textContent = wc;
+        const fc = cfg.farewell_color || '#ef4444';
+        document.getElementById('farewell_color').value = fc;
+        document.getElementById('farewell_color_val').textContent = fc;
+        document.getElementById('modServerStatusBadge').textContent = cfg.welcome_enabled||cfg.farewell_enabled||cfg.xp_enabled ? 'Configurado' : 'Não configurado';
       } catch(e) { console.error('Failed to load config:', e); }
     }
 
@@ -640,12 +735,14 @@
       if (!currentGuildId) return;
       try {
         const r = await fetch('/api/' + currentGuildId + '/channels');
-        const channels = await r.json();
-        ['mod_log_channel', 'mod_punishment_channel'].forEach(id => {
+        const data = await r.json();
+        const channels = data.channels || data || [];
+        ['welcome_channel','farewell_channel','mod_log_channel','mod_punishment_channel','xp_channel'].forEach(id => {
           const sel = document.getElementById(id);
+          if (!sel) return;
           const current = sel.value;
           sel.innerHTML = '<option value="">Nenhum</option>';
-          channels.filter(c => c.type === 0).forEach(c => { sel.innerHTML += '<option value="' + c.id + '">#' + c.name + '</option>'; });
+          channels.forEach(c => { sel.innerHTML += '<option value="' + c.id + '">#' + c.name + '</option>'; });
           sel.value = current;
         });
       } catch(e) { console.error('Failed to load channels:', e); }
@@ -655,12 +752,16 @@
       if (!currentGuildId) return;
       try {
         const r = await fetch('/api/' + currentGuildId + '/roles');
-        const roles = await r.json();
-        const sel = document.getElementById('mod_mute_role');
-        const current = sel.value;
-        sel.innerHTML = '<option value="">Nenhum</option>';
-        roles.forEach(role => { sel.innerHTML += '<option value="' + role.id + '">' + role.name + '</option>'; });
-        sel.value = current;
+        const data = await r.json();
+        const roles = data.roles || data || [];
+        ['mod_mute_role','autorole_role','xprole_role'].forEach(id => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const current = sel.value;
+          sel.innerHTML = '<option value="">Nenhum</option>';
+          roles.forEach(role => { sel.innerHTML += '<option value="' + role.id + '">' + role.name + '</option>'; });
+          sel.value = current;
+        });
       } catch(e) { console.error('Failed to load roles:', e); }
     }
 
@@ -682,26 +783,56 @@
 
     async function saveModConfig() {
       if (!currentGuildId) return;
+      const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+      const b = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+      const n = (id,d) => { const v = parseInt(g(id)); return isNaN(v) ? d : v; };
       const data = {
-        mod_mute_duration: parseInt(document.getElementById('mod_mute_duration').value),
-        mod_warn_kick: parseInt(document.getElementById('mod_warn_kick').value),
-        mod_warn_ban: parseInt(document.getElementById('mod_warn_ban').value),
-        mod_log_channel: document.getElementById('mod_log_channel').value,
-        logging_mod: document.getElementById('logging_mod').checked,
-        automod_anti_spam: document.getElementById('automod_anti_spam').checked,
-        automod_spam_count: parseInt(document.getElementById('automod_spam_count').value),
-        automod_spam_window: parseInt(document.getElementById('automod_spam_window').value),
-        automod_anti_links: document.getElementById('automod_anti_links').checked,
-        automod_anti_mentions: document.getElementById('automod_anti_mentions').checked,
-        automod_max_mentions: parseInt(document.getElementById('automod_max_mentions').value),
-        automod_bad_words_toggle: document.getElementById('automod_bad_words_toggle').checked,
-        automod_bad_words: document.getElementById('automod_bad_words').value.split('\n').filter(w => w.trim()),
-        automod_raid_enabled: document.getElementById('automod_raid_enabled').checked,
-        automod_raid_threshold: parseInt(document.getElementById('automod_raid_threshold').value),
-        automod_raid_action: document.getElementById('automod_raid_action').value,
-        mod_punishment_channel: document.getElementById('mod_punishment_channel').value,
-        mod_mute_role: document.getElementById('mod_mute_role').value,
-        automod_auto_mute: document.getElementById('automod_auto_mute').checked,
+        mod_mute_duration: n('mod_mute_duration',5),
+        mod_warn_kick: n('mod_warn_kick',0),
+        mod_warn_ban: n('mod_warn_ban',0),
+        mod_log_channel: g('mod_log_channel'),
+        logging_mod: b('logging_mod'),
+        automod_anti_spam: b('automod_anti_spam'),
+        automod_spam_count: n('automod_spam_count',5),
+        automod_spam_window: n('automod_spam_window',5),
+        automod_anti_links: b('automod_anti_links'),
+        automod_anti_mentions: b('automod_anti_mentions'),
+        automod_max_mentions: n('automod_max_mentions',5),
+        automod_bad_words_toggle: b('automod_bad_words_toggle'),
+        automod_bad_words: g('automod_bad_words').split('\n').filter(w => w.trim()),
+        automod_raid_enabled: b('automod_raid_enabled'),
+        automod_raid_threshold: n('automod_raid_threshold',5),
+        automod_raid_action: g('automod_raid_action'),
+        mod_punishment_channel: g('mod_punishment_channel'),
+        mod_mute_role: g('mod_mute_role'),
+        automod_auto_mute: b('automod_auto_mute'),
+        welcome_enabled: b('welcome_enabled'),
+        welcome_channel: g('welcome_channel'),
+        welcome_message: g('welcome_message'),
+        welcome_color: g('welcome_color'),
+        welcome_image: g('welcome_image'),
+        welcome_footer: g('welcome_footer'),
+        farewell_enabled: b('farewell_enabled'),
+        farewell_channel: g('farewell_channel'),
+        farewell_message: g('farewell_message'),
+        farewell_color: g('farewell_color'),
+        farewell_image: g('farewell_image'),
+        farewell_footer: g('farewell_footer'),
+        autorole_enabled: b('autorole_enabled'),
+        autorole_role: g('autorole_role'),
+        xp_enabled: b('xp_enabled'),
+        xp_channel: g('xp_channel'),
+        xp_min: n('xp_min',15),
+        xp_max: n('xp_max',35),
+        xp_cooldown_enabled: b('xp_cooldown_enabled'),
+        xprole_role: g('xprole_role'),
+        economy_starting_koins: n('economy_starting_koins',500),
+        economy_daily_min: n('economy_daily_min',18),
+        economy_work_cooldown: n('economy_work_cooldown',30),
+        economy_rob_cooldown: n('economy_rob_cooldown',60),
+        economy_crime_chance: n('economy_crime_chance',50),
+        economy_heist_chance: n('economy_heist_chance',40),
+        economy_lottery_price: n('economy_lottery_price',1000),
       };
       try {
         const r = await fetch('/api/' + currentGuildId + '/config', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
@@ -1218,10 +1349,13 @@
         var d = await r.json();
         var el = document.getElementById('mod-premium-status');
         if (!el) return;
+        var badge = document.getElementById('modServerPremiumBadge');
         if (d.premium) {
           el.innerHTML = '<div style="padding:1rem;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.2);margin-bottom:1rem"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem"><span style="font-size:1.2rem">👑</span><span style="font-weight:700;color:#ffd700">Premium Ativo</span></div><div style="font-size:.8rem;color:var(--text3)">Multiplicador: <b style="color:#ffd700">' + (d.multiplier||2) + 'x</b></div></div>';
+          if (badge) badge.style.display = 'inline-block';
         } else {
           el.innerHTML = '<div style="padding:1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border2);margin-bottom:1rem"><div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:1.2rem;opacity:.4">👑</span><span style="color:var(--text3)">Premium inativo neste servidor</span></div></div>';
+          if (badge) badge.style.display = 'none';
         }
         document.getElementById('mod-premium-multiplier').value = d.multiplier || 2;
         var perks = d.perks || {};
@@ -1231,6 +1365,13 @@
         });
       } catch(e) {}
     }
+
+    document.getElementById('welcome_color').addEventListener('input', function() {
+      document.getElementById('welcome_color_val').textContent = this.value;
+    });
+    document.getElementById('farewell_color').addEventListener('input', function() {
+      document.getElementById('farewell_color_val').textContent = this.value;
+    });
   </script>
 </body>
 </html>
